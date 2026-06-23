@@ -24,7 +24,6 @@ class ArchiveController extends Controller
         return response()->json([
             'message' => 'Archive permanently deleted'
 
-            ss
         ]);
     }
 }
