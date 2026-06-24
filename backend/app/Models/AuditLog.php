@@ -8,9 +8,10 @@ use App\Models\User;
 class AuditLog extends Model
 {
     protected $fillable = [
+        'user_id',
         'time_log',
         'action',
-        'user_id',
+        
     ];
 
     public function User(){

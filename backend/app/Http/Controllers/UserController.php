@@ -17,12 +17,15 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        
+       
+
         $validated = $request->validate([
-            'role_id' => 'required|exists:roles,role_id',
+            'role_id' => 'required|integer|exists:roles,id',
             'full_name' => 'required|string|max:255',
             'password' => 'required|string|min:6',
             'email' => 'required|email|unique:users,email',
-            'contact_number' => 'nullable|string|max:20'
+            // 'contact_number' => 'nullable|string|max:20'
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -37,15 +40,21 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        return response()->json($user->load('role', 'leads', 'salesTasks', 'performancePlans', 'auditLogs'));
+        // return response()->json($user->load('role', 'leads', 'salesTasks', 'performancePlans', 'auditLogs'));
+        return response()->json($user->load('role'));
     }
+    
+    public function leads()
+{
+    return $this->hasMany(Lead::class, 'user_id');
+}
 
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
             'role_id' => 'sometimes|exists:roles,role_id',
             'full_name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $user->user_id . ',user_id',
+            'email' => 'sometimes|email|unique:users,email,' . $user->user_id . ',id',
             'contact_number' => 'nullable|string|max:20'
         ]);
 

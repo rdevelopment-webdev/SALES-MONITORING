@@ -32,29 +32,37 @@ class AuditLogController extends Controller
         return response()->json($auditLogs);
     }
 
-    public function store(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'time_log' => 'required|date',
-            'action'   => 'required|string|max:255',
-            'user_id'  => 'required|exists:users,id',
-        ]);
+  public function store(Request $request): JsonResponse
+{
+    $validator = Validator::make($request->all(), [
+        'time_log' => 'required|date',
+        'action'   => 'required|string|max:255',
+        'user_id'  => 'required|exists:users,id',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
 
+    try {
         $auditLog = AuditLog::create($validator->validated());
 
         return response()->json([
             'message' => 'Audit log created successfully',
-            'data'    => $auditLog->load(['user', 'archive']),
+            'data'    => $auditLog->load(['user']),
         ], 201);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Failed to create audit_log',
+            'error'   => $e->getMessage(),
+        ], 500);
     }
+}
 
     public function show(AuditLog $auditLog): JsonResponse
     {
-        return response()->json($auditLog->load(['user', 'archive']));
+    // return response()->json($auditLog->load(['user', 'archive']));
+    return response()->json($auditLog->load(['user']));
     }
 
     public function update(Request $request, AuditLog $auditLog): JsonResponse
@@ -73,7 +81,8 @@ class AuditLogController extends Controller
 
         return response()->json([
             'message' => 'Audit log updated successfully',
-            'data'    => $auditLog->fresh(['user', 'archive']),
+            // 'data'    => $auditLog->fresh(['user', 'archive']),
+            'data'    => $auditLog->fresh(['user']),
         ]);
     }
 

@@ -15,6 +15,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
+        'role_id',
         'full_name',
         'email',
         'password',
@@ -24,9 +25,10 @@ class User extends Authenticatable
         'password',
     ];
     public function Role(){
-        return $this->belongsToss(Role::class);
+        return $this->belongsTo(Role::class);
     }
     public function audit_log(){
+        
         return $this->hasMany(AuditLog::class);
     }
 
