@@ -44,7 +44,7 @@ class PageController extends Controller
      */
     public function show(Page $page)
     {
-        $page->load('Role_Page_Permission');
+        // $page->load('Role_Page_Permission');
 
         return response()->json([
             'message' => 'Page retrieved successfully',

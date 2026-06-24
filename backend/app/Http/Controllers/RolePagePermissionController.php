@@ -54,9 +54,7 @@ class RolePagePermissionController extends Controller
         ], 201);
     }
 
-    /**
-     * Show a specific permission.
-     */
+  
     public function show(RolePagePermission $rolePagePermission)
     {
         return response()->json([
