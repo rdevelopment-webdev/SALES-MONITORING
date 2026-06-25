@@ -10,9 +10,11 @@ use App\Models\Role;
 use App\Models\AuditLog;
 use App\Models\Lead;
 use App\Models\SalesTask;
+use Laravel\Sanctum\HasApiTokens;
+
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens,HasFactory, Notifiable;
 
     protected $fillable = [
         'role_id',
@@ -23,12 +25,16 @@ class User extends Authenticatable
 
     protected $hidden = [
         'password',
+        'remember_token',
+    ];
+    protected $casts = [
+        'password' => 'hashed', // Laravel 10+ auto-hashes
     ];
     public function Role(){
         return $this->belongsTo(Role::class);
     }
     public function audit_log(){
-        
+
         return $this->hasMany(AuditLog::class);
     }
 
