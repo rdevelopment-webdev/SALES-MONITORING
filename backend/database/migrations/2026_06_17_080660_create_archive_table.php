@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('lead_id');
             $table->unsignedBigInteger('log_id');
+            $table->unsignedBigInteger('performance_id');
+            $table->unsignedBigInteger('task_id');
             $table->string('service_name');
             $table->string('status_name');
 
@@ -22,7 +24,8 @@ return new class extends Migration
 
             $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
             $table->foreign('log_id')->references('id')->on('audit_logs')->onDelete('cascade');
-
+            $table->foreign('performance_id')->references('id')->on('performance_plans')->onDelete('cascade');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
         });
     }
 
@@ -31,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('archives');
+        Schema::dropIfExists('archive');
     }
 };

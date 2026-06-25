@@ -16,7 +16,7 @@ class PerformancePlanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,user_id',
+            'user_id' => 'required|exists:users,id',
             'date_recorded' => 'required|date',
             'client_name' => 'required|string|max:255',
             'technique_name' => 'required|string|max:255',
@@ -49,7 +49,7 @@ class PerformancePlanController extends Controller
     public function update(Request $request, PerformancePlan $performancePlan)
     {
         $validated = $request->validate([
-            'user_id' => 'sometimes|exists:users,user_id',
+            'user_id' => 'sometimes |exists:users,id',
             'date_recorded' => 'sometimes|date',
             'client_name' => 'sometimes|string|max:255',
             'technique_name' => 'sometimes|string|max:255',

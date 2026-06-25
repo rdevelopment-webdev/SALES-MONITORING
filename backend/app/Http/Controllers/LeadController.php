@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
-
     public function index()
     {
         $leads = Lead::with('user')->get();
@@ -19,21 +18,25 @@ class LeadController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,user_id',
-            'service_name' => 'required|string|max:255',
-            'status_name' => 'required|string|max:255',
+            'user_id' => 'required|exists:users,id',
             'business_name' => 'required|string|max:255',
             'contact_person' => 'required|string|max:255',
             'job_position' => 'nullable|string|max:255',
             'contact_number' => 'required|string|max:20',
-            'email' => 'required|email|max:255'
+            'email' => 'required|email|max:255',
+            'service_name' => 'required|string|max:255',
+            'status_name' => 'required|string|max:255',
+            'remarks' => 'nullable|string',
+            'location' => 'required|string',
         ]);
 
         $lead = Lead::create($validated);
 
-        // Log the creation
+        // Fallback: use auth user, or the lead's user_id if not authenticated
+        $actorId = auth()->id() ?? $validated['user_id'];
+
         AuditLog::create([
-            'user_id' => auth()->id(),
+            'user_id' => $actorId,
             'time_log' => now(),
             'action' => 'Created lead: ' . $lead->business_name
         ]);
@@ -46,27 +49,30 @@ class LeadController extends Controller
 
     public function show(Lead $lead)
     {
-        return response()->json($lead->load('user', 'performancePlans', 'salesTasks'));
+        return response()->json($lead->load('user'));
     }
 
     public function update(Request $request, Lead $lead)
     {
         $validated = $request->validate([
-            'user_id' => 'sometimes|exists:users,user_id',
-            'service_name' => 'sometimes|string|max:255',
-            'status_name' => 'sometimes|string|max:255',
+            'user_id' => 'sometimes|exists:users,id',
             'business_name' => 'sometimes|string|max:255',
             'contact_person' => 'sometimes|string|max:255',
             'job_position' => 'nullable|string|max:255',
             'contact_number' => 'sometimes|string|max:20',
-            'email' => 'sometimes|email|max:255'
+            'email' => 'sometimes|email|max:255',
+            'service_name' => 'sometimes|string|max:255',
+            'status_name' => 'sometimes|string|max:255',
+            'remarks' => 'nullable|string',
+            'location' => 'sometimes|string',
         ]);
 
         $lead->update($validated);
 
-        // Log the update
+        $actorId = auth()->id() ?? $lead->user_id;
+
         AuditLog::create([
-            'user_id' => auth()->id(),
+            'user_id' => $actorId,
             'time_log' => now(),
             'action' => 'Updated lead: ' . $lead->business_name
         ]);
@@ -77,19 +83,18 @@ class LeadController extends Controller
         ]);
     }
 
-    // ARCHIVE — Move to Archive table + create AuditLog
     public function destroy(Lead $lead)
     {
-        // Create audit log first
+        $actorId = auth()->id() ?? $lead->user_id;
+
         $auditLog = AuditLog::create([
-            'user_id' => auth()->id(),
+            'user_id' => $actorId,
             'time_log' => now(),
             'action' => 'Archived lead: ' . $lead->business_name
         ]);
 
-        // Create archive record with log_id
         Archive::create([
-            'lead_id' => $lead->lead_id,
+            'lead_id' => $lead->id,        // ✅ was $lead->lead_id
             'log_id' => $auditLog->log_id,
             'service_name' => $lead->service_name,
             'status_name' => $lead->status_name

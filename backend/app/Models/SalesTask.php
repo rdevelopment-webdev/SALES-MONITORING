@@ -7,12 +7,16 @@ use App\Models\User;
 class SalesTask extends Model
 {
     protected $fillable = [
-        'task_date',
         'user_id',
+        'task_date',
         'task_notes',
         'pdf_export',
     ];
     public function User(){
         return $this->belongsTo(User::class);
+    }
+
+    public function Archive(){
+        return $this->hasMany(Archive::class);
     }
 }
