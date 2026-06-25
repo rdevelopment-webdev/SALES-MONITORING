@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sales_Task;
+use App\Models\SalesTask;
 use Illuminate\Http\Request;
 
 class SalesTaskController extends Controller
 {
     public function index()
     {
-        $tasks = Sales_Task::with('user')->get();
+        $tasks = SalesTask::with('user')->get();
         return response()->json($tasks);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,user_id',
+            'user_id' => 'required|exists:users,id',
             'task_date' => 'required|date',
             'task_notes' => 'nullable|string',
-            'exported_file_path' => 'nullable|string|max:255'
         ]);
 
-        $task = Sales_Task::create($validated);
+        $task = SalesTask::create($validated);
 
         return response()->json([
             'message' => 'Sales task created successfully',
@@ -30,31 +29,30 @@ class SalesTaskController extends Controller
         ], 201);
     }
 
-    public function show(Sales_Task $salesTask)
+    public function show(SalesTask $salestask)
     {
-        return response()->json($salesTask->load('user'));
+        return response()->json($salestask->load('user'));
     }
 
-    public function update(Request $request, Sales_Task $salesTask)
+    public function update(Request $request, SalesTask $salestask)
     {
         $validated = $request->validate([
-            'user_id' => 'sometimes|exists:users,user_id',
+            'user_id' => 'sometimes|exists:users,id',
             'task_date' => 'sometimes|date',
             'task_notes' => 'nullable|string',
-            'exported_file_path' => 'nullable|string|max:255'
         ]);
 
-        $salesTask->update($validated);
+        $salestask->update($validated);
 
         return response()->json([
             'message' => 'Sales task updated successfully',
-            'task' => $salesTask
+            'task' => $salestask
         ]);
     }
 
-    public function destroy(Sales_Task $salesTask)
+    public function destroy(SalesTask $salestask)
     {
-        $salesTask->delete();
+        $salestask->delete();
 
         return response()->json([
             'message' => 'Sales task deleted successfully'
