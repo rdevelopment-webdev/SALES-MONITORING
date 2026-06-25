@@ -10,7 +10,19 @@ use App\Http\Controllers\PerformancePlanController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\SalesTaskController;
 use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\LoginController;
+Route::post('login', [LoginController::class, 'login']);
 
+// Protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [LoginController::class, 'logout']);
+    Route::get('me', [LoginController::class, 'me']);
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/register', [LoginController::class, 'register']);
+
+    });
+});
 
 Route::apiResource('roles', RoleController::class);
 Route::apiResource('users', UserController::class);
