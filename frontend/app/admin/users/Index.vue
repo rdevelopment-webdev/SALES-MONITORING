@@ -195,12 +195,6 @@ import { ref, computed } from 'vue'
 
 const users = ref([
   { id: 1, fullName: 'Admin User', email: 'helloadmin@gmail.com', contactNumber: '09123456789', role: 'Admin', date: 'June 25, 2026' },
-  { id: 2, fullName: 'User', email: 'helloadmin@gmail.com', contactNumber: '09123456789', role: 'Admin', date: 'June 25, 2026' },
-  { id: 3, fullName: 'Admin', email: 'helloadmin@gmail.com', contactNumber: '09123456789', role: 'Admin', date: 'June 25, 2026' },
-  { id: 4, fullName: 'Admin User', email: 'helloadmin@gmail.com', contactNumber: '09123456789', role: 'Admin', date: 'June 25, 2026' },
-  { id: 5, fullName: 'User', email: 'helloadmin@gmail.com', contactNumber: '09123456789', role: 'Admin', date: 'June 25, 2026' },
-  { id: 6, fullName: 'Admin User', email: 'helloadmin@gmail.com', contactNumber: '09123456789', role: 'Admin', date: 'June 25, 2026' },
-  { id: 7, fullName: 'Admin User', email: 'helloadmin@gmail.com', contactNumber: '09123456789', role: 'Admin', date: 'June 25, 2026' },
 ])
 
 const archivedUsers = ref([])
