@@ -1,155 +1,282 @@
 <template>
-  <div class="h-screen w-screen flex bg-[#F8FAFC] text-[#1F2835] font-sans overflow-hidden box-border select-none m-0 p-0">
+  <aside class="w-64 h-screen bg-[#1f2835] text-white flex flex-col font-overpass select-none">
     
-    <aside class="w-[260px] h-full bg-[#1F2835] flex flex-col justify-between text-gray-300 border-r border-[#2A374A] flex-shrink-0">
+    <!-- Header -->
+    <div class="p-4 flex items-center gap-3 shrink-0">
+      <img src="/Rweb logo.png" alt="RWEB Solutions Logo" class="w-10 h-10 object-contain rounded bg-white p-0.5" />
       <div>
-        <div class="p-5 flex items-center gap-3 border-b border-[#2A374A]">
-          <div class="w-10 h-10 bg-white rounded flex items-center justify-center overflow-hidden flex-shrink-0 p-1">
-            <img src="/Rweb logo.png" alt="Logo" class="max-w-full max-h-full object-contain">
-          </div>
-          <div>
-            <h2 class="text-white text-sm font-bold tracking-wide uppercase leading-tight">RWEB SOLUTIONS INC.</h2>
-            <p class="text-[11px] text-gray-400">Sales & Marketing MS</p>
-          </div>
-        </div>
+        <h2 class="text-white text-xs font-bold tracking-wider uppercase leading-tight">RWEB SOLUTIONS INC.</h2>
+        <p class="text-[10px] text-gray-400 font-medium tracking-wide mt-0.5">Sales & Marketing MS</p>
+      </div>
+    </div>
 
-        <nav class="p-4 space-y-6">
-          <div>
-            <p class="text-[10px] uppercase font-bold tracking-wider text-gray-500 mb-2 px-3">My Modules</p>
-            <ul class="space-y-1">
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto py-2 px-3">
+      
+      <!-- My Modules -->
+      <div class="mb-5">
+        <span class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-2">My Modules</span>
+        <ul class="space-y-0.5">
+          
+          <!-- User Management -->
+          <li>
+            <div 
+              @click="toggleUserManagement"
+              :class="activeItem === 'user-management' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-300 hover:text-white hover:bg-white/5'"
+              class="flex items-center justify-between px-3 py-2 rounded text-sm cursor-pointer transition-colors"
+            >
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <span class="font-medium">User Management</span>
+              </div>
+              <svg 
+                :class="isUserManagementOpen ? 'rotate-180' : ''"
+                class="w-3.5 h-3.5 transition-transform duration-200"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 15l7-7 7 7"/>
+              </svg>
+            </div>
+
+            <!-- User Management Sub-menu -->
+            <ul 
+              v-show="isUserManagementOpen"
+              class="mt-0.5 space-y-0"
+            >
               <li>
-                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm rounded hover:bg-[#2A374A] transition-colors">
-                  <i class="fa-solid fa-users-gear text-xs"></i> User Management
+                <a 
+                  href="#" 
+                  @click.prevent="activeItem = 'users'"
+                  :class="activeItem === 'users' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                  class="block px-3 py-1.5 rounded text-xs transition-colors ml-7"
+                >
+                  Users
                 </a>
               </li>
               <li>
-                <div class="px-3 py-2 text-sm rounded bg-[#2A374A] text-white flex items-center justify-between cursor-pointer">
-                  <span class="flex items-center gap-3">
-                    <i class="fa-solid fa-chart-line text-xs"></i> Leads Tracker
-                  </span>
-                  <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                <a 
+                  href="#" 
+                  @click.prevent="activeItem = 'roles'"
+                  :class="activeItem === 'roles' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                  class="block px-3 py-1.5 rounded text-xs transition-colors ml-7"
+                >
+                  Roles
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#" 
+                  @click.prevent="activeItem = 'permissions'"
+                  :class="activeItem === 'permissions' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                  class="block px-3 py-1.5 rounded text-xs transition-colors ml-7"
+                >
+                  Permissions
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Leads Tracker -->
+          <li>
+            <div 
+              @click="toggleLeadsTracker"
+              :class="activeItem === 'leads-tracker' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-300 hover:text-white hover:bg-white/5'"
+              class="flex items-center justify-between px-3 py-2 rounded text-sm cursor-pointer transition-colors"
+            >
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <span class="font-medium">Leads Tracker</span>
+              </div>
+              <svg 
+                :class="isLeadsTrackerOpen ? 'rotate-180' : ''"
+                class="w-3.5 h-3.5 transition-transform duration-200"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 15l7-7 7 7"/>
+              </svg>
+            </div>
+
+            <!-- Leads Tracker Sub-menu -->
+            <ul 
+              v-show="isLeadsTrackerOpen"
+              class="mt-0.5 space-y-0"
+            >
+              <!-- Leads (nested toggle) -->
+              <li>
+                <div 
+                  @click="isLeadsOpen = !isLeadsOpen; activeItem = 'leads'"
+                  :class="activeItem === 'leads' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                  class="flex items-center justify-between px-3 py-1.5 rounded text-xs cursor-pointer transition-colors ml-7"
+                >
+                  <span>Leads</span>
+                  <svg 
+                    :class="isLeadsOpen ? 'rotate-180' : ''"
+                    class="w-3 h-3 transition-transform duration-200"
+                    fill="none" 
+                    stroke="currentColor" 
+                    stroke-width="2" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M5 15l7-7 7 7"/>
+                  </svg>
                 </div>
-                <ul class="pl-7 mt-1 space-y-1 text-xs">
+
+                <!-- Leads Sub-menu (Industry) -->
+                <ul 
+                  v-show="isLeadsOpen"
+                  class="mt-0 space-y-0"
+                >
                   <li>
-                    <a href="#" class="block px-3 py-2 rounded bg-[#F25C11] text-white font-medium">Leads</a>
-                  </li>
-                  <li>
-                    <a href="#" class="block px-3 py-2 rounded text-gray-400 hover:text-white hover:bg-[#334257]">Industry</a>
-                  </li>
-                  <li>
-                    <a href="#" class="block px-3 py-2 rounded text-gray-400 hover:text-white hover:bg-[#334257]">Performance Improvement Plan</a>
+                    <a 
+                      href="#" 
+                      @click.prevent="activeItem = 'industry'"
+                      :class="activeItem === 'industry' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                      class="block px-3 py-1.5 rounded text-xs transition-colors ml-12"
+                    >
+                      Industry
+                    </a>
                   </li>
                 </ul>
               </li>
-              <li>
-                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm rounded hover:bg-[#2A374A] transition-colors">
-                  <i class="fa-solid fa-wallet text-xs"></i> Sales Task
-                </a>
-              </li>
-            </ul>
-          </div>
 
-          <div>
-            <p class="text-[10px] uppercase font-bold tracking-wider text-gray-500 mb-2 px-3">Others</p>
-            <ul class="space-y-1">
+              <!-- Performance Improvement Plan -->
               <li>
-                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm rounded hover:bg-[#2A374A] transition-colors">
-                  <i class="fa-solid fa-file-invoice text-xs"></i> Audit Logs
+                <a 
+                  href="#" 
+                  @click.prevent="activeItem = 'performance-improvement'"
+                  :class="activeItem === 'performance-improvement' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                  class="block px-3 py-1.5 rounded text-xs transition-colors ml-7 leading-snug"
+                >
+                  Performance Improvement Plan
                 </a>
               </li>
             </ul>
-          </div>
-        </nav>
+          </li>
+
+          <!-- Sales Task -->
+          <li>
+            <a 
+              href="#" 
+              @click.prevent="activeItem = 'sales-task'"
+              :class="activeItem === 'sales-task' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-300 hover:text-white hover:bg-white/5'"
+              class="flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>Sales Task</span>
+            </a>
+          </li>
+        </ul>
       </div>
-    </aside>
 
-    <main class="flex-1 h-full flex flex-col overflow-hidden">
+      <!-- Others -->
+      <div>
+        <span class="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-2">Others</span>
+        <ul class="space-y-0.5">
+          <li>
+            <a 
+              href="#" 
+              @click.prevent="activeItem = 'audit-logs'"
+              :class="activeItem === 'audit-logs' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-300 hover:text-white hover:bg-white/5'"
+              class="flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <span>Audit Logs</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+
+    <!-- Admin Account Footer -->
+    <div 
+      ref="adminFooter"
+      @click.stop="isAdminMenuOpen = !isAdminMenuOpen"
+      class="px-4 py-3 border-t border-white/10 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors relative shrink-0"
+    >
+      <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#CC3300] font-bold text-xs shrink-0">
+        SA
+      </div>
+      <div class="min-w-0">
+        <p class="text-white text-[13px] font-medium truncate">Super Admin</p>
+        <p class="text-[10px] text-gray-400 truncate">super@company.com</p>
+      </div>
       
-      <header class="h-[70px] bg-white border-b border-gray-200 px-8 flex items-center justify-between flex-shrink-0">
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Leads Listing</h1>
-        
-        <div class="flex items-center gap-4">
-          <div class="relative w-[320px]">
-            <input type="text" placeholder="Search" class="w-full h-9 pl-4 pr-10 border border-gray-300 bg-gray-50 rounded-full text-sm outline-none focus:border-gray-400">
-            <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-          </div>
-          <button class="h-9 px-4 bg-white border border-red-200 text-[#F52C11] font-semibold text-xs rounded shadow-sm hover:bg-red-50 flex items-center gap-2 transition-colors">
-            <span class="text-base font-normal">+</span> Add Record
-          </button>
-        </div>
-      </header>
+      <!-- Dropdown Menu -->
+      <ul 
+        v-show="isAdminMenuOpen"
+        class="absolute bottom-full left-3 mb-2 w-56 bg-[#1F2835] border border-[#2d3748] rounded-lg shadow-xl py-1 z-50"
+      >
+        <li>
+          <a href="#" @click.stop class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">
+            Profile
+          </a>
+        </li>
+        <li>
+          <a href="#" @click.stop class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors">
+            Settings
+          </a>
+        </li>
+        <li class="border-t border-white/10 my-1"></li>
+        <li>
+          <a href="#" @click.stop class="block px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-white/10 transition-colors">
+            Logout
+          </a>
+        </li>
+      </ul>
+    </div>
 
-      <div class="flex-1 flex overflow-hidden p-6 gap-6">
-        
-        <section class="w-[280px] h-full flex flex-col gap-4 flex-shrink-0 overflow-y-auto pr-1">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Location</label>
-            <select class="w-full h-9 border border-gray-300 rounded bg-gray-50 px-3 text-xs outline-none focus:border-gray-400 shadow-sm">
-              <option>Davao</option>
-            </select>
-          </div>
-
-          <div class="flex-1 bg-white border border-gray-300 rounded p-3 flex flex-col shadow-sm min-h-0">
-            <p class="text-xs font-semibold text-center text-gray-500 mb-3 border-b pb-2">Select Industry</p>
-            <div class="flex-1 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-              <div v-for="n in 25" :key="n" class="px-3 py-1.5 border border-gray-200 text-xs rounded text-gray-700 font-medium hover:bg-gray-50 cursor-pointer">
-                Food Industry
-              </div>
-            </div>
-            <button class="w-full h-8 mt-3 bg-white border border-red-100 text-[#F52C11] font-semibold text-[11px] rounded hover:bg-red-50 flex items-center justify-center gap-1">
-              <span class="text-sm font-normal">+</span> Add Industry
-            </button>
-          </div>
-        </section>
-
-        <section class="flex-1 h-full bg-white border border-gray-300 rounded flex flex-col overflow-hidden shadow-sm">
-          <div class="flex-1 overflow-auto custom-scrollbar">
-            <table class="w-full border-collapse text-left text-xs">
-              <thead class="bg-gray-50 border-b border-gray-300 sticky top-0 z-10 font-bold text-gray-700 text-[13px]">
-                <tr>
-                  <th class="p-3 border-r border-gray-200">Business Name</th>
-                  <th class="p-3 border-r border-gray-200">Contact Person</th>
-                  <th class="p-3 border-r border-gray-200">Job Position</th>
-                  <th class="p-3 border-r border-gray-200">Contact Number</th>
-                  <th class="p-3">Email</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 text-gray-600">
-                <tr v-for="n in 25" :key="n" class="hover:bg-slate-50 transition-colors">
-                  <td class="p-3 border-r border-gray-100 font-medium">First Middle Last</td>
-                  <td class="p-3 border-r border-gray-100">First Middle Last</td>
-                  <td class="p-3 border-r border-gray-100">Cold Calling</td>
-                  <td class="p-3 border-r border-gray-100 tracking-wide">0123456789</td>
-                  <td class="p-3 text-blue-600 font-medium underline cursor-pointer hover:text-blue-800">firstmiddlelast@gmail.com</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-      </div>
-    </main>
-  </div>
+  </aside>
 </template>
 
-<style scoped>
-.font-sans {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const isUserManagementOpen = ref(false)
+const isLeadsTrackerOpen = ref(false)
+const isLeadsOpen = ref(false)
+const isAdminMenuOpen = ref(false)
+const activeItem = ref('user-management')
+const adminFooter = ref(null)
+
+function toggleUserManagement() {
+  isUserManagementOpen.value = !isUserManagementOpen.value
+  activeItem.value = 'user-management'
 }
 
-/* Custom Scrollbar formatting to keep the layout extremely clean */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+function toggleLeadsTracker() {
+  isLeadsTrackerOpen.value = !isLeadsTrackerOpen.value
+  if (!isLeadsTrackerOpen.value) {
+    isLeadsOpen.value = false
+  }
+  activeItem.value = 'leads-tracker'
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+
+function handleClickOutside(event) {
+  if (adminFooter.value && !adminFooter.value.contains(event.target)) {
+    isAdminMenuOpen.value = false
+  }
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
-}
-</style>
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+</script>
