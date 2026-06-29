@@ -10,20 +10,10 @@ use App\Http\Controllers\PerformancePlanController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\SalesTaskController;
 use App\Http\Controllers\ArchiveController;
-use App\Http\Controllers\LoginController;
-Route::post('login', [LoginController::class, 'login']);
+use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\AuthController;
 
-// Protected routes
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [LoginController::class, 'logout']);
-    Route::get('me', [LoginController::class, 'me']);
-Route::prefix('auth')->group(function () {
-    Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/register', [LoginController::class, 'register']);
-
-    });
-});
-
+Route::post('/login', [AuthController::class, 'login']);
 Route::apiResource('roles', RoleController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('audit_logs', AuditLogController::class);
@@ -33,3 +23,6 @@ Route::apiResource('pages', PageController::class);
 Route::apiResource('leads', LeadController::class);
 Route::apiResource('salestasks', SalesTaskController::class);
 Route::apiResource('archives', ArchiveController::class);
+
+
+Route::get('/public-posts', [PostController::class, 'index']);
