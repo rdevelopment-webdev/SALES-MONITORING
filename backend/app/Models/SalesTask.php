@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 class SalesTask extends Model
 {
+    protected $table = 'sales_task'; 
+    
     protected $fillable = [
         'user_id',
         'task_date',

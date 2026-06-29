@@ -41,12 +41,12 @@ class PerformancePlanController extends Controller
         ], 201);
     }
 
-    public function show(PerformancePlan $performancePlan)
+    public function show(PerformancePlan $PerformancePlan)
     {
-        return response()->json($performancePlan->load('user'));
+        return response()->json($PerformancePlan->load('user'));
     }
 
-    public function update(Request $request, PerformancePlan $performancePlan)
+    public function update(Request $request, PerformancePlan $PerformancePlan)
     {
         $validated = $request->validate([
             'user_id' => 'sometimes |exists:users,id',
@@ -66,17 +66,17 @@ class PerformancePlanController extends Controller
             'ways_of_communication' => 'sometimes|string|max:255'
         ]);
 
-        $performancePlan->update($validated);
+        $PerformancePlan->update($validated);
 
         return response()->json([
             'message' => 'Performance plan updated successfully',
-            'plan' => $performancePlan
+            'plan' => $PerformancePlan
         ]);
     }
 
-    public function destroy(PerformancePlan $performancePlan)
+    public function destroy(PerformancePlan $PerformancePlan)
     {
-        $performancePlan->delete();
+        $PerformancePlan->delete();
 
         return response()->json([
             'message' => 'Performance plan deleted successfully'
