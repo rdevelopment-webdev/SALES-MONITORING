@@ -24,8 +24,8 @@ return new class extends Migration
 
             $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
             $table->foreign('log_id')->references('id')->on('audit_logs')->onDelete('cascade');
-            $table->foreign('performance_id')->references('id')->on('performance_plans')->onDelete('cascade');
-            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
+            $table->foreign('performance_id')->references('id')->on('performanceplans')->onDelete('cascade');
+            $table->foreign('task_id')->references('id')->on('sales_task')->onDelete('cascade');
         });
     }
 

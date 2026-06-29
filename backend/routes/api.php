@@ -11,19 +11,17 @@ use App\Http\Controllers\LeadController;
 use App\Http\Controllers\SalesTaskController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\LoginController;
-Route::post('login', [LoginController::class, 'login']);
+use App\Http\Controllers\ProspectTechniqueController;
+use App\Http\Controllers\SalesRepresentativeController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\WayOfCommunicationController;
 
-// Protected routes
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [LoginController::class, 'logout']);
-    Route::get('me', [LoginController::class, 'me']);
-Route::prefix('auth')->group(function () {
-    Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/register', [LoginController::class, 'register']);
-
-    });
-});
-
+Route::apiResource('ways_of_communication', WayOfCommunicationController::class)
+    ->parameters(['ways_of_communication' => 'wayOfCommunication']);
+Route::apiResource('services', ServiceController::class);
+Route::apiResource('sales__representatives', SalesRepresentativeController::class)
+    ->parameters(['sales__representatives' => 'salesRepresentative']);
+Route::apiResource('prospect_techniques', ProspectTechniqueController::class);
 Route::apiResource('roles', RoleController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('audit_logs', AuditLogController::class);
@@ -33,3 +31,17 @@ Route::apiResource('pages', PageController::class);
 Route::apiResource('leads', LeadController::class);
 Route::apiResource('salestasks', SalesTaskController::class);
 Route::apiResource('archives', ArchiveController::class);
+
+
+// Protected routes
+
+Route::post('login', [LoginController::class, 'login']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [LoginController::class, 'logout']);
+    Route::get('me', [LoginController::class, 'me']);
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/register', [LoginController::class, 'register']);
+
+    });
+});
