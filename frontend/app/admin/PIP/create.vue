@@ -12,7 +12,7 @@
         </button>
         <button class="text-gray-600 hover:text-black transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.295 1.088.22l1.274-.254c.54-.108 1.098.138 1.316.63.218.494.026 1.068-.433 1.384l-1.09.753c-.29.2-.436.55-.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273-.254c.368-.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87l.213 1.28c.09.543.56.941 1.11.941h2.594c.55 0 1.02-.398 1.11-.94l.213-1.281c.063-.374.313-.686.645-.87.074-.04.147-.083.22-.127.324-.196.72-.295 1.088-.22l1.274.254c.54.108 1.098-.138 1.316-.63.218-.494.026-1.068-.433-1.384l-1.09-.753c-.29-.2-.436-.55-.397-.898-.007-.062-.01-.125-.01-.19 0-.338.147-.663.397-.898l1.09-.753c.46-.317.65-.89.433-1.384-.218-.492-.775-.738-1.316-.63l-1.273.254c-.368.074-.764-.024-1.088-.22-.073-.044-.146-.087-.22-.127-.332-.184-.582-.496-.645-.87l-.213-1.28c-.09-.543-.56-.941-1.11-.941h-2.594c-.55 0-1.02.398-1.11.94l-.213 1.281c-.063.374-.313.686-.645.87-.074.04-.147.083-.22.127-.324.196-.72.295-1.088.22l-1.274-.254c-.54-.108-1.098.138-1.316.63-.218.494-.026 1.068.433 1.384l1.09.753c.29.2.436.55.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273-.254c.368-.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.295 1.088.22l1.274-.254c.54-.108 1.098.138 1.316.63.218.494.026 1.068-.433 1.384l-1.09.753c-.29.2-.436.55-.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273-.254c.368-.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87l.213 1.28c.09.543.56.941 1.11.941h2.594c.55 0 1.02-.398 1.11-.94l.213-1.281c.063-.374.313-.686.645-.87.074-.04.147-.083.22-.127.324-.196.72-.295 1.088-.22l1.274.254c.54.108 1.098-.138 1.316-.63.218-.494.026-1.068-.433-1.384l-1.09-.753c-.29-.2-.436-.55-.397-.898-.007-.062-.01-.125-.01-.19 0-.338.147-.663.397-.898l1.09-.753c.46-.317.65-.89.433-1.384-.218-.492-.775-.738-1.316-.63l-1.273.254c-.368.074-.764-.024-1.088-.22-.073-.044-.146-.087-.22-.127-.332-.184-.582-.496-.645-.87l-.213-1.28c-.09-.543-.56-.941-1.11-.941h-2.594c-.55 0-1.02.398-1.11.94l-.213 1.281c-.063.374-.313.686-.645.87-.074.04-.147.083-.22.127-.324.196-.72.295-1.088.22l-1.274-.254c-.54-.108-1.098.138-1.316.63-.218.494-.026 1.068.433 1.384l1.09.753c.29.2.436.55.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273.254c.368.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87z"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </button>
@@ -77,22 +77,44 @@
                 <p v-if="errors.email" class="text-[10px] text-red-500 mt-0">{{ errors.email }}</p>
               </div>
 
-              <!-- Service (6 options + Add at bottom) -->
+              <!-- Service -->
               <div>
                 <label class="block text-[11px] text-gray-600 font-medium mb-0">Service</label>
-                <div class="relative">
-                  <select 
-                    v-model="form.service"
-                    class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all appearance-none cursor-pointer"
-                    :class="{ 'border-red-500 ring-1 ring-red-200': errors.service }"
+                <div ref="serviceDropdownRef" class="relative">
+                  <!-- Trigger -->
+                  <div 
+                    @click="toggleDropdown('service')"
+                    class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] cursor-pointer flex items-center justify-between select-none"
+                    :class="{ 'border-red-500 ring-1 ring-red-200': errors.service, 'border-[#fa6f10] ring-1 ring-[#fa6f10]/30': isServiceOpen }"
                   >
-                    <option value="" disabled>Select a service</option>
-                    <option v-for="svc in services" :key="svc" :value="svc">{{ svc }}</option>
-                    <option value="__add__" class="text-[#fa6f10] font-medium">+ Add new service</option>
-                  </select>
-                  <svg class="w-3.5 h-3.5 text-gray-400 absolute right-2 top-1.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                  </svg>
+                    <span :class="form.service ? 'text-black' : 'text-gray-400'">{{ form.service || 'Select a service' }}</span>
+                    <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="isServiceOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                  <!-- Panel -->
+                  <div 
+                    v-show="isServiceOpen" 
+                    class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-[4px] shadow-lg flex flex-col max-h-40"
+                  >
+                    <div class="overflow-y-auto flex-1">
+                      <div 
+                        v-for="svc in services" 
+                        :key="svc"
+                        @click="selectService(svc)"
+                        class="px-2 py-1.5 hover:bg-gray-100 cursor-pointer text-[13px]"
+                        :class="form.service === svc ? 'bg-[#fa6f10]/10 text-[#fa6f10] font-medium' : 'text-gray-700'"
+                      >
+                        {{ svc }}
+                      </div>
+                    </div>
+                    <div 
+                      @click="openAddService"
+                      class="px-2 py-1.5 text-[#fa6f10] font-medium hover:bg-gray-50 cursor-pointer border-t border-gray-200 text-[13px] bg-white shrink-0"
+                    >
+                      + Add new service
+                    </div>
+                  </div>
                 </div>
                 <!-- Inline Add Service Input -->
                 <div v-if="showAddService" class="mt-1 flex gap-1.5">
@@ -110,48 +132,30 @@
                 <p v-if="errors.service" class="text-[10px] text-red-500 mt-0">{{ errors.service }}</p>
               </div>
 
-              <!-- Status (Percentage Slider) -->
+              <!-- Status (Numbers and % only) -->
               <div>
                 <label class="block text-[11px] text-gray-600 font-medium mb-0">Status</label>
-                <div class="flex items-center gap-2">
-                  <div class="flex-1 relative">
-                    <input 
-                      v-model.number="form.status"
-                      type="range" 
-                      min="0" 
-                      max="100" 
-                      class="w-full h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-[#fa6f10]"
-                      :class="{ 'accent-red-500': errors.status }"
-                    >
-                  </div>
-                  <div class="w-14 relative">
-                    <input 
-                      v-model.number="form.status"
-                      type="number" 
-                      min="0" 
-                      max="100" 
-                      class="w-full px-1 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] text-center focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all"
-                      :class="{ 'border-red-500 ring-1 ring-red-200': errors.status }"
-                    >
-                    <span class="absolute right-1 top-1 text-gray-500 text-[10px]">%</span>
-                  </div>
-                </div>
-                <div class="w-full h-1 bg-gray-200 rounded-full mt-1 overflow-hidden border border-gray-300">
-                  <div class="h-full bg-green-600 rounded-full transition-all duration-300" :style="{ width: (form.status || 0) + '%' }"></div>
-                </div>
+                <input 
+                  v-model="form.status"
+                  type="text" 
+                  placeholder="e.g. 100% or 75"
+                  @input="filterStatusInput"
+                  class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all"
+                  :class="{ 'border-red-500 ring-1 ring-red-200': errors.status }"
+                >
                 <p v-if="errors.status" class="text-[10px] text-red-500 mt-0">{{ errors.status }}</p>
               </div>
 
               <!-- Area -->
               <div>
-                <label class="block text-[11px] text-gray-600 font-medium mb-0">Area</label>
+                <label class="block text-[11px] text-gray-600 font-medium mb-0">Location</label>
                 <input 
-                  v-model="form.area"
+                  v-model="form.location"
                   type="text" 
                   class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all"
-                  :class="{ 'border-red-500 ring-1 ring-red-200': errors.area }"
+                  :class="{ 'border-red-500 ring-1 ring-red-200': errors.location }"
                 >
-                <p v-if="errors.area" class="text-[10px] text-red-500 mt-0">{{ errors.area }}</p>
+                <p v-if="errors.location" class="text-[10px] text-red-500 mt-0">{{ errors.location }}</p>
               </div>
 
             </div>
@@ -162,12 +166,55 @@
               <!-- Sales Representative -->
               <div>
                 <label class="block text-[11px] text-gray-600 font-medium mb-0">Sales Representative</label>
-                <input 
-                  v-model="form.salesRep"
-                  type="text" 
-                  class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all"
-                  :class="{ 'border-red-500 ring-1 ring-red-200': errors.salesRep }"
-                >
+                <div ref="salesRepDropdownRef" class="relative">
+                  <!-- Trigger -->
+                  <div 
+                    @click="toggleDropdown('salesRep')"
+                    class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] cursor-pointer flex items-center justify-between select-none"
+                    :class="{ 'border-red-500 ring-1 ring-red-200': errors.salesRep, 'border-[#fa6f10] ring-1 ring-[#fa6f10]/30': isSalesRepOpen }"
+                  >
+                    <span :class="form.salesRep ? 'text-black' : 'text-gray-400'">{{ form.salesRep || 'Select sales representative' }}</span>
+                    <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="isSalesRepOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                  <!-- Panel -->
+                  <div 
+                    v-show="isSalesRepOpen" 
+                    class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-[4px] shadow-lg flex flex-col max-h-40"
+                  >
+                    <div class="overflow-y-auto flex-1">
+                      <div 
+                        v-for="rep in salesReps" 
+                        :key="rep"
+                        @click="selectSalesRep(rep)"
+                        class="px-2 py-1.5 hover:bg-gray-100 cursor-pointer text-[13px]"
+                        :class="form.salesRep === rep ? 'bg-[#fa6f10]/10 text-[#fa6f10] font-medium' : 'text-gray-700'"
+                      >
+                        {{ rep }}
+                      </div>
+                    </div>
+                    <div 
+                      @click="openAddSalesRep"
+                      class="px-2 py-1.5 text-[#fa6f10] font-medium hover:bg-gray-50 cursor-pointer border-t border-gray-200 text-[13px] bg-white shrink-0"
+                    >
+                      + Add new representative
+                    </div>
+                  </div>
+                </div>
+                <!-- Inline Add Sales Rep Input -->
+                <div v-if="showAddSalesRep" class="mt-1 flex gap-1.5">
+                  <input 
+                    v-model="newSalesRepName"
+                    ref="salesRepInput"
+                    type="text" 
+                    placeholder="Type new representative..."
+                    class="flex-1 px-2 py-1 bg-white border border-[#fa6f10] rounded-[4px] text-[13px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30"
+                    @keyup.enter="confirmAddSalesRep"
+                  >
+                  <button @click="confirmAddSalesRep" class="px-2 py-1 bg-[#fa6f10] text-white rounded-[4px] text-[12px] font-medium">Add</button>
+                  <button @click="cancelAddSalesRep" class="px-2 py-1 border border-gray-300 rounded-[4px] text-[12px]">✕</button>
+                </div>
                 <p v-if="errors.salesRep" class="text-[10px] text-red-500 mt-0">{{ errors.salesRep }}</p>
               </div>
 
@@ -195,22 +242,44 @@
                 <p v-if="errors.remarks" class="text-[10px] text-red-500 mt-0">{{ errors.remarks }}</p>
               </div>
 
-              <!-- Prospect Technique (10 options + Add at bottom) -->
+              <!-- Prospect Technique -->
               <div>
                 <label class="block text-[11px] text-gray-600 font-medium mb-0">Prospect Technique</label>
-                <div class="relative">
-                  <select 
-                    v-model="form.prospectTechnique"
-                    class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all appearance-none cursor-pointer"
-                    :class="{ 'border-red-500 ring-1 ring-red-200': errors.prospectTechnique }"
+                <div ref="techniqueDropdownRef" class="relative">
+                  <!-- Trigger -->
+                  <div 
+                    @click="toggleDropdown('technique')"
+                    class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] cursor-pointer flex items-center justify-between select-none"
+                    :class="{ 'border-red-500 ring-1 ring-red-200': errors.prospectTechnique, 'border-[#fa6f10] ring-1 ring-[#fa6f10]/30': isTechniqueOpen }"
                   >
-                    <option value="" disabled>Select technique</option>
-                    <option v-for="tech in prospectTechniques" :key="tech" :value="tech">{{ tech }}</option>
-                    <option value="__add__" class="text-[#fa6f10] font-medium">+ Add new technique</option>
-                  </select>
-                  <svg class="w-3.5 h-3.5 text-gray-400 absolute right-2 top-1.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                  </svg>
+                    <span :class="form.prospectTechnique ? 'text-black' : 'text-gray-400'">{{ form.prospectTechnique || 'Select technique' }}</span>
+                    <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="isTechniqueOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                  <!-- Panel -->
+                  <div 
+                    v-show="isTechniqueOpen" 
+                    class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-[4px] shadow-lg flex flex-col max-h-40"
+                  >
+                    <div class="overflow-y-auto flex-1">
+                      <div 
+                        v-for="tech in prospectTechniques" 
+                        :key="tech"
+                        @click="selectTechnique(tech)"
+                        class="px-2 py-1.5 hover:bg-gray-100 cursor-pointer text-[13px]"
+                        :class="form.prospectTechnique === tech ? 'bg-[#fa6f10]/10 text-[#fa6f10] font-medium' : 'text-gray-700'"
+                      >
+                        {{ tech }}
+                      </div>
+                    </div>
+                    <div 
+                      @click="openAddTechnique"
+                      class="px-2 py-1.5 text-[#fa6f10] font-medium hover:bg-gray-50 cursor-pointer border-t border-gray-200 text-[13px] bg-white shrink-0"
+                    >
+                      + Add new technique
+                    </div>
+                  </div>
                 </div>
                 <!-- Inline Add Technique Input -->
                 <div v-if="showAddTechnique" class="mt-1 flex gap-1.5">
@@ -228,22 +297,44 @@
                 <p v-if="errors.prospectTechnique" class="text-[10px] text-red-500 mt-0">{{ errors.prospectTechnique }}</p>
               </div>
 
-              <!-- Ways of Communication (7 options + Add at bottom) -->
+              <!-- Ways of Communication -->
               <div>
                 <label class="block text-[11px] text-gray-600 font-medium mb-0">Ways of Communication</label>
-                <div class="relative">
-                  <select 
-                    v-model="form.communication"
-                    class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all appearance-none cursor-pointer"
-                    :class="{ 'border-red-500 ring-1 ring-red-200': errors.communication }"
+                <div ref="communicationDropdownRef" class="relative">
+                  <!-- Trigger -->
+                  <div 
+                    @click="toggleDropdown('communication')"
+                    class="w-full px-2 py-1 bg-gray-50 border border-gray-300 rounded-[4px] text-[13px] cursor-pointer flex items-center justify-between select-none"
+                    :class="{ 'border-red-500 ring-1 ring-red-200': errors.communication, 'border-[#fa6f10] ring-1 ring-[#fa6f10]/30': isCommunicationOpen }"
                   >
-                    <option value="" disabled>Select communication</option>
-                    <option v-for="comm in communications" :key="comm" :value="comm">{{ comm }}</option>
-                    <option value="__add__" class="text-[#fa6f10] font-medium">+ Add new communication</option>
-                  </select>
-                  <svg class="w-3.5 h-3.5 text-gray-400 absolute right-2 top-1.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                  </svg>
+                    <span :class="form.communication ? 'text-black' : 'text-gray-400'">{{ form.communication || 'Select communication' }}</span>
+                    <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200" :class="isCommunicationOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                  <!-- Panel -->
+                  <div 
+                    v-show="isCommunicationOpen" 
+                    class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-[4px] shadow-lg flex flex-col max-h-40"
+                  >
+                    <div class="overflow-y-auto flex-1">
+                      <div 
+                        v-for="comm in communications" 
+                        :key="comm"
+                        @click="selectCommunication(comm)"
+                        class="px-2 py-1.5 hover:bg-gray-100 cursor-pointer text-[13px]"
+                        :class="form.communication === comm ? 'bg-[#fa6f10]/10 text-[#fa6f10] font-medium' : 'text-gray-700'"
+                      >
+                        {{ comm }}
+                      </div>
+                    </div>
+                    <div 
+                      @click="openAddCommunication"
+                      class="px-2 py-1.5 text-[#fa6f10] font-medium hover:bg-gray-50 cursor-pointer border-t border-gray-200 text-[13px] bg-white shrink-0"
+                    >
+                      + Add new communication
+                    </div>
+                  </div>
                 </div>
                 <!-- Inline Add Communication Input -->
                 <div v-if="showAddCommunication" class="mt-1 flex gap-1.5">
@@ -315,14 +406,14 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 
 const form = ref({
   dateRecorded: '',
   clientName: '',
   email: '',
   service: '',
-  status: 0,
+  status: '',
   area: '',
   salesRep: '',
   onboardingDate: '',
@@ -335,10 +426,27 @@ const form = ref({
 
 const errors = ref({})
 
+// Dropdown open states
+const isServiceOpen = ref(false)
+const isSalesRepOpen = ref(false)
+const isTechniqueOpen = ref(false)
+const isCommunicationOpen = ref(false)
+
+// Dropdown refs
+const serviceDropdownRef = ref(null)
+const salesRepDropdownRef = ref(null)
+const techniqueDropdownRef = ref(null)
+const communicationDropdownRef = ref(null)
+
 // Service add
 const showAddService = ref(false)
 const newServiceName = ref('')
 const serviceInput = ref(null)
+
+// Sales Representative add
+const showAddSalesRep = ref(false)
+const newSalesRepName = ref('')
+const salesRepInput = ref(null)
 
 // Technique add
 const showAddTechnique = ref(false)
@@ -357,6 +465,14 @@ const services = ref([
   'Cloud Hosting',
   'UI/UX Design',
   'Digital Marketing'
+])
+
+const salesReps = ref([
+  'John Smith',
+  'Sarah Johnson',
+  'Michael Brown',
+  'Emily Davis',
+  'Robert Wilson'
 ])
 
 const prospectTechniques = ref([
@@ -382,34 +498,41 @@ const communications = ref([
   'Zoom Meeting'
 ])
 
-// Watch Service "+ Add"
-watch(() => form.value.service, (val) => {
-  if (val === '__add__') {
-    form.value.service = ''
-    showAddService.value = true
-    nextTick(() => serviceInput.value?.focus())
-  }
-})
+function toggleDropdown(name) {
+  closeAllDropdowns()
+  if (name === 'service') isServiceOpen.value = !isServiceOpen.value
+  if (name === 'salesRep') isSalesRepOpen.value = !isSalesRepOpen.value
+  if (name === 'technique') isTechniqueOpen.value = !isTechniqueOpen.value
+  if (name === 'communication') isCommunicationOpen.value = !isCommunicationOpen.value
+}
 
-// Watch Prospect Technique "+ Add"
-watch(() => form.value.prospectTechnique, (val) => {
-  if (val === '__add__') {
-    form.value.prospectTechnique = ''
-    showAddTechnique.value = true
-    nextTick(() => techniqueInput.value?.focus())
-  }
-})
+function closeAllDropdowns() {
+  isServiceOpen.value = false
+  isSalesRepOpen.value = false
+  isTechniqueOpen.value = false
+  isCommunicationOpen.value = false
+}
 
-// Watch Communication "+ Add"
-watch(() => form.value.communication, (val) => {
-  if (val === '__add__') {
-    form.value.communication = ''
-    showAddCommunication.value = true
-    nextTick(() => communicationInput.value?.focus())
-  }
-})
+function handleDocumentClick(e) {
+  const refs = [serviceDropdownRef, salesRepDropdownRef, techniqueDropdownRef, communicationDropdownRef]
+  const clickedInside = refs.some(r => r.value && r.value.contains(e.target))
+  if (!clickedInside) closeAllDropdowns()
+}
 
-// Service functions
+onMounted(() => document.addEventListener('click', handleDocumentClick))
+onUnmounted(() => document.removeEventListener('click', handleDocumentClick))
+
+// Service
+function selectService(svc) {
+  form.value.service = svc
+  isServiceOpen.value = false
+}
+function openAddService() {
+  form.value.service = ''
+  isServiceOpen.value = false
+  showAddService.value = true
+  nextTick(() => serviceInput.value?.focus())
+}
 function confirmAddService() {
   const name = newServiceName.value.trim()
   if (name) {
@@ -419,13 +542,47 @@ function confirmAddService() {
   showAddService.value = false
   newServiceName.value = ''
 }
-
 function cancelAddService() {
   showAddService.value = false
   newServiceName.value = ''
 }
 
-// Technique functions
+// Sales Representative
+function selectSalesRep(rep) {
+  form.value.salesRep = rep
+  isSalesRepOpen.value = false
+}
+function openAddSalesRep() {
+  form.value.salesRep = ''
+  isSalesRepOpen.value = false
+  showAddSalesRep.value = true
+  nextTick(() => salesRepInput.value?.focus())
+}
+function confirmAddSalesRep() {
+  const name = newSalesRepName.value.trim()
+  if (name) {
+    salesReps.value.push(name)
+    form.value.salesRep = name
+  }
+  showAddSalesRep.value = false
+  newSalesRepName.value = ''
+}
+function cancelAddSalesRep() {
+  showAddSalesRep.value = false
+  newSalesRepName.value = ''
+}
+
+// Technique
+function selectTechnique(tech) {
+  form.value.prospectTechnique = tech
+  isTechniqueOpen.value = false
+}
+function openAddTechnique() {
+  form.value.prospectTechnique = ''
+  isTechniqueOpen.value = false
+  showAddTechnique.value = true
+  nextTick(() => techniqueInput.value?.focus())
+}
 function confirmAddTechnique() {
   const name = newTechniqueName.value.trim()
   if (name) {
@@ -435,13 +592,22 @@ function confirmAddTechnique() {
   showAddTechnique.value = false
   newTechniqueName.value = ''
 }
-
 function cancelAddTechnique() {
   showAddTechnique.value = false
   newTechniqueName.value = ''
 }
 
-// Communication functions
+// Communication
+function selectCommunication(comm) {
+  form.value.communication = comm
+  isCommunicationOpen.value = false
+}
+function openAddCommunication() {
+  form.value.communication = ''
+  isCommunicationOpen.value = false
+  showAddCommunication.value = true
+  nextTick(() => communicationInput.value?.focus())
+}
 function confirmAddCommunication() {
   const name = newCommunicationName.value.trim()
   if (name) {
@@ -451,10 +617,19 @@ function confirmAddCommunication() {
   showAddCommunication.value = false
   newCommunicationName.value = ''
 }
-
 function cancelAddCommunication() {
   showAddCommunication.value = false
   newCommunicationName.value = ''
+}
+
+// Only allow numbers and % in Status
+function filterStatusInput(e) {
+  const val = e.target.value
+  const filtered = val.replace(/[^0-9%]/g, '')
+  if (val !== filtered) {
+    e.target.value = filtered
+    form.value.status = filtered
+  }
 }
 
 function onlyNumbers(e) {
@@ -505,31 +680,6 @@ function cancel() {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap');
-
-select {
-  background-image: none;
-}
-
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 5px;
-  background: #e5e7eb;
-  border-radius: 3px;
-  outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #fa6f10;
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
-}
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
