@@ -8,15 +8,27 @@ export const useAuth = () => {
       credentials: "include",
     });
 
-    await $fetch("/login", {
+    const response = await $fetch("/login", {
       baseURL,
       method: "POST",
       body: { email, password },
       credentials: "include",
     });
 
+    const payload = response?.data ?? response;
+    const token = payload?.token ?? response?.token;
+    const user = payload?.user ?? response?.user;
+
+    if (token) {
+      localStorage.setItem("token", token);
+    }
+
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+
     await refreshNuxtData("user");
-    return navigateTo("/dashboard");
+    return navigateTo("/admin/layouts/app");
   };
 
   const logout = async () => {
