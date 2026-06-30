@@ -13,7 +13,7 @@ class WayOfCommunicationController extends Controller
 
         return response()->json([
             'message' => 'Ways of communication retrieved successfully',
-            'data' => $wayOfCommunication
+            'data' => $wayOfCommunication 
         ]);
     }
 

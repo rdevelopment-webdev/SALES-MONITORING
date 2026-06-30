@@ -18,7 +18,7 @@ class SalesTaskController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'task_date' => 'required|date',
-            'task_notes' => 'nullable|string',
+            'task_notes' => 'nullable|string', 
         ]);
 
         $task = SalesTask::create($validated);

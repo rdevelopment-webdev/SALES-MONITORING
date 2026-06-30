@@ -14,4 +14,4 @@ class Service extends Model
     {
         return $this->hasMany(PerformancePlan::class, 'service_id');
     }
-}
+} 

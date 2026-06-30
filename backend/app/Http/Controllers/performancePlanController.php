@@ -76,7 +76,7 @@ class PerformancePlanController extends Controller
 
     public function destroy(PerformancePlan $PerformancePlan)
     {
-        $PerformancePlan->delete();
+        $PerformancePlan->delete(); 
 
         return response()->json([
             'message' => 'Performance plan deleted successfully'

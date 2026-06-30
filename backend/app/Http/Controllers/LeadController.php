@@ -7,7 +7,7 @@ use App\Models\Archive;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 
-class LeadController extends Controller
+class LeadController extends Controller 
 {
     public function index()
     {

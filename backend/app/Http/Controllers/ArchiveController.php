@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ArchiveController extends Controller
 {
-    public function index()
+    public function index() 
     {
         // Use RELATIONSHIP names, not column names
         $archives = Archive::with(['lead', 'auditLog', 'performancePlan', 'salesTask'])->get();

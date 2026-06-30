@@ -16,7 +16,7 @@ class ProspectTechnique extends Model  // FIX: no underscore in class name
        
     ];
 
-    public function performancePlans()
+    public function performancePlans() 
     {
         return $this->hasMany(PerformancePlan::class, 'technique_id');
     }

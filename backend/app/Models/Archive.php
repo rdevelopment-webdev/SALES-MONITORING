@@ -11,7 +11,7 @@ use App\Models\SalesTask;
 class Archive extends Model
 {
     // Match the migration table name
-    protected $table = 'archive';
+    protected $table = 'archive'; 
 
     protected $fillable = [
         'lead_id',
