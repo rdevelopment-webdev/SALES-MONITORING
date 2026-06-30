@@ -12,7 +12,7 @@
         </button>
         <button class="text-gray-600 hover:text-black transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.295 1.088.22l1.274-.254c.54-.108 1.098.138 1.316.63.218.494.026 1.068-.433 1.384l-1.09.753c-.29.2-.436.55-.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273-.254c.368-.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87l.213 1.28c.09.543.56.941 1.11.941h2.594c.55 0 1.02-.398 1.11-.94l.213-1.281c.063-.374.313-.686.645-.87.074-.04.147-.083.22-.127.324-.196.72-.295 1.088-.22l1.274.254c.54.108 1.098-.138 1.316-.63.218-.494.026-1.068-.433-1.384l-1.09-.753c-.29-.2-.436-.55-.397-.898-.007-.062-.01-.125-.01-.19 0-.338.147-.663.397-.898l1.09-.753c.46-.317.65-.89.433-1.384-.218-.492-.775-.738-1.316-.63l-1.273.254c-.368.074-.764-.024-1.088-.22-.073-.044-.146-.087-.22-.127-.332-.184-.582-.496-.645-.87l-.213-1.28c-.09-.543-.56-.941-1.11-.941h-2.594c-.55 0-1.02.398-1.11.94l-.213 1.281c-.063.374-.313.686-.645.87-.074.04-.147.083-.22.127-.324.196-.72.295-1.088.22l-1.274-.254c-.54-.108-1.098.138-1.316.63-.218.494-.026 1.068.433 1.384l1.09.753c.29.2.436.55.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273.254c.368.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.295 1.088.22l1.274-.254c.54-.108 1.098.138 1.316.63.218.494.026 1.068-.433 1.384l-1.09.753c-.29.2-.436.55-.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273-.254c.368-.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87l.213 1.28c.09.543.56.941 1.11.941h2.594c.55 0 1.02-.398 1.11-.94l.213-1.281c.063-.374.313-.686.645-.87.074-.04.147-.083.22-.127.324-.196.72-.295 1.088-.22l1.274.254c.54.108 1.098-.138 1.316-.63.218-.494.026-1.068-.433-1.384l-1.09-.753c-.29-.2-.436-.55-.397-.898-.007-.062-.01-.125-.01-.19 0-.338.147-.663.397-.898l1.09-.753c.46-.317.65-.89.433-1.384-.218-.492-.775-.738-1.316-.63l-1.273.254c-.368.074-.764-.024-1.088-.22-.073-.044-.146-.087-.22-.127-.332-.184-.582-.496-.645-.87l-.213-1.28c-.09-.543-.56-.941-1.11-.941h-2.594c-.55 0-1.02.398-1.11.94l-.213 1.281c-.063.374-.313.686-.645.87-.074.04-.147.083-.22.127-.324.196-.72.295-1.088.22l-1.274-.254c-.54-.108-1.098.138-1.316.63-.218.494-.026 1.068.433 1.384l1.09.753c.29.2.436.55.397.898.007.062.01.125.01.19 0 .338-.147.663-.397.898l-1.09.753c-.46.317-.65.89-.433 1.384.218.492.775.738 1.316.63l1.273-.254c.368.074.764.024 1.088.22.073.044.146.087.22.127.332.184.582.496.645.87z"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </button>
@@ -33,58 +33,56 @@
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-3 shrink-0">
         <h1 class="font-bold text-[16px]">Performance Improvement Plan (PIP)</h1>
         
-        <!-- In the Title & Controls section, replace the button div with this -->
+        <div class="flex items-center gap-2">
+          <!-- Search -->
+          <div class="relative flex items-center">
+            <input 
+              v-model="searchQuery"
+              type="text" 
+              placeholder="Search records..." 
+              class="pl-3 pr-16 py-1.5 w-72 bg-white border border-gray-400 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all"
+            >
+            <button 
+              v-if="searchQuery" 
+              @click="clearSearch"
+              class="absolute right-8 text-gray-400 hover:text-red-600 px-1"
+              title="Clear"
+            >
+              ✕
+            </button>
+            <svg class="w-4 h-4 text-gray-500 absolute right-2.5 top-2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
 
-<div class="flex items-center gap-2">
-  <!-- Search -->
-  <div class="relative flex items-center">
-    <input 
-      v-model="searchQuery"
-      type="text" 
-      placeholder="Search records..." 
-      class="pl-3 pr-16 py-1.5 w-72 bg-white border border-gray-400 rounded-[8px] focus:outline-none focus:ring-1 focus:ring-[#fa6f10]/30 focus:border-[#fa6f10] transition-all"
-    >
-    <button 
-      v-if="searchQuery" 
-      @click="clearSearch"
-      class="absolute right-8 text-gray-400 hover:text-red-600 px-1"
-      title="Clear"
-    >
-      ✕
-    </button>
-    <svg class="w-4 h-4 text-gray-500 absolute right-2.5 top-2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-    </svg>
-  </div>
+          <!-- Add Record (hidden when viewing archived) -->
+          <button 
+            v-if="!showArchived"
+            @click="addRecord" 
+            class="bg-[#fa6f10] hover:bg-[#e5630e] active:bg-[#cc570d] text-white px-3 py-1.5 rounded-[8px] font-medium flex items-center gap-1 transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Record
+          </button>
 
-  <!-- Add Record (hidden when viewing archived) -->
-  <button 
-    v-if="!showArchived"
-    @click="addRecord" 
-    class="bg-[#fa6f10] hover:bg-[#e5630e] active:bg-[#cc570d] text-white px-3 py-1.5 rounded-[8px] font-medium flex items-center gap-1 transition-colors"
-  >
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-    </svg>
-    Add Record
-  </button>
-
-  <!-- Archive Button with Notification Badge -->
-  <button 
-    @click="showArchived = !showArchived"
-    class="relative bg-white border border-gray-400 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-[8px] font-medium flex items-center gap-1.5 transition-colors"
-  >
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-    </svg>
-    Archive
-    <span 
-      v-if="archivedCount > 0"
-      class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
-    >
-      {{ archivedCount }}
-    </span>
-  </button>
+          <!-- Archive Button with Notification Badge -->
+          <button 
+            @click="showArchived = !showArchived"
+            class="relative bg-white border border-gray-400 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-[8px] font-medium flex items-center gap-1.5 transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+            </svg>
+            Archive
+            <span 
+              v-if="archivedCount > 0"
+              class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
+            >
+              {{ archivedCount }}
+            </span>
+          </button>
         </div>
       </div>
 
@@ -96,17 +94,11 @@
             <tr>
               <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Date Recorded</th>
               <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Client Name</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Prospect Technique</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Email</th>
               <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Service</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Status (%)</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Area</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Sales Representative</th>
+              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Status</th>
+              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Location</th>
               <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Onboarding Date</th>
               <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Remarks</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Contact Person</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Contact Number</th>
-              <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap">Ways of Communication</th>
               <th class="px-2 py-1.5 border border-gray-300 font-semibold whitespace-nowrap sticky right-0 z-30">Action</th>
             </tr>
           </thead>
@@ -119,24 +111,25 @@
             >
               <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.dateRecorded }}</td>
               <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.clientName }}</td>
-              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.prospectTechnique }}</td>
-              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap text-blue-700 hover:underline cursor-pointer">{{ record.email }}</td>
               <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.service }}</td>
+              
+              <!-- Status with dynamic color bar -->
               <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">
-                <div class="flex items-center gap-1.5">
-                  <div class="w-16 h-1.5 border-gray-400">
-                    <div class="h-full" :style="{ width: record.status + '%' }"></div>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      class="h-full rounded-full transition-all duration-300"
+                      :class="getStatusColorClass(parseStatus(record.status))"
+                      :style="{ width: Math.min(parseStatus(record.status), 100) + '%' }"
+                    ></div>
                   </div>
-                  <span class="text-xs">{{ record.status }}%</span>
+                  <span class="text-xs font-medium">{{ record.status }}</span>
                 </div>
               </td>
-              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.area }}</td>
-              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.salesRep }}</td>
+
+              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.location }}</td>
               <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.onboardingDate }}</td>
               <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap text-gray-600">{{ record.remarks || '-' }}</td>
-              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.contactPerson }}</td>
-              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.contactNumber }}</td>
-              <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap">{{ record.communication }}</td>
               <td class="px-2 py-1.5 border border-gray-300 whitespace-nowrap sticky right-0 bg-white shadow-[-2px_0_4px_rgba(0,0,0,0.1)]">
                 <div class="flex items-center gap-2">
                   <button class="text-gray-600 hover:text-blue-700 transition-colors" title="View">
@@ -177,7 +170,7 @@
             
             <!-- Empty state -->
             <tr v-if="currentRecords.length === 0">
-              <td colspan="14" class="px-4 py-8 text-center text-gray-500 border border-gray-300">
+              <td colspan="8" class="px-4 py-8 text-center text-gray-500 border border-gray-300">
                 <div v-if="searchQuery">
                   No records found matching "<span class="font-semibold text-black">{{ searchQuery }}</span>"
                   <br>
@@ -202,7 +195,7 @@ const showArchived = ref(false)
 let nextId = 1
 
 const records = ref([
-  { id: nextId++, dateRecorded: '06/19/2026', clientName: 'lilms.sweetie', prospectTechnique: 'Cold Emailing', email: '@gmail.com', service: 'Website Development', status: 100, area: 'Area jsgjahfsffffffffffffffffff', salesRep: 'First Middle Last', onboardingDate: '06/19/2026', remarks: '', contactPerson: 'First Middle Last', contactNumber: '0123456789', communication: 'Messenger' },
+  { id: nextId++, dateRecorded: '06/19/2026', clientName: 'lilms.sweetie', email: '@gmail.com', service: 'Website Development', status: '100%', location: 'Location jsgjahfsffffffffffffffffff', onboardingDate: '06/19/2026', remarks: '' },
 ])
 
 // Archived count for notification badge
@@ -223,6 +216,23 @@ const currentRecords = computed(() => {
     })
   })
 })
+
+// Parse status string (e.g. "100%" or "75") into a number 0-100
+function parseStatus(status) {
+  if (typeof status === 'number') return status
+  if (!status) return 0
+  const match = String(status).match(/(\d+)/)
+  return match ? Math.min(parseInt(match[1], 10), 100) : 0
+}
+
+// Return Tailwind color class based on percentage
+function getStatusColorClass(percent) {
+  if (percent >= 100) return 'bg-green-500'
+  if (percent >= 75)  return 'bg-emerald-400'
+  if (percent >= 50)  return 'bg-yellow-400'
+  if (percent >= 25)  return 'bg-orange-400'
+  return 'bg-red-500'
+}
 
 function clearSearch() {
   searchQuery.value = ''
@@ -252,22 +262,7 @@ function addRecord() {
   const randomPercent = Math.floor(Math.random() * 100)
   const comm = comms[Math.floor(Math.random() * comms.length)]
   
-  records.value.push({
-    id: nextId++,
-    dateRecorded: '06/19/2026',
-    clientName: 'First Middle Last',
-    prospectTechnique: 'Cold Calling',
-    email: 'firstmiddlelast@gmail.com',
-    service: 'Website Development',
-    status: randomPercent,
-    area: 'Area',
-    salesRep: 'First Middle Last',
-    onboardingDate: '06/19/2026',
-    remarks: '',
-    contactPerson: 'First Middle Last',
-    contactNumber: '0123456789',
-    communication: comm,
-  })
+
 }
 
 function deleteRecord(id) {

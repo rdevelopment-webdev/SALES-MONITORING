@@ -10,6 +10,7 @@
       </div>
     </div>
 
+    
     <!-- Navigation -->
     <nav class="flex-1 overflow-y-auto py-2 px-3">
       
@@ -20,65 +21,17 @@
           
           <!-- User Management -->
           <li>
-            <div 
-              @click="toggleUserManagement"
+            <a 
+              href="#" 
+              @click.prevent="activeItem = 'user-management'"
               :class="activeItem === 'user-management' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-300 hover:text-white hover:bg-white/5'"
-              class="flex items-center justify-between px-3 py-2 rounded text-sm cursor-pointer transition-colors"
+              class="flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors"
             >
-              <div class="flex items-center gap-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                </svg>
-                <span class="font-medium">User Management</span>
-              </div>
-              <svg 
-                :class="isUserManagementOpen ? 'rotate-180' : ''"
-                class="w-3.5 h-3.5 transition-transform duration-200"
-                fill="none" 
-                stroke="currentColor" 
-                stroke-width="2" 
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 15l7-7 7 7"/>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
               </svg>
-            </div>
-
-            <!-- User Management Sub-menu -->
-            <ul 
-              v-show="isUserManagementOpen"
-              class="mt-0.5 space-y-0"
-            >
-              <li>
-                <a 
-                  href="#" 
-                  @click.prevent="activeItem = 'users'"
-                  :class="activeItem === 'users' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
-                  class="block px-3 py-1.5 rounded text-xs transition-colors ml-7"
-                >
-                  Users
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  @click.prevent="activeItem = 'roles'"
-                  :class="activeItem === 'roles' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
-                  class="block px-3 py-1.5 rounded text-xs transition-colors ml-7"
-                >
-                  Roles
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  @click.prevent="activeItem = 'permissions'"
-                  :class="activeItem === 'permissions' ? 'bg-[#f52c11]/20 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'"
-                  class="block px-3 py-1.5 rounded text-xs transition-colors ml-7"
-                >
-                  Permissions
-                </a>
-              </li>
-            </ul>
+              <span class="font-medium">User Management</span>
+            </a>
           </li>
 
           <!-- Leads Tracker -->
@@ -246,17 +199,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const isUserManagementOpen = ref(false)
 const isLeadsTrackerOpen = ref(false)
 const isLeadsOpen = ref(false)
 const isAdminMenuOpen = ref(false)
 const activeItem = ref('user-management')
 const adminFooter = ref(null)
-
-function toggleUserManagement() {
-  isUserManagementOpen.value = !isUserManagementOpen.value
-  activeItem.value = 'user-management'
-}
 
 function toggleLeadsTracker() {
   isLeadsTrackerOpen.value = !isLeadsTrackerOpen.value

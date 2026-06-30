@@ -7,11 +7,12 @@ import { ref, onMounted } from 'vue'
 
 // Import all your page designs
 import Login from './Login.vue'
-import LayoutApp from './layouts/App.vue'
+import LayoutsApp from './layouts/App.vue'
 import UsersIndex from './admin/users/Index.vue'
 import UsersCreate from './admin/users/create.vue'
-import PipIndex from './admin/pip/Index.vue'
-import PipCreate from './admin/pip/create.vue'
+import PipIndex from './admin/PIP/Index.vue'
+import PipCreate from './admin/PIP/create.vue'
+
 
 // Map URL names to components
 const pages = {
@@ -20,7 +21,7 @@ const pages = {
   'pip-create': PipCreate,
   'pip-index': PipIndex,
   'login': Login,
-  'layout-app': LayoutApp,
+  'layouts-app': LayoutsApp,
 }
 
 // Default to Login on server, then update on client
