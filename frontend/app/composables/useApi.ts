@@ -5,9 +5,14 @@ export const useApi = () => {
   const apiFetch = $fetch.create({
     baseURL,
     credentials: "include",
-    headers: {
-      Accept: "application/json",
-      "X-Requested-With": "XMLHttpRequest",
+    onRequest({ options }) {
+      const token = localStorage.getItem("token");
+      options.headers = {
+        Accept: "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+      };
     },
     onResponseError({ response }) {
       if (response.status === 401) {

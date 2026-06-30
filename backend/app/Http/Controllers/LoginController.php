@@ -16,6 +16,22 @@ class LoginController extends Controller
     private const MAX_ATTEMPTS = 5;
     private const LOCKOUT_MINUTES = 15;
 
+    private function formatUser(User $user): array
+    {
+        $user->load('Role');
+
+        return [
+            'id' => $user->id,
+            'full_name' => $user->full_name,
+            'email' => $user->email,
+            'role_id' => $user->role_id,
+            'role' => $user->Role ? [
+                'id' => $user->Role->id,
+                'role_name' => $user->Role->role_name,
+            ] : null,
+        ];
+    }
+
     /**
      * Login user.
      */
@@ -57,20 +73,14 @@ class LoginController extends Controller
         // Generate Sanctum token
         $token = $user->createToken(
             'auth-token-' . $request->ip(),
-            [$user->Role->name ?? 'user'] // use role name as ability
+            [$user->Role->role_name ?? 'user'] // use role name as ability
         )->plainTextToken;
 
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
             'data'    => [
-                'user' => [
-                    'id'         => $user->id,
-                    'full_name'  => $user->full_name,
-                    'email'      => $user->email,
-                    'role'       => $user->Role->name ?? null,
-                    'role_id'    => $user->role_id,
-                ],
+                'user' => $this->formatUser($user),
                 'token'      => $token,
                 'token_type' => 'Bearer',
             ],
@@ -110,10 +120,7 @@ class LoginController extends Controller
             'success' => true,
             'message' => 'User registered successfully',
             'data'    => [
-                'id'        => $user->id,
-                'full_name' => $user->full_name,
-                'email'     => $user->email,
-                'role'      => $user->Role->name ?? null,
+                'user' => $this->formatUser($user),
             ],
         ], 201);
     }
@@ -128,13 +135,7 @@ class LoginController extends Controller
         return response()->json([
             'success' => true,
             'data'    => [
-                'user' => [
-                    'id'        => $user->id,
-                    'full_name' => $user->full_name,
-                    'email'     => $user->email,
-                    'role'      => $user->Role->name ?? null,
-                    'role_id'   => $user->role_id,
-                ],
+                'user' => $this->formatUser($user),
             ],
         ]);
     }
@@ -151,7 +152,7 @@ class LoginController extends Controller
 
         $token = $user->createToken(
             'auth-token-' . $request->ip(),
-            [$user->Role->name ?? 'user']
+            [$user->Role->role_name ?? 'user']
         )->plainTextToken;
 
         return response()->json([
@@ -182,6 +183,42 @@ class LoginController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Logged out from all devices',
+        ]);
+    }
+
+    /**
+     * Change the authenticated user's password.
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = $request->user();
+
+        if (! Hash::check($request->input('current_password'), $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect',
+            ], 422);
+        }
+
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password updated successfully',
         ]);
     }
 }

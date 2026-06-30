@@ -217,13 +217,19 @@ const handleLogin = async () => {
       },
     });
 
-    // Store token
-    localStorage.setItem("token", response.token);
+    const payload = response?.data ?? response;
+    const token = payload?.token ?? response?.token;
+    const user = payload?.user ?? response?.user;
 
-    // Store user info (optional)
-    localStorage.setItem("user", JSON.stringify(response.user));
+    if (token) {
+      localStorage.setItem("token", token);
+    }
 
-    // Redirect to user dashboard
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+
+    // Redirect to the admin shell route that the root renderer understands
     await navigateTo("/admin/layouts/app");
   } catch (err) {
     error.value =
