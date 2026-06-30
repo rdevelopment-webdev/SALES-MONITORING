@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sales__representatives', function (Blueprint $table) {
             $table->id();
             $table->string('representative_name');
-            $table->timestamps();
+            $table->timestamps(); 
         });
     }
 

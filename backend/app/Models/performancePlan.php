@@ -46,7 +46,7 @@ class PerformancePlan extends Model
 
     public function Service(){
         return $this->belongsTo(Service::class, 'service_id');
-    }
+    } 
 
     public function Way_of_Communication(){
         return $this->belongsTo(Way_of_Communication::class, 'communication_id');

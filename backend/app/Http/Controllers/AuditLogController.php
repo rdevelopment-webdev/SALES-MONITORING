@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 
-class AuditLogController extends Controller
+class AuditLogController extends Controller 
 {
     public function index(Request $request): JsonResponse
     {

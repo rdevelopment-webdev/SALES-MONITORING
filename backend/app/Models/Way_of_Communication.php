@@ -16,4 +16,4 @@ class Way_of_Communication extends Model
     {
         return $this->hasMany(PerformancePlan::class, 'communication_id');
     }
-}
+} 

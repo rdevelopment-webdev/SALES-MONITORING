@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('service_name');
             $table->string('status_name');
 
-            $table->timestamps();
+            $table->timestamps(); 
 
             $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
             $table->foreign('log_id')->references('id')->on('audit_logs')->onDelete('cascade');

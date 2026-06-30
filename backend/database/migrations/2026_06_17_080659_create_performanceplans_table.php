@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreignId('communication_id')->constrained('ways_of_communication')->onDelete('cascade');
             $table->timestamps();
         });
-    }
+    } 
 
     public function down(): void
     {

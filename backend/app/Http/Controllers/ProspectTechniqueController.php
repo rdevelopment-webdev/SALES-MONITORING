@@ -31,7 +31,7 @@ class ProspectTechniqueController extends Controller
         ], 201);
     }
 
-    public function show(ProspectTechnique $prospectTechnique)
+    public function show(ProspectTechnique $prospectTechnique) 
     {
         return response()->json([
             'message' => 'Prospect technique retrieved successfully',

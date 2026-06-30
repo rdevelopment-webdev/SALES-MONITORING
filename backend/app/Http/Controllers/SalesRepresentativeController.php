@@ -31,7 +31,7 @@ class SalesRepresentativeController extends Controller
         ], 201);
     }
 
-    public function show(SalesRepresentative $salesRepresentative)
+    public function show(SalesRepresentative $salesRepresentative) 
     {
          return response()->json([
             'message' => 'Sales representative retrieved successfully',

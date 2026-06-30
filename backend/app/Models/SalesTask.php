@@ -11,8 +11,7 @@ class SalesTask extends Model
     protected $fillable = [
         'user_id',
         'task_date',
-        'task_notes',
-        'pdf_export',
+        'task_notes', 
     ];
     public function User(){
         return $this->belongsTo(User::class);
