@@ -10,8 +10,8 @@ import Login from './Login.vue'
 import LayoutsApp from './layouts/App.vue'
 import UsersIndex from './admin/users/Index.vue'
 import UsersCreate from './admin/users/create.vue'
-import PipIndex from './admin/pip/Index.vue'
-import PipCreate from './admin/pip/create.vue'
+import PipIndex from './admin/PIP/Index.vue'
+import PipCreate from './admin/PIP/create.vue'
 
 
 // Map URL names to components
