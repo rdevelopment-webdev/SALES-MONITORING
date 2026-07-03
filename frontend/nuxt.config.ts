@@ -11,18 +11,29 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8000",
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8000/api",
     },
   },
 
   auth: {
-    baseURL: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8000",
+    baseURL: "http://localhost:8000/api",
+
     provider: {
       type: "local",
+
       endpoints: {
-        signIn: { path: "/login", method: "post" },
-        signOut: { path: "/logout", method: "post" },
-        getSession: { path: "/user", method: "get" },
+        signIn: {
+          path: "/login",
+          method: "post",
+        },
+        signOut: {
+          path: "/logout",
+          method: "post",
+        },
+        getSession: {
+          path: "/me",
+          method: "get",
+        },
       },
     },
   },

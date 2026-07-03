@@ -1,6 +1,10 @@
 <template>
-  <component :is="currentPage" />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
+<<<<<<< HEAD
+=======
 
 <script setup>
 import { computed } from "vue";
@@ -67,3 +71,4 @@ const currentPage = computed(() => {
   return pathPages[route.path] || Login;
 });
 </script>
+>>>>>>> 4bbf351df3ec060fb560051d86d92f65c96e9752

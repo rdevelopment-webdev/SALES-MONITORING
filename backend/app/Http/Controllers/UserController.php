@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -17,18 +16,12 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        
-       
-
         $validated = $request->validate([
             'role_id' => 'required|integer|exists:roles,id',
             'full_name' => 'required|string|max:255',
             'password' => 'required|string|min:6',
             'email' => 'required|email|unique:users,email',
-            // 'contact_number' => 'nullable|string|max:20'
         ]);
-
-        $validated['password'] = Hash::make($validated['password']);
 
         $user = User::create($validated);
 
@@ -43,7 +36,7 @@ class UserController extends Controller
         // return response()->json($user->load('role', 'leads', 'salesTasks', 'performancePlans', 'auditLogs'));
         return response()->json($user->load('role'));
     }
-    
+
     public function leads()
 {
     return $this->hasMany(Lead::class, 'user_id');
@@ -59,7 +52,7 @@ class UserController extends Controller
         ]);
 
         if ($request->has('password')) {
-            $validated['password'] = Hash::make($request->password);
+            $validated['password'] = $request->password;
         }
 
         $user->update($validated);
@@ -91,4 +84,3 @@ class UserController extends Controller
 }
 
     }
-

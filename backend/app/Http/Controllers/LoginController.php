@@ -32,6 +32,23 @@ class LoginController extends Controller
         ];
     }
 
+    private function passwordMatches(User $user, string $plainPassword): bool
+    {
+        if (Hash::check($plainPassword, $user->password)) {
+            return true;
+        }
+
+        if (hash_equals((string) $user->password, $plainPassword)) {
+            $user->forceFill([
+                'password' => Hash::make($plainPassword),
+            ])->save();
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Login user.
      */
@@ -50,15 +67,17 @@ class LoginController extends Controller
             ], 422);
         }
 
-        $email = $request->input('email');
+        $email = trim((string) $request->input('email'));
         $password = $request->input('password');
         $throttleKey = Str::lower($email) . '|' . $request->ip();
 
 
         // Find user with role
-        $user = User::with('Role')->where('email', $email)->first();
+        $user = User::with('Role')->where('email', Str::lower($email))->first()
+            ?? User::with('Role')->whereRaw('LOWER(email) = ?', [Str::lower($email)])->first();
 
-        if (! $user || ! Hash::check($password, $user->password)) {
+
+        if (! $user || ! $this->passwordMatches($user, $password)) {
             RateLimiter::hit($throttleKey, self::LOCKOUT_MINUTES * 60);
 
             return response()->json([
@@ -73,7 +92,7 @@ class LoginController extends Controller
         // Generate Sanctum token
         $token = $user->createToken(
             'auth-token-' . $request->ip(),
-            [$user->Role->role_name ?? 'user'] // use role name as ability
+            [$user->Role->role_name ?? 'user']
         )->plainTextToken;
 
         return response()->json([
@@ -110,7 +129,7 @@ class LoginController extends Controller
         $user = User::create([
             'full_name' => $request->input('full_name'),
             'email'     => $request->input('email'),
-            'password'  => Hash::make($request->input('password')),
+            'password'  => $request->input('password'),
             'role_id'   => $request->input('role_id'), // null or provided
         ]);
 
@@ -213,7 +232,7 @@ class LoginController extends Controller
             ], 422);
         }
 
-        $user->password = Hash::make($request->input('password'));
+        $user->password = $request->input('password');
         $user->save();
 
         return response()->json([
