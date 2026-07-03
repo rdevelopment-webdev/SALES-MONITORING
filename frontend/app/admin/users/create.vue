@@ -119,7 +119,7 @@
               <p class="text-[9px] text-gray-400 leading-tight">Password security details</p>
             </div>
           </div>
-
+ 
           <!-- Form Fields -->
           <div class="px-3 pb-2.5">
             <div class="grid grid-cols-2 gap-3">
