@@ -1,788 +1,818 @@
 <template>
-  <div class="user-management">
-    <!-- Header -->
-    <header class="header">
-      <h1 class="header-title">User Management</h1>
-      <div class="header-actions">
-        <button class="icon-btn notification-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
+  <div
+    class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#e5e5e5] font-['Overpass'] text-[13px] text-[#1F2835]"
+  >
+    <!-- Top Header: Breadcrumb -->
+    <div
+      class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
+    >
+      <div class="flex items-center text-[10px] text-gray-500 gap-1">
+        <svg
+          class="w-3 h-3 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
             stroke-linecap="round"
             stroke-linejoin="round"
-          >
-            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-          </svg>
-          <span class="notification-badge">3</span>
-        </button>
-        <button class="icon-btn settings-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+        <span class="cursor-pointer transition-colors hover:text-[#F52C11]"
+          >User Management</span
+        >
+        <svg
+          class="w-2.5 h-2.5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
             stroke-linecap="round"
             stroke-linejoin="round"
-          >
-            <path
-              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
-            />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+        <span class="text-[#F52C11] font-medium">Add User</span>
       </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Page Header -->
-      <div class="page-header">
-        <button class="back-btn" @click="goBack">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </button>
-        <div class="page-header-text">
-          <h2 class="page-title">Create New User</h2>
-          <p class="page-subtitle">
-            Add a new user to the system with roles and permissions
-          </p>
-        </div>
-      </div>
-
-      <!-- Form Card -->
-      <div class="form-card">
-        <form @submit.prevent="handleSubmit">
-          <!-- Form Fields -->
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">
-                Full Name <span class="required">*</span>
-              </label>
-              <input
-                v-model="form.fullName"
-                type="text"
-                class="form-input"
-                placeholder="John Doe"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">
-                Email <span class="required">*</span>
-              </label>
-              <input
-                v-model="form.email"
-                type="email"
-                class="form-input"
-                placeholder="john@example.com"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">
-                Role <span class="required">*</span>
-              </label>
-              <div class="select-wrapper">
-                <select v-model="form.role" class="form-select" required>
-                  <option value="" disabled>Select a role</option>
-                  <option value="admin">Administrator</option>
-                  <option value="manager">Manager</option>
-                  <option value="editor">Editor</option>
-                  <option value="viewer">Viewer</option>
-                </select>
-                <svg
-                  class="select-arrow"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">
-                Password <span class="required">*</span>
-              </label>
-              <div class="input-wrapper">
-                <input
-                  v-model="form.password"
-                  :type="showPassword ? 'text' : 'password'"
-                  class="form-input"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  class="toggle-password"
-                  @click="showPassword = !showPassword"
-                >
-                  <svg
-                    v-if="!showPassword"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                  <svg
-                    v-else
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                    <path
-                      d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
-                    />
-                    <path
-                      d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7c.78 0 1.53-.09 2.24-.26"
-                    />
-                    <path d="M2 2l20 20" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div class="form-group full-width">
-              <label class="form-label">
-                Confirm Password <span class="required">*</span>
-              </label>
-              <div class="input-wrapper">
-                <input
-                  v-model="form.confirmPassword"
-                  :type="showConfirmPassword ? 'text' : 'password'"
-                  class="form-input"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  class="toggle-password"
-                  @click="showConfirmPassword = !showConfirmPassword"
-                >
-                  <svg
-                    v-if="!showConfirmPassword"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                  <svg
-                    v-else
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                    <path
-                      d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
-                    />
-                    <path
-                      d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7c.78 0 1.53-.09 2.24-.26"
-                    />
-                    <path d="M2 2l20 20" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <hr class="divider" />
-
-          <!-- Role Permissions -->
-          <div class="permissions-section">
-            <h3 class="permissions-title">Role Permissions</h3>
-            <p class="permissions-subtitle">
-              Select which pages this role can access:
-            </p>
-
-            <div class="permissions-grid">
-              <label
-                v-for="permission in permissions"
-                :key="permission.id"
-                class="permission-item"
-              >
-                <input
-                  v-model="form.permissions"
-                  type="checkbox"
-                  :value="permission.id"
-                  class="permission-checkbox"
-                />
-                <span class="checkbox-custom"></span>
-                <span class="permission-name">{{ permission.name }}</span>
-                <span class="permission-desc"
-                  >— {{ permission.description }}</span
-                >
-              </label>
-            </div>
-
-            <!-- Info Alert -->
-            <div class="info-alert">
+    <!-- Main Content - Aligned Left -->
+    <main class="flex-1 p-3 flex items-start justify-start overflow-hidden">
+      <div class="w-full max-w-[860px] space-y-2">
+        <!-- Account Information Card -->
+        <div
+          class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
+        >
+          <!-- Card Header -->
+          <div class="flex items-center gap-1.5 px-3 py-1.5">
+            <div
+              class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
+            >
               <svg
-                class="info-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
+                class="w-2.5 h-2.5 text-[#F52C11]"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                viewBox="0 0 24 24"
               >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4" />
-                <path d="M12 8h.01" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
               </svg>
-              <span
-                >No permissions selected. User will have limited access.</span
-              >
+            </div>
+            <div>
+              <h2 class="text-[11px] font-bold text-[#1F2835] leading-tight">
+                Account information
+              </h2>
+              <p class="text-[9px] text-gray-400 leading-tight">
+                Basic profile details
+              </p>
             </div>
           </div>
 
-          <!-- Form Actions -->
-          <div class="form-actions">
-            <button type="button" class="btn btn-secondary" @click="goBack">
+          <!-- Form Fields -->
+          <div class="px-3 pb-2.5">
+            <div class="grid grid-cols-2 gap-3">
+              <!-- First name -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                >
+                  First name <span class="text-[#F52C11]">*</span>
+                </label>
+                <input
+                  v-model="form.firstName"
+                  type="text"
+                  placeholder="First name"
+                  :class="[
+                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    errors.firstName
+                      ? 'border-[#F52C11]'
+                      : 'border-gray-200 focus:border-[#F52C11]',
+                  ]"
+                />
+                <p
+                  v-if="errors.firstName"
+                  class="text-[8px] text-[#F52C11] mt-0.5"
+                >
+                  First name is required
+                </p>
+              </div>
+
+              <!-- Last name -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                >
+                  Last name <span class="text-[#F52C11]">*</span>
+                </label>
+                <input
+                  v-model="form.lastName"
+                  type="text"
+                  placeholder="Last name"
+                  :class="[
+                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    errors.lastName
+                      ? 'border-[#F52C11]'
+                      : 'border-gray-200 focus:border-[#F52C11]',
+                  ]"
+                />
+                <p
+                  v-if="errors.lastName"
+                  class="text-[8px] text-[#F52C11] mt-0.5"
+                >
+                  Last name is required
+                </p>
+              </div>
+
+              <!-- Email address -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                >
+                  Email address <span class="text-[#F52C11]">*</span>
+                </label>
+                <input
+                  v-model="form.email"
+                  type="email"
+                  placeholder="example@company.com"
+                  :class="[
+                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    errors.email
+                      ? 'border-[#F52C11]'
+                      : 'border-gray-200 focus:border-[#F52C11]',
+                  ]"
+                />
+                <p v-if="errors.email" class="text-[8px] text-[#F52C11] mt-0.5">
+                  Email is required
+                </p>
+                <p v-else class="text-[8px] text-gray-400 mt-0.5">
+                  Changing the email will update the user's login credentials.
+                </p>
+              </div>
+
+              <!-- Date added with clickable calendar icon -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                >
+                  Date added
+                </label>
+                <div class="relative">
+                  <input
+                    v-model="form.dateAdded"
+                    type="text"
+                    placeholder="-- -- ----"
+                    readonly
+                    class="w-full bg-gray-100 border border-gray-200 rounded-[4px] px-2.5 py-[5px] pr-8 text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer"
+                    @click="showDatePicker = true"
+                  />
+                  <button
+                    @click="showDatePicker = true"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F52C11] transition-colors"
+                    type="button"
+                  >
+                    <svg
+                      class="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Settings Card -->
+        <div
+          class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
+        >
+          <!-- Card Header -->
+          <div class="flex items-center gap-1.5 px-3 py-1.5">
+            <div
+              class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
+            >
+              <svg
+                class="w-2.5 h-2.5 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-[11px] font-bold text-[#1F2835] leading-tight">
+                Password settings
+              </h2>
+              <p class="text-[9px] text-gray-400 leading-tight">
+                Password security details
+              </p>
+            </div>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="px-3 pb-2.5">
+            <div class="grid grid-cols-2 gap-3">
+              <!-- Create Password -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                >
+                  Create Password
+                </label>
+                <input
+                  v-model="form.password"
+                  type="password"
+                  placeholder="Create a password"
+                  :class="[
+                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    errors.password
+                      ? 'border-[#F52C11]'
+                      : 'border-gray-200 focus:border-[#F52C11]',
+                  ]"
+                />
+                <p
+                  v-if="errors.password"
+                  class="text-[8px] text-[#F52C11] mt-0.5"
+                >
+                  Password is required
+                </p>
+                <p
+                  v-else-if="passwordReminder"
+                  class="text-[8px] text-[#F52C11] mt-0.5"
+                >
+                  Please create a password first
+                </p>
+              </div>
+
+              <!-- Confirm Password -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                >
+                  Confirm Password <span class="text-[#F52C11]">*</span>
+                </label>
+                <input
+                  v-model="form.confirmPassword"
+                  type="password"
+                  placeholder="Re-enter new password"
+                  :disabled="!form.password"
+                  :class="[
+                    'w-full border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    !form.password
+                      ? 'bg-gray-100 cursor-not-allowed border-gray-200'
+                      : 'bg-white border-gray-200 focus:border-[#F52C11]',
+                    errors.confirmPassword ? 'border-[#F52C11]' : '',
+                  ]"
+                  @focus="checkPasswordFirst"
+                />
+                <p
+                  v-if="errors.confirmPassword"
+                  class="text-[8px] text-[#F52C11] mt-0.5"
+                >
+                  Passwords do not match
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Role & Permissions Card -->
+        <div
+          class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden flex flex-col"
+        >
+          <!-- Card Header -->
+          <div class="flex items-center gap-1.5 px-3 py-1.5">
+            <div
+              class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
+            >
+              <svg
+                class="w-2.5 h-2.5 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-[11px] font-bold text-[#1F2835] leading-tight">
+                Role & permissions
+              </h2>
+              <p class="text-[9px] text-gray-400 leading-tight">
+                Controls what this user can access and do
+              </p>
+            </div>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="px-3 pb-2">
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Assign role -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                >
+                  Assign role <span class="text-[#F52C11]">*</span>
+                </label>
+                <div class="relative">
+                  <select
+                    v-model="form.role"
+                    :class="[
+                      'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer',
+                      errors.role
+                        ? 'border-[#F52C11]'
+                        : 'border-gray-200 focus:border-[#F52C11]',
+                      form.role ? 'text-[#1F2835]' : 'text-gray-400',
+                    ]"
+                  >
+                    <option value="" disabled>- Please select -</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Sales">Sales</option>
+                  </select>
+                  <svg
+                    class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+                <p v-if="errors.role" class="text-[8px] text-[#F52C11] mt-0.5">
+                  Role is required
+                </p>
+              </div>
+
+              <!-- Permissions Table -->
+              <div>
+                <label
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-1"
+                >
+                  Permissions
+                </label>
+                <div
+                  class="border border-gray-200 rounded-[4px] overflow-hidden"
+                >
+                  <table class="w-full border-collapse">
+                    <thead>
+                      <tr class="border-b border-gray-200">
+                        <th
+                          class="text-left px-2 py-[3px] text-[9px] font-semibold text-[#F52C11]"
+                        >
+                          Module
+                        </th>
+                        <th
+                          class="text-center px-1.5 py-[3px] text-[9px] font-semibold text-[#F52C11] w-8"
+                        >
+                          View
+                        </th>
+                        <th
+                          class="text-center px-1.5 py-[3px] text-[9px] font-semibold text-[#F52C11] w-8"
+                        >
+                          Edit
+                        </th>
+                        <th
+                          class="text-center px-1.5 py-[3px] text-[9px] font-semibold text-[#F52C11] w-8"
+                        >
+                          Add
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="module in permissions"
+                        :key="module.name"
+                        class="border-b border-gray-100 last:border-b-0"
+                      >
+                        <td class="px-2 py-[3px] text-[10px] text-[#1F2835]">
+                          {{ module.name }}
+                        </td>
+                        <td class="px-1.5 py-[3px] text-center">
+                          <input
+                            type="checkbox"
+                            v-model="module.view"
+                            class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                          />
+                        </td>
+                        <td class="px-1.5 py-[3px] text-center">
+                          <input
+                            type="checkbox"
+                            v-model="module.edit"
+                            class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                          />
+                        </td>
+                        <td class="px-1.5 py-[3px] text-center">
+                          <input
+                            type="checkbox"
+                            v-model="module.add"
+                            class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div
+            class="px-3 py-2 border-t border-gray-100 flex items-center justify-end gap-2"
+          >
+            <button
+              @click="cancel"
+              class="px-3 py-[4px] rounded-[4px] text-[10px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
               Cancel
             </button>
             <button
-              type="submit"
-              class="btn btn-primary"
-              :disabled="isSubmitting"
+              @click="createUser"
+              :disabled="!isFormValid"
+              :class="[
+                'px-3 py-[4px] rounded-[4px] text-[10px] font-medium flex items-center gap-1 transition-colors shadow-sm',
+                isFormValid
+                  ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed',
+              ]"
             >
-              {{ isSubmitting ? "Creating..." : "Create User" }}
+              Create User
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </main>
+
+    <!-- Date Picker Modal -->
+    <div
+      v-if="showDatePicker"
+      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      @click.self="showDatePicker = false"
+    >
+      <div class="bg-white rounded-[8px] w-[280px] shadow-xl p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[13px] font-bold text-[#1F2835]">Select Date</h3>
+          <button
+            @click="showDatePicker = false"
+            class="text-gray-400 hover:text-[#1F2835]"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Month/Year Navigation -->
+        <div class="flex items-center justify-between mb-2">
+          <button
+            @click="prevMonth"
+            class="p-1 hover:bg-gray-100 rounded text-gray-500"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <span class="text-[12px] font-semibold text-[#1F2835]">{{
+            currentMonthYear
+          }}</span>
+          <button
+            @click="nextMonth"
+            class="p-1 hover:bg-gray-100 rounded text-gray-500"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="grid grid-cols-7 gap-0.5 mb-1">
+          <div
+            v-for="day in ['S', 'M', 'T', 'W', 'T', 'F', 'S']"
+            :key="day"
+            class="text-center text-[9px] font-semibold text-gray-400 py-1"
+          >
+            {{ day }}
+          </div>
+        </div>
+        <div class="grid grid-cols-7 gap-0.5">
+          <div
+            v-for="date in calendarDates"
+            :key="date.key"
+            @click="selectDate(date)"
+            :class="[
+              'text-center text-[11px] py-1 rounded cursor-pointer transition-colors',
+              date.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
+              date.isSelected ? 'bg-[#F52C11] text-white' : 'hover:bg-gray-100',
+              date.isToday && !date.isSelected
+                ? 'border border-[#F52C11] text-[#F52C11]'
+                : '',
+            ]"
+          >
+            {{ date.day }}
+          </div>
+        </div>
+
+        <div
+          class="flex items-center justify-end gap-2 mt-3 pt-2 border-t border-gray-100"
+        >
+          <button
+            @click="showDatePicker = false"
+            class="px-3 py-[4px] rounded-[4px] text-[10px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            @click="confirmDate"
+            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-3 py-[4px] rounded-[4px] text-[10px] font-medium transition-colors"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { ref, computed } from "vue";
 
-// Form state
-const form = reactive({
-  fullName: "",
+const form = ref({
+  firstName: "",
+  lastName: "",
   email: "",
-  role: "",
   password: "",
   confirmPassword: "",
-  permissions: [],
+  role: "",
+  dateAdded: "",
 });
 
-const showPassword = ref(false);
-const showConfirmPassword = ref(false);
-const isSubmitting = ref(false);
+const errors = ref({
+  firstName: false,
+  lastName: false,
+  email: false,
+  password: false,
+  confirmPassword: false,
+  role: false,
+});
 
-// Permissions data
-const permissions = [
-  {
-    id: "dashboard",
-    name: "Dashboard",
-    description: "Access to dashboard and analytics",
-  },
-  {
-    id: "users",
-    name: "Users Management",
-    description: "Manage users and their roles",
-  },
-  {
-    id: "roles",
-    name: "Roles Management",
-    description: "Create and manage roles",
-  },
-  {
-    id: "reports",
-    name: "Reports",
-    description: "Access to reports and data export",
-  },
-  {
-    id: "settings",
-    name: "Settings",
-    description: "Access to system settings",
-  },
-  {
-    id: "products",
-    name: "Products",
-    description: "Manage products and inventory",
-  },
-  { id: "orders", name: "Orders", description: "View and manage orders" },
-  {
-    id: "customers",
-    name: "Customers",
-    description: "Manage customer information",
-  },
-  {
-    id: "permissions",
-    name: "Permissions",
-    description: "Manage permissions and access",
-  },
-  { id: "audit", name: "Audit Logs", description: "View system audit logs" },
-];
+const showDatePicker = ref(false);
+const selectedDate = ref(null);
+const viewDate = ref(new Date());
+const passwordReminder = ref(false);
 
-// Methods
-const goBack = () => {
-  // Navigate back or emit event
-  console.log("Go back");
-};
+const currentMonthYear = computed(() => {
+  return viewDate.value.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+});
 
-const handleSubmit = async () => {
-  // Validate passwords match
-  if (form.password !== form.confirmPassword) {
-    alert("Passwords do not match!");
+const calendarDates = computed(() => {
+  const year = viewDate.value.getFullYear();
+  const month = viewDate.value.getMonth();
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDayOfWeek = firstDay.getDay();
+
+  const dates = [];
+  const today = new Date();
+
+  // Previous month padding
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+  for (let i = startDayOfWeek - 1; i >= 0; i--) {
+    dates.push({
+      key: `prev-${i}`,
+      day: prevMonthLastDay - i,
+      isCurrentMonth: false,
+      isSelected: false,
+      isToday: false,
+    });
+  }
+
+  // Current month
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const dateObj = new Date(year, month, day);
+    const isToday = dateObj.toDateString() === today.toDateString();
+    const isSelected =
+      selectedDate.value &&
+      dateObj.toDateString() === selectedDate.value.toDateString();
+
+    dates.push({
+      key: `current-${day}`,
+      day,
+      isCurrentMonth: true,
+      isSelected,
+      isToday,
+      dateObj,
+    });
+  }
+
+  // Next month padding
+  const remaining = 42 - dates.length;
+  for (let day = 1; day <= remaining; day++) {
+    dates.push({
+      key: `next-${day}`,
+      day,
+      isCurrentMonth: false,
+      isSelected: false,
+      isToday: false,
+    });
+  }
+
+  return dates;
+});
+
+function prevMonth() {
+  viewDate.value = new Date(
+    viewDate.value.getFullYear(),
+    viewDate.value.getMonth() - 1,
+    1
+  );
+}
+
+function nextMonth() {
+  viewDate.value = new Date(
+    viewDate.value.getFullYear(),
+    viewDate.value.getMonth() + 1,
+    1
+  );
+}
+
+function selectDate(date) {
+  if (!date.isCurrentMonth) {
+    if (date.day > 20) {
+      prevMonth();
+    } else {
+      nextMonth();
+    }
     return;
   }
+  selectedDate.value = date.dateObj;
+}
 
-  isSubmitting.value = true;
-
-  try {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("User created:", form);
-    alert("User created successfully!");
-    // Reset form or redirect
-  } catch (error) {
-    console.error("Error creating user:", error);
-    alert("Failed to create user");
-  } finally {
-    isSubmitting.value = false;
+function confirmDate() {
+  if (selectedDate.value) {
+    form.value.dateAdded = selectedDate.value.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
   }
-};
+  showDatePicker.value = false;
+}
+
+function checkPasswordFirst() {
+  if (!form.value.password) {
+    passwordReminder.value = true;
+    setTimeout(() => {
+      passwordReminder.value = false;
+    }, 3000);
+  }
+}
+
+const permissions = ref([
+  { name: "User Management", view: false, edit: false, add: false },
+  { name: "Industry", view: false, edit: false, add: false },
+  {
+    name: "Performance Improvement Plan",
+    view: false,
+    edit: false,
+    add: false,
+  },
+  { name: "Sales Task", view: false, edit: false, add: false },
+  { name: "Audit Logs", view: false, edit: false, add: false },
+]);
+
+const isFormValid = computed(() => {
+  return (
+    form.value.firstName.trim() &&
+    form.value.lastName.trim() &&
+    form.value.email.trim() &&
+    form.value.password.trim() &&
+    form.value.confirmPassword.trim() &&
+    form.value.password === form.value.confirmPassword &&
+    form.value.role
+  );
+});
+
+function validateForm() {
+  errors.value.firstName = !form.value.firstName.trim();
+  errors.value.lastName = !form.value.lastName.trim();
+  errors.value.email = !form.value.email.trim();
+  errors.value.password = !form.value.password.trim();
+  errors.value.confirmPassword =
+    !form.value.confirmPassword.trim() ||
+    form.value.password !== form.value.confirmPassword;
+  errors.value.role = !form.value.role;
+
+  return !Object.values(errors.value).some((error) => error);
+}
+
+function cancel() {
+  form.value = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    dateAdded: "",
+  };
+  selectedDate.value = null;
+  passwordReminder.value = false;
+  permissions.value.forEach((p) => {
+    p.view = false;
+    p.edit = false;
+    p.add = false;
+  });
+  resetErrors();
+}
+
+function resetErrors() {
+  errors.value = {
+    firstName: false,
+    lastName: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    role: false,
+  };
+}
+
+function createUser() {
+  if (!validateForm()) return;
+  console.log("Created", form.value, permissions.value);
+}
 </script>
 
 <style scoped>
-/* Base */
-.user-management {
-  min-height: 100vh;
-  background-color: #f3f4f6;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-}
+@import url("https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&display=swap");
 
-/* Header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 32px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.header-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111827;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.icon-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 8px;
-  color: #6b7280;
-  transition: background-color 0.2s;
-}
-
-.icon-btn:hover {
-  background-color: #f3f4f6;
-}
-
-.notification-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background-color: #dc2626;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 600;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Main Content */
-.main-content {
-  padding: 24px 32px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Page Header */
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background-color: #ffffff;
-  cursor: pointer;
-  color: #374151;
-  transition: background-color 0.2s;
-}
-
-.back-btn:hover {
-  background-color: #f9fafb;
-}
-
-.page-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 4px 0;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0;
-}
-
-/* Form Card */
-.form-card {
-  background-color: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  padding: 32px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-/* Form Grid */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group.full-width {
-  grid-column: 1 / -1;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #111827;
-}
-
-.required {
-  color: #dc2626;
-}
-
-.form-input,
-.form-select {
-  width: 100%;
-  padding: 10px 14px;
-  font-size: 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background-color: #ffffff;
-  color: #111827;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-sizing: border-box;
-}
-
-.form-input:focus,
-.form-select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-input::placeholder {
-  color: #9ca3af;
-}
-
-.select-wrapper {
-  position: relative;
-}
-
-.form-select {
-  appearance: none;
-  cursor: pointer;
-}
-
-.select-arrow {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: #6b7280;
-}
-
-.input-wrapper {
-  position: relative;
-}
-
-.input-wrapper .form-input {
-  padding-right: 44px;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-}
-
-.toggle-password:hover {
-  color: #374151;
-}
-
-/* Divider */
-.divider {
-  border: none;
-  border-top: 1px solid #e5e7eb;
-  margin: 28px 0;
-}
-
-/* Permissions Section */
-.permissions-section {
-  margin-bottom: 28px;
-}
-
-.permissions-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 4px 0;
-}
-
-.permissions-subtitle {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0 0 16px 0;
-}
-
-.permissions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.permission-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  padding: 4px 0;
-}
-
-.permission-checkbox {
-  display: none;
-}
-
-.checkbox-custom {
-  width: 18px;
-  height: 18px;
-  border: 2px solid #d1d5db;
-  border-radius: 4px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.permission-checkbox:checked + .checkbox-custom {
-  background-color: #dc2626;
-  border-color: #dc2626;
-}
-
-.permission-checkbox:checked + .checkbox-custom::after {
-  content: "";
-  width: 5px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-  margin-bottom: 2px;
-}
-
-.permission-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #111827;
-}
-
-.permission-desc {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* Info Alert */
-.info-alert {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 8px;
-  margin-top: 20px;
-  font-size: 14px;
-  color: #1d4ed8;
-}
-
-.info-icon {
-  flex-shrink: 0;
-  color: #3b82f6;
-}
-
-/* Form Actions */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-.btn {
-  padding: 10px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-}
-
-.btn-secondary {
-  background-color: #ffffff;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-
-.btn-secondary:hover {
-  background-color: #f9fafb;
-}
-
-.btn-primary {
-  background-color: #dc2626;
-  color: #ffffff;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #b91c1c;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .form-grid,
-  .permissions-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .main-content {
-    padding: 16px;
-  }
-
-  .form-card {
-    padding: 20px;
-  }
+input[type="checkbox"] {
+  saccent-color: #f52c11;
 }
 </style>
