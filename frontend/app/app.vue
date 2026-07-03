@@ -12,7 +12,8 @@ import UsersIndex from './admin/users/Index.vue'
 import UsersCreate from './admin/users/create.vue'
 import PipIndex from './admin/PIP/Index.vue'
 import PipCreate from './admin/PIP/create.vue'
-
+import LeadsIndex from './admin/leads/Index.vue'
+import UsersAdd from './admin/users/add.vue'
 
 // Map URL names to components
 const pages = {
@@ -22,6 +23,8 @@ const pages = {
   'pip-index': PipIndex,
   'login': Login,
   'layouts-app': LayoutsApp,
+  'leads-index': LeadsIndex,
+  'users-add': UsersAdd
 }
 
 // Default to Login on server, then update on client
