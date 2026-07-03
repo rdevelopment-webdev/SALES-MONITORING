@@ -192,6 +192,11 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: false,
+});
+
+const { apiFetch } = useApi();
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
@@ -207,35 +212,33 @@ const handleLogin = async () => {
   error.value = "";
 
   try {
-    const config = useRuntimeConfig();
-
-    const response = await $fetch(`${config.public.apiBase}/login`, {
+    const response = await apiFetch("/login", {
       method: "POST",
       body: {
-        email: email.value,
+        email: email.value.trim(),
         password: password.value,
       },
     });
 
     const payload = response?.data ?? response;
-    const token = payload?.token ?? response?.token;
-    const user = payload?.user ?? response?.user;
+    const token = payload?.token;
+    const user = payload?.user;
 
-    if (token) {
-      localStorage.setItem("token", token);
+    if (!token || !user) {
+      throw new Error("Login succeeded but the server did not return a token.");
     }
 
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    }
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
 
-    // Redirect to the admin shell route that the root renderer understands
-    await navigateTo("/admin/layouts/app");
+    await navigateTo("/users");
   } catch (err) {
     error.value =
-      err.data?.message ||
-      err.statusMessage ||
-      "Invalid credentials. Please try again.";
+      err?.data?.message ||
+      err?.response?._data?.message ||
+      err?.statusMessage ||
+      err?.message ||
+      "Login failed.";
   } finally {
     loading.value = false;
   }

@@ -408,6 +408,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 
+definePageMeta({
+  layout: "app",
+  middleware: "auth",
+});
+
 const form = ref({
   dateRecorded: '',
   clientName: '',

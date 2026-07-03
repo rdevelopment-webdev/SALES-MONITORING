@@ -1,6 +1,6 @@
 export const useAuth = () => {
   const config = useRuntimeConfig();
-  const baseURL = config.public.apiBase as string;
+  const baseURL = `${config.public.apiBase as string}/api`;
 
   const login = async (email: string, password: string) => {
     await $fetch("/sanctum/csrf-cookie", {
@@ -28,7 +28,7 @@ export const useAuth = () => {
     }
 
     await refreshNuxtData("user");
-    return navigateTo("/admin/layouts/app");
+    return navigateTo("/users");
   };
 
   const logout = async () => {
@@ -40,7 +40,7 @@ export const useAuth = () => {
 
   const fetchUser = () => {
     const { apiFetch } = useApi();
-    return useAsyncData("user", () => apiFetch("/api/user"));
+    return useAsyncData("user", () => apiFetch("/me"));
   };
 
   return { login, logout, fetchUser };

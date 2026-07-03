@@ -10,6 +10,27 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    private function passwordMatches(User $user, string $plainPassword): bool
+    {
+        if (Hash::check($plainPassword, $user->password)) {
+            return true;
+        }
+
+        if (Hash::check(Hash::make($plainPassword), $user->password)) {
+            return true;
+        }
+
+        if (hash_equals((string) $user->password, $plainPassword)) {
+            $user->forceFill([
+                'password' => Hash::make($plainPassword),
+            ])->save();
+
+            return true;
+        }
+
+        return false;
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -17,9 +38,11 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $email = trim((string) $request->email);
+        $user = User::where('email', $email)->first()
+            ?? User::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! $this->passwordMatches($user, $request->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
