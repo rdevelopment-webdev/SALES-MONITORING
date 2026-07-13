@@ -56,7 +56,7 @@
 
     <div class="px-4 py-2 flex items-center justify-between shrink-0">
       <h1 class="font-bold text-[16px] tracking-tight">
-        Industry – Leads listing
+        Industry – Leads listingss
       </h1>
       <button
         @click="openArchiveModal"
