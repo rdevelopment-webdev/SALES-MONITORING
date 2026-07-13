@@ -194,16 +194,16 @@ defineProps({
 defineEmits(["close"]);
 
 function getStatusColor(status) {
-  if (status === 100) return "#006400";
-  if (status >= 90) return "#90ee90";
-  if (status >= 80) return "#7fffd4";
-  if (status >= 70) return "#ffd700";
-  if (status >= 60) return "#daa520";
-  if (status >= 50) return "#ff8c00";
-  if (status >= 40) return "#ba55d3";
-  if (status >= 30) return "#4b0082";
-  if (status >= 20) return "#800000";
-  if (status >= 10) return "#000000";
+  if (status >= 91) return "#639922"; // 91-100
+  if (status >= 81) return "#4f772d"; // 81-90
+  if (status >= 71) return "#5e8c31"; // 71-80
+  if (status >= 61) return "#7fb069"; // 61-70
+  if (status >= 51) return "#6b7a8f"; // 51-60
+  if (status >= 41) return "#888888"; // 41-50
+  if (status >= 31) return "#ffd60a"; // 31-40
+  if (status >= 21) return "#ffb300"; // 21-30
+  if (status >= 11) return "#fa6f10"; // 11-20
+  if (status >= 1) return "#f52c11"; // 1-10
   return "#9ca3af";
 }
 </script>
