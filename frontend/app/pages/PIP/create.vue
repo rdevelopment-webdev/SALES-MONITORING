@@ -121,7 +121,6 @@
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
                   Date Recorded
-                  <span class="text-[#F52C11]">*</span>
                 </label>
                 <div class="relative">
                   <input
@@ -208,7 +207,7 @@
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
-                  Client Name <span class="text-[#F52C11]">*</span>
+                  Client Name
                 </label>
                 <input
                   v-model="form.clientName"
@@ -251,7 +250,7 @@
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
-                  Prospect Technique <span class="text-[#F52C11]">*</span>
+                  Prospect Technique
                 </label>
                 <button
                   ref="techniqueButtonRef"
@@ -636,7 +635,7 @@
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
-                  Email <span class="text-[#F52C11]">*</span>
+                  Email
                 </label>
                 <input
                   v-model="form.email"
@@ -661,7 +660,7 @@
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
-                  Ways of Communication <span class="text-[#F52C11]">*</span>
+                  Ways of Communication
                 </label>
                 <button
                   ref="communicationButtonRef"
@@ -830,7 +829,7 @@
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
-                  Service <span class="text-[#F52C11]">*</span>
+                  Service
                 </label>
                 <button
                   ref="serviceButtonRef"
@@ -1923,7 +1922,7 @@ function handleContactKeydown(e) {
 // EMAIL VALIDATION
 // ============================================
 function isValidEmail(value) {
-  if (!value || !value.trim()) return false; // required field now
+  if (!value || !value.trim()) return true; // nullable field — empty is fine
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
@@ -2052,19 +2051,11 @@ const calendarDates = computed(() => {
   return dates;
 });
 
+// All fields are nullable now — the only thing that can still block
+// submission is an email that's been typed in but isn't validly formatted.
+// An empty email is fine.
 const isFormValid = computed(() => {
-  return (
-    form.value.clientName.trim() &&
-    form.value.dateRecorded &&
-    form.value.prospectTechnique &&
-    form.value.salesRepresentative.length > 0 &&
-    form.value.email &&
-    isValidEmail(form.value.email) &&
-    form.value.waysOfCommunication &&
-    form.value.service &&
-    form.value.contactPersonName.trim() &&
-    form.value.contactPersonPhone.trim()
-  );
+  return isValidEmail(form.value.email);
 });
 
 // ============================================
@@ -2114,16 +2105,17 @@ function confirmDate() {
 // VALIDATION
 // ============================================
 function validateForm() {
-  errors.value.dateRecorded = !form.value.dateRecorded;
-  errors.value.clientName = !form.value.clientName.trim();
-  errors.value.prospectTechnique = !form.value.prospectTechnique;
-  errors.value.salesRepresentative =
-    form.value.salesRepresentative.length === 0;
+  // All fields are nullable — nothing is required anymore. Email is the
+  // only field still validated, and only if the user actually typed one in.
+  errors.value.dateRecorded = false;
+  errors.value.clientName = false;
+  errors.value.prospectTechnique = false;
+  errors.value.salesRepresentative = false;
   errors.value.email = !isValidEmail(form.value.email);
-  errors.value.waysOfCommunication = !form.value.waysOfCommunication;
-  errors.value.service = !form.value.service;
-  errors.value.contactPersonName = !form.value.contactPersonName.trim();
-  errors.value.contactPersonPhone = !form.value.contactPersonPhone.trim();
+  errors.value.waysOfCommunication = false;
+  errors.value.service = false;
+  errors.value.contactPersonName = false;
+  errors.value.contactPersonPhone = false;
 
   return !Object.values(errors.value).some((error) => error);
 }

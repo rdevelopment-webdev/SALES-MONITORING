@@ -30,22 +30,25 @@ class PerformancePlanController extends Controller
 
     public function store(Request $request)
     {
+        // All fields are nullable now — the create form no longer requires
+        // anything to be filled in. 'exists' checks are skipped automatically
+        // by Laravel when a nullable field is left null.
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'date_recorded' => 'required|date',
-            'client_name' => 'required|string|max:255',
-            'technique_id' => 'required|exists:prospect_techniques,id',
-            'email' => 'required|email|max:255',
-            'service_id' => 'required|exists:services,id',
-            'status' => 'required|string|max:255',
+            'user_id' => 'nullable|exists:users,id',
+            'date_recorded' => 'nullable|date',
+            'client_name' => 'nullable|string|max:255',
+            'technique_id' => 'nullable|exists:prospect_techniques,id',
+            'email' => 'nullable|email|max:255',
+            'service_id' => 'nullable|exists:services,id',
+            'status' => 'nullable|string|max:255',
             'percentage' => 'nullable|numeric|min:0|max:100',
             'area_input' => 'nullable|string|max:255',
-            'representative__id' => 'required|exists:sales__representatives,id',  // double underscore
+            'representative__id' => 'nullable|exists:sales__representatives,id',  // double underscore
             'onboarding_date' => 'nullable|date',
             'remarks' => 'nullable|string',
-            'contact_name' => 'required|string|max:255',
-            'contact_number' => 'required|string|max:20',
-            'communication_id' => 'required|exists:ways_of_communication,id'
+            'contact_name' => 'nullable|string|max:255',
+            'contact_number' => 'nullable|string|max:20',
+            'communication_id' => 'nullable|exists:ways_of_communication,id'
         ]);
 
         $plan = PerformancePlan::create($validated);
@@ -63,22 +66,25 @@ class PerformancePlanController extends Controller
 
     public function update(Request $request, PerformancePlan $performance_plan)
     {
+        // 'sometimes' skips validation when the key is absent from the request;
+        // 'nullable' alongside it means that when the key IS present, an
+        // explicit null is also accepted (not just a valid value).
         $validated = $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
-            'date_recorded' => 'sometimes|date',
-            'client_name' => 'sometimes|string|max:255',
-            'technique_id' => 'sometimes|exists:prospect_techniques,id',
-            'email' => 'sometimes|email|max:255',
-            'service_id' => 'sometimes|exists:services,id',
-            'status' => 'sometimes|string|max:255',
+            'user_id' => 'sometimes|nullable|exists:users,id',
+            'date_recorded' => 'sometimes|nullable|date',
+            'client_name' => 'sometimes|nullable|string|max:255',
+            'technique_id' => 'sometimes|nullable|exists:prospect_techniques,id',
+            'email' => 'sometimes|nullable|email|max:255',
+            'service_id' => 'sometimes|nullable|exists:services,id',
+            'status' => 'sometimes|nullable|string|max:255',
             'percentage' => 'nullable|numeric|min:0|max:100',
             'area_input' => 'nullable|string|max:255',
-            'representative__id' => 'sometimes|exists:sales__representatives,id',  // double underscore
+            'representative__id' => 'sometimes|nullable|exists:sales__representatives,id',  // double underscore
             'onboarding_date' => 'nullable|date',
             'remarks' => 'nullable|string',
-            'contact_name' => 'sometimes|string|max:255',
-            'contact_number' => 'sometimes|string|max:20',
-            'communication_id' => 'sometimes|exists:ways_of_communication,id'
+            'contact_name' => 'sometimes|nullable|string|max:255',
+            'contact_number' => 'sometimes|nullable|string|max:20',
+            'communication_id' => 'sometimes|nullable|exists:ways_of_communication,id'
         ]);
 
         $performance_plan->update($validated);

@@ -770,7 +770,7 @@ const form = ref({
   date: "",
   remarks: "",
   location: route.query.location || "",
-  progress: 30,
+  progress: 0,
 });
 
 const errors = ref({
@@ -1044,7 +1044,7 @@ function clearAllFields() {
     date: "",
     remarks: "",
     location: "",
-    progress: 30,
+    progress: 0,
   };
   selectedDate.value = null;
   resetErrors();
