@@ -67,9 +67,7 @@
                 :aria-expanded="isLeadsTrackerOpen"
                 :class="[
                   'flex w-full items-center justify-between rounded px-3 py-2 text-sm transition-colors text-left',
-                  isLeadTrackerActive
-                    ? 'bg-[#f52c11]/20 text-white'
-                    : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                  'text-gray-300 hover:bg-white/5 hover:text-white',
                 ]"
               >
                 <span class="flex items-center gap-3">
@@ -106,9 +104,7 @@
                     :aria-expanded="isLeadsOpen"
                     :class="[
                       'ml-7 flex w-[calc(100%-1.75rem)] items-center justify-between rounded px-3 py-1.5 text-left text-xs transition-colors',
-                      isLeadActive
-                        ? 'bg-[#f52c11]/20 text-white'
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white',
+                      'text-gray-400 hover:bg-white/5 hover:text-white',
                     ]"
                   >
                     <span class="font-medium">Leads</span>

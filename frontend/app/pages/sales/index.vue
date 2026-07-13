@@ -185,10 +185,10 @@
 
     <!-- Main Content: Table -->
     <main
-      class="flex-1 flex pt-0.5 px-2.5 pb-2 gap-1.5 min-h-0 overflow-hidden"
+      class="flex-1 flex justify-center pt-0.5 px-2.5 pb-2 gap-1.5 min-h-0 overflow-hidden"
     >
       <section
-        class="flex-1 flex flex-col min-w-2 bg-white border border-gray-200 overflow-hidden relative rounded-[6px]"
+        class="w-full max-w-[955px] flex flex-col bg-white border border-gray-200 overflow-hidden relative rounded-[6px]"
       >
         <!-- Table Header Info -->
         <div
@@ -270,13 +270,15 @@
         <div v-else class="flex-1 overflow-auto custom-scroll relative">
           <table class="w-full border-collapse text-left table-fixed">
             <colgroup>
+              <col class="w-8" />
               <col class="w-6" />
-              <col class="w-1/3" />
-              <col class="w-1/3" />
-              <col class="w-1/3" />
+              <col class="w-0.5/5" />
+              <col class="w-4/6" />
+              <col class="w-0.5/5" />
             </colgroup>
             <thead class="bg-gray-100 sticky top-0 z-20">
               <tr class="border-b border-gray-200">
+                <th class="w-8 px-1.5 py-[2px]"></th>
                 <th class="w-6 px-1.5 py-[2px]">
                   <div class="flex items-center justify-center">
                     <input
@@ -288,7 +290,7 @@
                   </div>
                 </th>
                 <th
-                  class="px-4 py-[2px] font-semibold text-[11px] whitespace-nowrap text-[#f52c11] text-center"
+                  class="pl-1.5 pr-4 py-[2px] font-semibold text-[11px] whitespace-nowrap text-[#f52c11] text-left"
                 >
                   Date
                 </th>
@@ -316,6 +318,14 @@
                     index !== paginatedRecords.length - 1,
                 }"
               >
+                <td
+                  class="px-1.5 py-[2px] text-center text-[11px] font-medium"
+                  :class="
+                    isSelected(record.id) ? 'text-white' : 'text-gray-500'
+                  "
+                >
+                  {{ recordsRangeStart + index }}
+                </td>
                 <td class="px-1.5 py-[2px]">
                   <div class="flex items-center justify-center h-full">
                     <input
@@ -327,7 +337,7 @@
                   </div>
                 </td>
                 <td
-                  class="px-4 py-[2px] whitespace-nowrap text-[11px] font-medium text-center"
+                  class="pl-1.5 pr-4 py-[2px] whitespace-nowrap text-[11px] font-medium text-left"
                   :class="
                     isSelected(record.id) ? 'text-white' : 'text-[#1F2835]'
                   "
@@ -362,7 +372,7 @@
                   class="px-4 py-[2px] whitespace-nowrap text-center sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] transition-colors"
                   :class="
                     isSelected(record.id)
-                      ? 'bg-[##FCE4E2]'
+                      ? 'bg-[#FCE4E2]'
                       : 'bg-white hover:bg-[#F52C11]/10'
                   "
                 >
@@ -396,7 +406,7 @@
               </tr>
 
               <tr v-if="paginatedRecords.length === 0">
-                <td colspan="4" class="px-4 py-12 text-center text-gray-400">
+                <td colspan="5" class="px-4 py-12 text-center text-gray-400">
                   <div v-if="searchQuery">
                     No records found matching "<span
                       class="font-semibold text-[#1F2835]"
@@ -1347,13 +1357,23 @@ async function deleteRecordApi(id) {
 
 // ==================== UI HANDLERS ====================
 
+const progressColorPalette = [
+  "#f52c11", // 1-10
+  "#fa6f10", // 11-20
+  "#ffb300", // 21-30
+  "#ffd60a", // 31-40
+  "#888888", // 41-50
+  "#6b7a8f", // 51-60
+  "#7fb069", // 61-70
+  "#5e8c31", // 71-80
+  "#4f772d", // 81-90
+  "#639922", // 91-100
+];
+
 function getStatusColor(status) {
-  if (status === 100) return "#5a9e3d";
-  if (status >= 50) return "#ff8c00";
-  if (status >= 30) return "#4a90d9";
-  if (status >= 15) return "#808080";
-  if (status >= 10) return "#e74c3c";
-  return "#9ca3af";
+  const value = Number(status) || 0;
+  const bucket = Math.min(10, Math.max(1, Math.ceil(value / 10) || 1));
+  return progressColorPalette[bucket - 1];
 }
 
 function isSelected(id) {
