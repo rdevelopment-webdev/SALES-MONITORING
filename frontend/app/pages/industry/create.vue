@@ -386,25 +386,42 @@
               </div>
 
               <div class="px-3 pb-2.5 pt-1">
-                <input
-                  v-model="form.location"
-                  type="text"
-                  list="location-options"
-                  placeholder="Type a location"
-                  :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                    errors.location
-                      ? 'border-[#F52C11]'
-                      : 'border-gray-200 focus:border-[#F52C11]',
-                  ]"
-                />
-                <datalist id="location-options">
-                  <option
-                    v-for="loc in locationOptions"
-                    :key="loc"
-                    :value="loc"
-                  />
-                </datalist>
+                <div class="relative">
+                  <select
+                    v-model="form.location"
+                    :class="[
+                      'w-full border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer',
+                      errors.location
+                        ? 'border-[#F52C11]'
+                        : 'border-gray-200 focus:border-[#F52C11]',
+                      form.location
+                        ? 'text-[#1F2835] bg-white'
+                        : 'text-gray-400 bg-gray-100',
+                    ]"
+                  >
+                    <option value="" disabled>Select a location</option>
+                    <option
+                      v-for="loc in locationOptions"
+                      :key="loc"
+                      :value="loc"
+                    >
+                      {{ loc }}
+                    </option>
+                  </select>
+                  <svg
+                    class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
                 <p
                   v-if="errors.location"
                   class="text-[8px] text-[#F52C11] mt-0.5"
@@ -790,12 +807,12 @@ const isSaving = ref(false);
 const saveError = ref("");
 
 const serviceOptions = ref([
-  "Web Development",
-  "Mobile App Development",
-  "UI/UX Design",
+  "Website Development",
+  "Custome Software",
+  "Mobile Application",
   "Digital Marketing",
-  "SEO Services",
-  "Consulting",
+  "Multimedia",
+  "Hosting & Server",
 ]);
 
 function payloadData(response) {
@@ -869,16 +886,16 @@ function validateEmailField() {
 }
 
 const progressColorPalette = [
-  "#ef4444",
-  "#f97316",
-  "#f59e0b",
-  "#eab308",
-  "#84cc16",
-  "#22c55e",
-  "#10b981",
-  "#14b8a6",
-  "#3b82f6",
-  "#8b5cf6",
+  "#f52c11",
+  "#fa6f10",
+  "#ffb300",
+  "#ffd60a",
+  "#888888",
+  "#6b7a8f",
+  "#7fb069",
+  "#5e8c31",
+  "#4f772d",
+  "#639922",
 ];
 
 const progressColor = computed(() => {

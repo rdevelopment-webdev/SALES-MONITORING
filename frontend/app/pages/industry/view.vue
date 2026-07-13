@@ -3,18 +3,18 @@
     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-[1px]"
   >
     <div
-      class="bg-white rounded-[6px] w-[560px] shadow-2xl flex flex-col overflow-hidden"
+      class="bg-white rounded-[10px] w-[440px] shadow-2xl flex flex-col overflow-hidden"
     >
       <!-- Modal Header -->
       <div
-        class="flex items-center justify-between px-4 py-2 border-b border-gray-100 bg-white"
+        class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white"
       >
         <div class="flex items-center gap-2">
           <div
-            class="w-5 h-5 rounded-[4px] bg-[#F52C11]/10 flex items-center justify-center shrink-0"
+            class="w-7 h-7 rounded-[6px] bg-[#F52C11]/10 flex items-center justify-center shrink-0"
           >
             <svg
-              class="w-3 h-3 text-[#F52C11]"
+              class="w-3.5 h-3.5 text-[#F52C11]"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
@@ -28,11 +28,12 @@
             </svg>
           </div>
           <div>
-            <h3 class="text-[12px] font-bold text-[#1F2835] leading-tight">
+            <h3 class="text-[13px] font-bold text-[#1F2835] leading-tight">
               View record
             </h3>
-            <p class="text-[9px] text-gray-400 leading-tight">
-              {{ displayRecord.businessName }} – {{ displayRecord.industry }}
+            <p class="text-[10px] text-gray-400 leading-tight mt-0.5">
+              {{ displayRecord.businessName }} — {{ displayRecord.industry }}
+              industry
             </p>
           </div>
         </div>
@@ -57,172 +58,128 @@
       </div>
 
       <!-- Centered "Business info" divider -->
-      <div class="px-4 pt-2 pb-0">
+      <div class="px-4 pt-3 pb-1">
         <div class="relative flex items-center justify-center">
           <div class="w-full border-t border-gray-200"></div>
           <span
-            class="absolute bg-white px-2 text-[9px] text-gray-400 whitespace-nowrap"
+            class="absolute bg-white px-2 text-[10px] text-gray-400 whitespace-nowrap"
             >Business info</span
           >
         </div>
       </div>
 
-      <!-- Modal Body - Two Column Layout -->
-      <div class="px-4 py-3 bg-white">
-        <div class="grid grid-cols-2 gap-x-6 gap-y-3">
-          <!-- Left Column -->
-          <div class="space-y-3">
-            <!-- Business name -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Business name
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.businessName || "—" }}
-              </p>
-            </div>
+      <!-- Modal Body - Single Column Rows -->
+      <div class="px-4 pb-1 bg-white">
+        <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
+          <span class="text-[12px] text-gray-500">Business name</span>
+          <span class="text-[12px] font-bold text-[#1F2835]">{{
+            displayRecord.businessName || "—"
+          }}</span>
+        </div>
 
-            <!-- Contact person -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Contact person
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.contactPerson || "—" }}
-              </p>
-            </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
+          <span class="text-[12px] text-gray-500">Contact person</span>
+          <span class="text-[12px] font-bold text-[#1F2835]">{{
+            displayRecord.contactPerson || "—"
+          }}</span>
+        </div>
 
-            <!-- Contact number -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Contact number
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.contactNo || "—" }}
-              </p>
-            </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
+          <span class="text-[12px] text-gray-500">Job position</span>
+          <span class="text-[12px] font-bold text-[#1F2835]">{{
+            displayRecord.jobPosition || "—"
+          }}</span>
+        </div>
 
-            <!-- Service -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Service
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.service || "—" }}
-              </p>
-            </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
+          <span class="text-[12px] text-gray-500">Location</span>
+          <span class="text-[12px] font-bold text-[#1F2835]">{{
+            displayRecord.location || "—"
+          }}</span>
+        </div>
 
-            <!-- Remarks -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Remarks
-              </p>
-              <p
-                class="text-[12px] font-medium"
-                :class="
-                  displayRecord.remarks ? 'text-[#1F2835]' : 'text-gray-400'
-                "
-              >
-                {{ displayRecord.remarks || "No additional notes" }}
-              </p>
-            </div>
+        <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
+          <span class="text-[12px] text-gray-500">Contact number</span>
+          <span class="text-[12px] font-bold text-[#1F2835]">{{
+            displayRecord.contactNo || "—"
+          }}</span>
+        </div>
+
+        <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
+          <span class="text-[12px] text-gray-500">Email</span>
+          <span class="text-[12px] font-bold text-[#1F2835] break-all">{{
+            displayRecord.email || "—"
+          }}</span>
+        </div>
+
+        <div class="flex items-center justify-between py-1.5 border-b border-gray-100">
+          <span class="text-[12px] text-gray-500">Service</span>
+          <span class="text-[12px] font-bold text-[#1F2835]">{{
+            displayRecord.service || "—"
+          }}</span>
+        </div>
+
+        <div class="flex items-center justify-between py-1.5">
+          <span class="text-[12px] text-gray-500">Date</span>
+          <span class="text-[12px] font-bold text-[#1F2835]">{{
+            displayRecord.date || "—"
+          }}</span>
+        </div>
+      </div>
+
+      <!-- Remarks box -->
+      <div class="px-4 pt-2 pb-1 bg-white">
+        <div class="border border-gray-200 rounded-[7px] px-3 py-2">
+          <p class="text-[12px] text-gray-500 mb-0.5">Remarks</p>
+          <p
+            class="text-[12px] font-bold"
+            :class="displayRecord.remarks ? 'text-[#1F2835]' : 'text-gray-400'"
+          >
+            {{ displayRecord.remarks || "No additional notes" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="px-4 pt-2 pb-3.5 bg-white">
+        <div class="flex items-start justify-between mb-1.5">
+          <div>
+            <p class="text-[12px] font-bold text-[#1F2835] leading-tight">
+              Status
+            </p>
+            <p class="text-[10px] text-gray-400 leading-tight mt-0.5">
+              Progress bar updates automatically
+            </p>
           </div>
-
-          <!-- Right Column -->
-          <div class="space-y-3">
-            <!-- Location -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Location
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.location || "—" }}
-              </p>
+          <div class="flex items-center gap-1 shrink-0">
+            <div
+              class="w-10 h-7 rounded-[6px] border border-gray-200 flex items-center justify-center text-[12px] font-bold text-[#1F2835]"
+            >
+              {{ displayRecord.statusPercent }}
             </div>
-
-            <!-- Job position -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Job position
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.jobPosition || "—" }}
-              </p>
-            </div>
-
-            <!-- Email -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Email
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium break-all">
-                {{ displayRecord.email || "—" }}
-              </p>
-            </div>
-
-            <!-- Date -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Date
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.date || "—" }}
-              </p>
-            </div>
-
-            <!-- Status -->
-            <div>
-              <div class="flex items-start justify-between mb-1">
-                <p
-                  class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400"
-                >
-                  Status
-                </p>
-                <span class="text-[12px] font-bold text-[#1F2835]">
-                  {{ displayRecord.statusPercent }}%
-                </span>
-              </div>
-              <!-- Progress Bar -->
-              <div class="w-full h-[6px] bg-gray-100 rounded-full relative">
-                <div
-                  class="absolute top-0 left-0 h-[6px] rounded-full transition-all duration-300"
-                  :style="{
-                    width: displayRecord.statusPercent + '%',
-                    backgroundColor: progressColor,
-                  }"
-                ></div>
-              </div>
-            </div>
+            <span class="text-[12px] text-gray-400">%</span>
           </div>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full h-1.5 bg-gray-100 rounded-full relative overflow-hidden">
+          <div
+            class="absolute top-0 left-0 h-1.5 rounded-full transition-all duration-300"
+            :style="{
+              width: displayRecord.statusPercent + '%',
+              backgroundColor: progressColor,
+            }"
+          ></div>
         </div>
       </div>
 
       <!-- Footer -->
       <div
-        class="px-4 py-2 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
+        class="px-4 py-2.5 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
       >
         <button
           type="button"
           @click="close"
-          class="px-3 py-[4px] rounded-[4px] text-[10px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+          class="px-3.5 py-1.5 rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
         >
           Back
         </button>

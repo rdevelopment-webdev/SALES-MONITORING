@@ -54,21 +54,25 @@ class LoginController extends Controller
     }
 
     private function passwordMatches(User $user, string $plainPassword): bool
-    {
+{
+    try {
         if (Hash::check($plainPassword, $user->password)) {
             return true;
         }
-
-        if (hash_equals((string) $user->password, $plainPassword)) {
-            $user->forceFill([
-                'password' => Hash::make($plainPassword),
-            ])->save();
-
-            return true;
-        }
-
-        return false;
+    } catch (\RuntimeException $e) {
+        // Stored value isn't a valid bcrypt hash (e.g. legacy plaintext) — fall through.
     }
+
+    if (hash_equals((string) $user->password, $plainPassword)) {
+        $user->forceFill([
+            'password' => Hash::make($plainPassword),
+        ])->save();
+
+        return true;
+    }
+
+    return false;
+}
 
     /**
      * Login user.
