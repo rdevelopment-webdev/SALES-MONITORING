@@ -2,7 +2,9 @@
   <div
     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-[1px]"
   >
-    <div class="bg-white rounded-[6px] w-[690px] h-[450px] shadow-2xl flex flex-col overflow-hidden">
+    <div
+      class="bg-white rounded-[6px] w-[690px] h-[450px] shadow-2xl flex flex-col overflow-hidden"
+    >
       <!-- Modal Header -->
       <div
         class="flex items-center justify-between px-4 py-2 border-b border-gray-100 bg-white"
@@ -176,11 +178,17 @@
 
         <!-- Checklist Section -->
         <div class="mt-3 flex-1 flex flex-col min-h-0">
-          <div class="border border-gray-200 rounded-[4px] overflow-hidden flex flex-col h-full">
+          <div
+            class="border border-gray-200 rounded-[4px] overflow-hidden flex flex-col h-full"
+          >
             <!-- Title & Subtitle - Fixed Header -->
-            <div class="px-3 pt-2 pb-1.5 border-b border-gray-100 bg-white shrink-0">
+            <div
+              class="px-3 pt-2 pb-1.5 border-b border-gray-100 bg-white shrink-0"
+            >
               <h4 class="text-[11px] font-bold text-[#1F2835]">Checklist</h4>
-              <p class="text-[9px] text-gray-400 mt-0.5">Add checklist item to track progress.</p>
+              <p class="text-[9px] text-gray-400 mt-0.5">
+                Add checklist item to track progress.
+              </p>
             </div>
 
             <!-- Scrollable List -->
@@ -224,7 +232,7 @@
                     />
                   </svg>
                 </div>
-                
+
                 <!-- Editable Text -->
                 <input
                   v-model="item.text"
@@ -239,7 +247,7 @@
                   @keydown.backspace="handleBackspace(index, $event)"
                   placeholder="Type here..."
                 />
-                
+
                 <!-- Delete X button - appears on hover -->
                 <button
                   type="button"
@@ -263,8 +271,6 @@
                 </button>
               </div>
             </div>
-
-            
           </div>
         </div>
       </div>
@@ -611,10 +617,10 @@ function addChecklistItemFromBottom() {
     completed: false,
   });
   newItemText.value = "";
-  
+
   // Scroll to bottom to show the new item
   nextTick(() => {
-    const scrollContainer = document.querySelector('.checklist-scroll');
+    const scrollContainer = document.querySelector(".checklist-scroll");
     if (scrollContainer) {
       scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
@@ -629,10 +635,12 @@ function addItemBelow(index) {
     completed: false,
   };
   form.checklist.splice(index + 1, 0, newItem);
-  
+
   // Focus the new item after render
   nextTick(() => {
-    const inputs = document.querySelectorAll('.checklist-scroll input[type="text"]');
+    const inputs = document.querySelectorAll(
+      '.checklist-scroll input[type="text"]'
+    );
     if (inputs[index + 1]) {
       inputs[index + 1].focus();
     }
@@ -645,10 +653,12 @@ function handleBackspace(index, event) {
   if (item.text === "" && form.checklist.length > 0) {
     event.preventDefault();
     deleteChecklistItem(index);
-    
+
     // Focus previous item or the add new item input
     nextTick(() => {
-      const inputs = document.querySelectorAll('.checklist-scroll input[type="text"]');
+      const inputs = document.querySelectorAll(
+        '.checklist-scroll input[type="text"]'
+      );
       if (inputs.length > 0 && index > 0) {
         const focusIndex = Math.min(index - 1, inputs.length - 1);
         inputs[focusIndex].focus();
@@ -824,7 +834,7 @@ input[type="number"] {
   background: transparent;
 }
 .checklist-scroll::-webkit-scrollbar-thumb {
-  background: #F52C11;
+  background: #f52c11;
   border-radius: 3px;
 }
 .checklist-scroll::-webkit-scrollbar-thumb:hover {
