@@ -13,14 +13,14 @@ class RolePagePermission extends Model
         'permission_name',
         'can_edit',
         'can_create',
-        'can_update',
+        'can_archive',
         'can_view',
     ];
     protected $casts = [
         'can_view'   => 'boolean',
         'can_create' => 'boolean',
         'can_edit'   => 'boolean',
-        'can_delete' => 'boolean',
+        'can_archive' => 'boolean',
     ];
 
     public function Role(){

@@ -1,14 +1,13 @@
 <template>
   <div
-    class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-white font-['Overpass'] text-[14px] text-[#1F2835]"
+    class="flex flex-col min-w-0 overflow-hidden bg-[#f4f6fa] font-['Overpass'] text-[14px] text-[#1F2835] h-screen"
   >
-    <!-- Top Header: Breadcrumb only -->
     <div
-      class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
+      class="bg-white px-6 py-2.5 flex items-center shrink-0 border-b border-gray-200 shadow-sm z-30"
     >
-      <div class="flex items-center text-[11px] text-gray-500 gap-1">
+      <div class="flex items-center text-[12px] text-gray-500 gap-1.5">
         <svg
-          class="w-3.5 h-3.5 text-gray-400"
+          class="w-4 h-4 text-[#f52c11]"
           fill="none"
           stroke="currentColor"
           stroke-width="2"
@@ -20,33 +19,30 @@
             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
           />
         </svg>
-        <span class="text-[#f52c11] cursor-pointer transition-colors"
+        <span
+          class="text-[#f52c11] cursor-pointer font-medium transition-colors"
           >User Management</span
         >
       </div>
     </div>
 
-    <!-- Title + Subtitle (same row) - COMPRESSED -->
-    <div class="bg-white px-4 py-1 flex items-center justify-between shrink-0">
-      <div>
-        <h1 class="font-bold text-[16px] tracking-tight">System Users</h1>
-        <span class="text-[11px] text-gray-500"
-          >{{ filteredUsers.length }} users total - {{ adminCount }} admins -
-          {{ salesCount }} sales</span
-        >
-      </div>
-    </div>
-
-    <!-- Filters Row - Search & Role LEFT | View Archive & Add User RIGHT -->
     <div
-      class="bg-white px-4 py-1 flex items-center justify-between gap-2 shrink-0"
+      class="bg-[#f4f6fa] px-8 py-6 flex items-center justify-between shrink-0 flex-wrap gap-4"
     >
-      <!-- Left: Search + Role Filter -->
-      <div class="flex items-center gap-1.5">
-        <!-- Search -->
+      <div>
+        <h1 class="font-bold text-[20px] tracking-tight text-[#1F2835]">
+          System Users
+        </h1>
+        <span class="text-[12px] text-gray-400 mt-0.5 block">
+          {{ filteredUsers.length }} users total · {{ adminCount }} admins ·
+          {{ salesCount }} sales
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
         <div class="relative flex items-center">
           <svg
-            class="w-3.5 h-3.5 text-gray-400 absolute left-2 top-[4px] pointer-events-none"
+            class="w-4 h-4 text-gray-400 absolute left-3 pointer-events-none"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -61,69 +57,17 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search by name or email..."
-            class="pl-7 pr-2 py-[2px] w-56 bg-white border border-gray-300 rounded-[4px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
+            placeholder="Search..."
+            class="pl-9 pr-3 py-1.5 w-64 bg-white border border-gray-200 rounded-[6px] focus:outline-none focus:border-[#F52C11] text-[12px] placeholder:text-gray-400 transition-colors shadow-sm"
           />
         </div>
 
-        <!-- Role Filter -->
-        <div class="relative">
-          <button
-            @click="showRoleDropdown = !showRoleDropdown"
-            :class="
-              selectedRole !== 'All roles'
-                ? 'border-[#F52C11] text-[#F52C11]'
-                : 'border-gray-300 text-[#1F2835]'
-            "
-            class="bg-white border px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-2 hover:border-gray-400 transition-colors"
-          >
-            {{ selectedRole }}
-            <svg
-              class="w-2.5 h-2.5 text-gray"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-          <div
-            v-if="showRoleDropdown"
-            class="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[140px]"
-          >
-            <button
-              v-for="role in roleOptions"
-              :key="role"
-              @click="
-                selectedRole = role;
-                showRoleDropdown = false;
-              "
-              :class="
-                selectedRole === role
-                  ? 'bg-[#F52C11]/10 text-[#F52C11] font-medium'
-                  : 'text-[#1F2835] hover:bg-gray-50'
-              "
-              class="w-full text-left px-3 py-1.5 text-[11px] transition-colors"
-            >
-              {{ role }}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: View Archive + Add User -->
-      <div class="flex items-center gap-1.5">
         <button
-          @click="showArchiveModal = true"
-          class="bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+          @click="openArchiveModal"
+          class="bg-white border border-gray-200 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-4 py-1.5 rounded-[6px] text-[12px] font-medium flex items-center gap-2 transition-colors shadow-sm"
         >
           <svg
-            class="w-3.5 h-3.5"
+            class="w-4 h-4 text-[#f52c11]"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -138,17 +82,18 @@
           View Archive
           <span
             v-if="archivedUsers.length > 0"
-            class="bg-[#F52C11] text-white text-[9px] px-1.5 py-[1px] rounded-full font-bold ml-0.5"
-            >{{ archivedUsers.length }}</span
+            class="bg-[#F52C11] text-white text-[10px] px-2 py-[1px] rounded-full font-bold ml-0.5"
           >
+            {{ archivedUsers.length }}
+          </span>
         </button>
 
         <button
-          @click="showAddUserModal = true"
-          class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+          @click="navigateToAddUser"
+          class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-4 py-1.5 rounded-[6px] text-[12px] font-medium flex items-center gap-1.5 transition-colors shadow-sm"
         >
           <svg
-            class="w-3 h-3"
+            class="w-3.5 h-3.5"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -165,116 +110,118 @@
       </div>
     </div>
 
-    <!-- Main Content: Table Section -->
-    <main class="flex-1 flex p-2 gap-1.5 min-h-0 overflow-hidden">
+    <main
+      class="flex-1 flex flex-col px-8 pb-4 gap-4 min-h-0 overflow-hidden bg-[#f4f6fa]"
+    >
       <section
-        class="flex-1 flex flex-col min-w-0 bg-white border border-gray-200 overflow-hidden relative rounded-[6px]"
+        class="flex-1 flex flex-col min-w-0 bg-white overflow-hidden relative rounded-[12px] shadow-sm border border-gray-100"
       >
-        <!-- Table -->
+        <div
+          v-if="isLoading"
+          class="absolute inset-0 bg-white/70 z-40 flex items-center justify-center"
+        >
+          <span class="text-[#F52C11] font-medium text-[13px]"
+            >Loading data...</span
+          >
+        </div>
+
         <div class="flex-1 overflow-auto custom-scroll relative">
           <table class="w-full border-collapse text-left">
-            <thead class="bg-[#f2f2f2] sticky top-0 z-20">
+            <thead
+              class="bg-[#f8fafc] sticky top-0 z-20 border-b border-gray-100"
+            >
               <tr>
-                <th
-                  class="w-6 px-1.5 py-[3px] border border-gray-200 text-center"
-                >
+                <th class="w-12 px-3 py-1.5 text-center">
                   <input
                     type="checkbox"
                     :checked="isAllSelected"
                     @change="toggleAll"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                    class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                   />
                 </th>
                 <th
-                  class="px-2 py-[3px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  class="px-3 py-1.5 font-bold text-[13px] whitespace-nowrap text-[#1F2835]"
                 >
                   Full Name
                 </th>
                 <th
-                  class="px-2 py-[3px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  class="px-3 py-1.5 font-bold text-[13px] whitespace-nowrap text-[#1F2835]"
                 >
                   Email
                 </th>
                 <th
-                  class="px-2 py-[3px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  class="px-3 py-1.5 font-bold text-[13px] whitespace-nowrap text-[#1F2835]"
                 >
                   Role
                 </th>
                 <th
-                  class="px-2 py-[3px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  class="px-3 py-1.5 font-bold text-[13px] whitespace-nowrap text-[#1F2835]"
                 >
                   Date added
                 </th>
                 <th
-                  class="px-2 py-[3px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11] sticky right-0 z-30 bg-[#f2f2f2] shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
+                  class="px-4 py-1.5 font-bold text-[13px] whitespace-nowrap text-[#1F2835] text-center w-28"
                 >
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-100">
               <tr
-                v-for="user in filteredUsers"
+                v-for="user in paginatedUsers"
                 :key="user.id"
-                class="transition-colors"
-                :class="{
-                  'bg-[#F52C11]/15': isSelected(user.id),
-                  'bg-white hover:bg-[#F52C11]/10': !isSelected(user.id),
-                }"
+                class="transition-colors bg-white hover:bg-[#f8fafc]"
+                :class="{ 'bg-[#F52C11]/5': isSelected(user.id) }"
               >
-                <td class="px-1.5 py-[3px] border border-gray-200 text-center">
+                <td class="px-3 py-1.5 text-center">
                   <input
                     type="checkbox"
                     :checked="isSelected(user.id)"
                     @change="toggleSelection(user.id)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                    class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                   />
                 </td>
+
                 <td
-                  class="px-2 py-[3px] border border-gray-200 whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                  class="px-3 py-1.5 whitespace-nowrap text-[12.5px] text-[#1F2835]"
                 >
-                  {{ user.fullName }}
+                  {{ user.name || user.full_name || user.fullName }}
                 </td>
+
                 <td
-                  class="px-2 py-[3px] border border-gray-200 whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                  class="px-3 py-1.5 whitespace-nowrap text-[12.5px] text-[#1F2835]"
                 >
                   {{ user.email }}
                 </td>
-                <td
-                  class="px-2 py-[3px] border border-gray-200 whitespace-nowrap"
-                >
+
+                <td class="px-3 py-1.5 whitespace-nowrap">
                   <span
-                    class="inline-flex items-center px-1.5 py-[1px] rounded-[8px] text-[10px] font-semibold"
+                    class="inline-flex items-center px-2.5 py-[2px] rounded-[6px] text-[11px] font-semibold tracking-wide"
                     :class="getRoleBadgeClass(user.role)"
                   >
-                    {{ user.role }}
+                    {{ user.role?.role_name || user.role || "No Role" }}
                   </span>
                 </td>
+
                 <td
-                  class="px-2 py-[3px] border border-gray-200 whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                  class="px-3 py-1.5 whitespace-nowrap text-[12.5px] text-gray-500"
                 >
-                  {{ user.dateAdded }}
+                  {{ formatDate(user.created_at || user.dateAdded) }}
                 </td>
-                <td
-                  class="px-2 py-[3px] border border-gray-200 whitespace-nowrap sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] transition-colors"
-                  :class="
-                    isSelected(user.id)
-                      ? 'bg-[#F52C11]/0'
-                      : 'bg-white hover:bg-[#F52C11]/0'
-                  "
-                >
-                  <div class="flex items-center gap-1.5">
-                    <!-- Edit Icon -->
+
+                <td class="px-4 py-1.5 whitespace-nowrap">
+                  <div class="flex items-center justify-center gap-2">
                     <button
-                      @click="openEditModal(user)"
-                      class="text-gray-400 hover:text-[#F52C11] transition-colors"
+                      @click="goToEditUser(user)"
+                      class="p-1.5 text-gray-400 hover:text-[#F52C11] border border-gray-200 rounded-[6px] bg-white transition-colors hover:shadow-sm"
                       title="Edit"
+                      aria-label="Edit user"
                     >
                       <svg
-                        class="w-3.5 h-3.5"
+                        class="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
+                        stroke-width="1.8"
                         viewBox="0 0 24 24"
                       >
                         <path
@@ -284,11 +231,9 @@
                         />
                       </svg>
                     </button>
-
-                    <!-- Lock Icon with Red Notification Dot -->
                     <button
                       @click="openResetPasswordModal(user)"
-                      class="relative text-gray-400 hover:text-amber-500 transition-colors"
+                      class="relative p-1.5 text-gray-400 hover:text-amber-500 border border-gray-200 rounded-[6px] bg-white transition-colors hover:shadow-sm"
                       :title="
                         user.passwordChanged
                           ? 'User changed password - Click to reset'
@@ -296,10 +241,10 @@
                       "
                     >
                       <svg
-                        class="w-3.5 h-3.5"
+                        class="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
+                        stroke-width="1.8"
                         viewBox="0 0 24 24"
                       >
                         <path
@@ -308,94 +253,106 @@
                           d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                         />
                       </svg>
-                      <!-- Red notification dot -->
                       <span
                         v-if="user.passwordChanged"
-                        class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"
+                        class="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full border border-white"
                       ></span>
                     </button>
                   </div>
                 </td>
               </tr>
-
-              <tr v-if="filteredUsers.length === 0">
-                <td
-                  colspan="6"
-                  class="px-4 py-12 text-center text-gray-400 border border-gray-200"
-                >
-                  <div v-if="searchQuery">
-                    No users found matching "<span
-                      class="font-semibold text-[#1F2835]"
-                      >{{ searchQuery }}</span
-                    >"
-                  </div>
-                  <div v-else>No users available</div>
-                </td>
-              </tr>
             </tbody>
           </table>
-        </div>
-
-        <!-- Bottom Selection Bar - ARCHIVE SELECTED -->
-        <div
-          v-if="selectedCount > 0"
-          class="shrink-0 bg-white border-t border-gray-200 px-3 py-[3px] flex items-center justify-between"
-        >
-          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
-            <svg
-              class="w-3.5 h-3.5 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span class="font-medium"
-              >{{ selectedCount }} user(s) selected</span
-            >
-          </div>
-          <button
-            @click="archiveSelectedUsers"
-            class="bg-[#F52C11] hover:bg-[#F52C11] text-white px-2.5 py-[2px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-          >
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-              />
-            </svg>
-            Archive selected
-          </button>
         </div>
       </section>
     </main>
 
-    <!-- Add User Modal -->
-    <div
-      v-if="showAddUserModal"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+    <footer
+      class="shrink-0 bg-[#f8fafc] px-8 pb-6 pt-2 flex flex-col gap-2.5 border-t border-gray-200/40 z-20"
     >
       <div
-        class="bg-white rounded-[8px] w-[480px] shadow-xl flex flex-col overflow-hidden"
+        v-if="selectedCount > 0"
+        class="w-full h-[42px] px-2 bg-[#f8fafc] flex items-center justify-between border-b border-gray-100"
       >
-        <div
-          class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white"
+        <div class="flex items-center gap-2 text-[12.5px] text-[#1F2835]">
+          <svg
+            class="w-4 h-4 text-[#F52C11]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v4m0 4h.01M12 3a9 9 0 100 18 9 9 0 000-18z"
+            />
+          </svg>
+
+          <span class="font-normal">
+            <span class="font-medium">{{ selectedCount }}</span>
+            {{ selectedCount === 1 ? "user" : "users" }} selected
+          </span>
+        </div>
+
+        <button
+          @click="archiveSelectedUsers"
+          class="flex items-center gap-1.5 bg-[#F52C11] hover:bg-[#d9250e] text-white px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors shadow-sm"
         >
-          <div class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-3.5 h-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 7h16M6 7V5a1 1 0 011-1h10a1 1 0 011 1v2m-1 0v11a1 1 0 01-1 1H7a1 1 0 01-1-1V7"
+            />
+          </svg>
+
+          <span>Archive selected</span>
+        </button>
+      </div>
+
+      <div
+        class="flex items-center justify-between px-2 text-[12px] text-gray-400 select-none"
+      >
+        <div>
+          Page
+          <span class="font-bold text-[#1F2835]">{{ currentPage }}</span> of
+          <span class="font-bold text-[#1F2835]">{{ totalPages }}</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span>Go to page</span>
+          <input
+            v-model.number="goToPageInput"
+            type="number"
+            min="1"
+            :max="totalPages"
+            class="w-14 text-center bg-white border border-gray-200 rounded-[6px] py-1 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors shadow-sm"
+            @keyup.enter="handleGoToPage"
+          />
+          <button
+            @click="handleGoToPage"
+            class="bg-white border border-gray-200 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-4 py-1 rounded-[6px] font-medium transition-colors shadow-sm bg-gradient-to-b from-white to-gray-50/50"
+          >
+            Go
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 1"
+            class="w-7 h-7 flex items-center justify-center rounded-[6px] border border-gray-200 bg-white text-gray-400 hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed transition-colors shadow-sm"
+          >
             <svg
-              class="w-4 h-4 text-[#F52C11]"
+              class="w-3.5 h-3.5"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
@@ -404,288 +361,144 @@
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-              />
-            </svg>
-            <div>
-              <h3 class="text-[14px] font-bold text-[#1F2835]">Add new user</h3>
-              <p class="text-[10px] text-gray-400">
-                Create a new system user account
-              </p>
-            </div>
-          </div>
-          <button
-            @click="closeAddUserModal"
-            class="text-gray-400 hover:text-[#1F2835] transition-colors"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
+                d="M15 19l-7-7 7-7"
               />
             </svg>
           </button>
-        </div>
 
-        <div class="px-5 py-4 bg-white space-y-3">
-          <div>
-            <label class="block text-[11px] font-medium text-[#1F2835] mb-1">
-              Full Name <span class="text-[#F52C11]">*</span>
-            </label>
-            <input
-              v-model="newUser.fullName"
-              type="text"
-              placeholder="Enter full name..."
-              class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-medium text-[#1F2835] mb-1">
-              Email <span class="text-[#F52C11]">*</span>
-            </label>
-            <input
-              v-model="newUser.email"
-              type="email"
-              placeholder="Enter email address..."
-              class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-medium text-[#1F2835] mb-1">
-              Role <span class="text-[#F52C11]">*</span>
-            </label>
-            <div class="relative">
-              <select
-                v-model="newUser.role"
-                class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer"
-              >
-                <option value="" disabled>Select a role...</option>
-                <option value="Admin">Admin</option>
-                <option value="Sales">Sales</option>
-              </select>
-              <svg
-                class="w-3 h-3 text-[#F52C11] absolute right-2.5 top-[9px] pointer-events-none"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-medium text-[#1F2835] mb-1">
-              Password <span class="text-[#F52C11]">*</span>
-            </label>
-            <input
-              v-model="newUser.password"
-              type="password"
-              placeholder="Enter password..."
-              class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-medium text-[#1F2835] mb-1">
-              Confirm Password <span class="text-[#F52C11]">*</span>
-            </label>
-            <input
-              v-model="newUser.confirmPassword"
-              type="password"
-              placeholder="Confirm password..."
-              class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-        </div>
-
-        <div
-          class="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
-        >
           <button
-            @click="closeAddUserModal"
-            class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            @click="addUser"
-            :disabled="!isAddUserValid"
+            v-for="page in totalPages"
+            :key="page"
+            @click="currentPage = page"
             :class="
-              isAddUserValid
-                ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              currentPage === page
+                ? 'bg-[#FFFFFF] text-black shadow-sm font-bold'
+                : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm'
             "
-            class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium transition-colors shadow-sm"
+            class="w-7 h-7 flex items-center justify-center rounded-[6px] text-[12px] transition-colors"
           >
-            Add user
+            {{ page }}
+          </button>
+
+          <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+            class="w-7 h-7 flex items-center justify-center rounded-[6px] border border-gray-200 bg-white text-gray-400 hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed transition-colors shadow-sm"
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
           </button>
         </div>
       </div>
-    </div>
+    </footer>
+  </div>
 
-    <!-- Reset Password Modal -->
+  <div
+    v-if="showResetPasswordModal && resettingUser"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-[2px]"
+  >
     <div
-      v-if="showResetPasswordModal && resettingUser"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-[2px]"
+      class="bg-white rounded-[12px] w-[480px] shadow-2xl flex flex-col overflow-hidden"
     >
       <div
-        class="bg-white rounded-[8px] w-[480px] shadow-2xl flex flex-col overflow-hidden"
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white"
       >
-        <div
-          class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white"
+        <h3 class="text-[15px] font-bold text-[#1F2835]">Reset Password</h3>
+        <button
+          @click="closeResetPasswordModal"
+          class="text-gray-400 hover:text-[#1F2835] transition-colors"
         >
-          <div class="flex items-center gap-2">
-            <svg
-              class="w-4 h-4 text-amber-500"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-            <div>
-              <h3 class="text-[14px] font-bold text-[#1F2835]">
-                Reset Password
-              </h3>
-              <p class="text-[10px] text-gray-400">
-                {{ resettingUser.fullName }} – {{ resettingUser.email }}
-              </p>
-            </div>
-          </div>
-          <button
-            @click="closeResetPasswordModal"
-            class="text-gray-400 hover:text-[#1F2835] transition-colors"
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
           >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
 
-        <div class="px-5 py-4 bg-white space-y-3">
+      <div class="px-6 py-5 bg-white space-y-4">
+        <div>
+          <label class="block text-[12px] font-medium text-[#1F2835] mb-1.5"
+            >New Password *</label
+          >
+          <input
+            v-model="resetPasswordData.newPassword"
+            type="password"
+            class="w-full border border-gray-300 rounded-[6px] px-3 py-2 text-[13px] focus:outline-none focus:border-[#F52C11]"
+          />
+        </div>
+        <div>
+          <label class="block text-[12px] font-medium text-[#1F2835] mb-1.5"
+            >Confirm New Password *</label
+          >
+          <input
+            v-model="resetPasswordData.confirmPassword"
+            type="password"
+            class="w-full border border-gray-300 rounded-[6px] px-3 py-2 text-[13px] focus:outline-none focus:border-[#F52C11]"
+          />
+        </div>
+      </div>
+
+      <div
+        class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
+      >
+        <button
+          @click="closeResetPasswordModal"
+          class="px-4 py-2 rounded-[6px] text-[12px] font-medium border border-gray-300 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button
+          @click="submitPasswordReset"
+          :disabled="!isResetPasswordValid"
+          :class="
+            isResetPasswordValid
+              ? 'bg-[#F52C11] text-white'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          "
+          class="px-4 py-2 rounded-[6px] text-[12px] font-medium"
+        >
+          Reset password
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    v-if="showArchiveModal"
+    class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 backdrop-blur-[1px]"
+  >
+    <div
+      class="bg-white rounded-[16px] w-[850px] max-h-[85vh] shadow-2xl flex flex-col overflow-hidden font-['Overpass']"
+    >
+      <div
+        class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white shrink-0"
+      >
+        <div class="flex items-center gap-3">
           <div
-            v-if="resettingUser.passwordChanged"
-            class="bg-red-50 border border-red-200 rounded-[4px] px-3 py-2 flex items-start gap-2"
+            class="w-10 h-10 rounded-[10px] bg-red-50 flex items-center justify-center text-[#F52C11]"
           >
             <svg
-              class="w-4 h-4 text-red-500 mt-0.5 shrink-0"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            <div>
-              <p class="text-[11px] font-medium text-red-700">
-                Password Change Detected
-              </p>
-              <p class="text-[10px] text-red-600">
-                This user has recently changed their password. You can reset it
-                below.
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-medium text-[#1F2835] mb-1">
-              New Password <span class="text-[#F52C11]">*</span>
-            </label>
-            <input
-              v-model="resetPasswordData.newPassword"
-              type="password"
-              placeholder="Enter new password..."
-              class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-medium text-[#1F2835] mb-1">
-              Confirm New Password <span class="text-[#F52C11]">*</span>
-            </label>
-            <input
-              v-model="resetPasswordData.confirmPassword"
-              type="password"
-              placeholder="Confirm new password..."
-              class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-        </div>
-
-        <div
-          class="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
-        >
-          <button
-            @click="closeResetPasswordModal"
-            class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            @click="resetUserPassword"
-            :disabled="!isResetPasswordValid"
-            :class="
-              isResetPasswordValid
-                ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            "
-            class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium transition-colors shadow-sm"
-          >
-            Reset Password
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- View Archive Modal -->
-    <div
-      v-if="showArchiveModal"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-    >
-      <div
-        class="bg-white rounded-[8px] w-[600px] max-h-[80vh] shadow-xl flex flex-col overflow-hidden"
-      >
-        <!-- Modal Header -->
-        <div
-          class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white shrink-0"
-        >
-          <div class="flex items-center gap-2">
-            <svg
-              class="w-4 h-4 text-amber-500"
+              class="w-5 h-5"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
@@ -697,128 +510,176 @@
                 d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
               />
             </svg>
-            <div>
-              <h3 class="text-[14px] font-bold text-[#1F2835]">
-                Archived Users
-              </h3>
-              <p class="text-[10px] text-gray-400">
-                {{ archivedUsers.length }} archived user(s)
-              </p>
-            </div>
           </div>
-          <button
-            @click="showArchiveModal = false"
-            class="text-gray-400 hover:text-[#1F2835] transition-colors"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+          <div>
+            <h3 class="text-[16px] font-bold text-[#1F2835] leading-tight">
+              Archived users
+            </h3>
+            <p class="text-[12px] text-gray-400 mt-0.5">User management page</p>
+          </div>
         </div>
-
-        <!-- Modal Body -->
-        <div class="flex-1 overflow-auto custom-scroll p-4">
-          <div
-            v-if="archivedUsers.length === 0"
-            class="text-center py-12 text-gray-400"
+        <button
+          @click="showArchiveModal = false"
+          class="text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
           >
-            <svg
-              class="w-10 h-10 mx-auto mb-2 text-gray-300"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-              />
-            </svg>
-            <p class="text-[12px]">No archived users yet</p>
-          </div>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
 
-          <table v-else class="w-full border-collapse text-left">
-            <thead class="bg-[#f2f2f2] sticky top-0 z-10">
-              <tr>
-                <th
-                  class="px-3 py-[6px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Full Name
-                </th>
-                <th
-                  class="px-3 py-[6px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Email
-                </th>
-                <th
-                  class="px-3 py-[6px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Role
-                </th>
-                <th
-                  class="px-3 py-[6px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Date archived
-                </th>
-                <th
-                  class="px-3 py-[6px] border border-gray-200 font-semibold text-[11px] whitespace-nowrap text-[#F52C11] text-center"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="user in archivedUsers"
-                :key="user.id"
-                class="bg-white hover:bg-gray-50 transition-colors"
+      <div
+        class="flex items-center justify-between px-6 py-4 bg-white shrink-0 gap-4"
+      >
+        <p class="text-[12px] text-gray-400">
+          These users have been archived and can no longer access the system.
+        </p>
+        <div class="relative flex items-center">
+          <svg
+            class="w-4 h-4 text-gray-400 absolute left-3 pointer-events-none"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          <input
+            v-model="archivedSearchQuery"
+            type="text"
+            placeholder="Search archived users..."
+            class="pl-9 pr-3 py-1.5 w-64 bg-white border border-gray-200 rounded-[6px] focus:outline-none focus:border-[#F52C11] text-[12px] placeholder:text-gray-400 transition-colors"
+          />
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-auto custom-scroll px-6 pb-4 bg-white">
+        <table
+          v-if="filteredArchivedUsers.length > 0"
+          class="w-full border-collapse text-left table-fixed border-t border-gray-100"
+        >
+          <thead class="bg-gray-50/70 sticky top-0 z-10">
+            <tr>
+              <th
+                class="w-[20%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider"
               >
-                <td
-                  class="px-3 py-[6px] border border-gray-200 whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                Full Name
+              </th>
+              <th
+                class="w-[23%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider"
+              >
+                Email
+              </th>
+              <th
+                class="w-[12%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider"
+              >
+                Role
+              </th>
+              <th
+                class="w-[16%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider"
+              >
+                Date Archived
+              </th>
+              <th
+                class="w-[16%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider"
+              >
+                Archived By
+              </th>
+              <th
+                class="w-[13%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider text-center"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr
+              v-for="user in filteredArchivedUsers"
+              :key="user.id"
+              class="bg-white hover:bg-gray-50/80 transition-colors"
+            >
+              <td
+                class="px-3 py-3 text-[12px] text-[#1F2835] truncate"
+                :title="user.fullName || user.name || user.full_name"
+              >
+                {{ user.fullName || user.name || user.full_name }}
+              </td>
+              <td
+                class="px-3 py-3 text-[12px] text-gray-600 truncate"
+                :title="user.email"
+              >
+                {{ user.email }}
+              </td>
+              <td class="px-3 py-3 whitespace-nowrap">
+                <span
+                  class="inline-flex items-center px-2 py-[2px] rounded-[6px] text-[11px] font-semibold"
+                  :class="getRoleBadgeClass(user.role)"
                 >
-                  {{ user.fullName }}
-                </td>
-                <td
-                  class="px-3 py-[6px] border border-gray-200 whitespace-nowrap text-[11px] text-gray-600"
+                  {{ user.role?.role_name || user.role || "No Role" }}
+                </span>
+              </td>
+              <td class="px-3 py-3 text-[12px] text-gray-500 leading-normal">
+                <div>
+                  {{
+                    formatArchiveDate(
+                      user.deleted_at || user.archivedAt || user.archived_date
+                    )
+                  }}
+                </div>
+                <div class="text-[11px] text-gray-400">
+                  {{
+                    formatArchiveTime(
+                      user.deleted_at || user.archivedAt || user.archived_time
+                    )
+                  }}
+                </div>
+              </td>
+              <td class="px-3 py-3 text-[12px] text-gray-500 leading-normal">
+                <div
+                  class="text-gray-700 truncate"
+                  :title="
+                    user.archived_by_name ||
+                    user.archivedBy?.name ||
+                    user.archivedBy?.fullName
+                  "
                 >
-                  {{ user.email }}
-                </td>
-                <td
-                  class="px-3 py-[6px] border border-gray-200 whitespace-nowrap"
+                  {{
+                    user.archived_by_name ||
+                    user.archivedBy?.name ||
+                    user.archivedBy?.fullName ||
+                    "System"
+                  }}
+                </div>
+                <div
+                  class="text-[11px] text-gray-400 truncate"
+                  :title="user.archived_by_email || user.archivedBy?.email"
                 >
-                  <span
-                    class="inline-flex items-center px-2 py-[1px] rounded-[4px] text-[10px] font-semibold border"
-                    :class="getRoleBadgeClass(user.role)"
-                  >
-                    {{ user.role }}
-                  </span>
-                </td>
-                <td
-                  class="px-3 py-[6px] border border-gray-200 whitespace-nowrap text-[11px] text-gray-500"
-                >
-                  {{ user.dateArchived }}
-                </td>
-                <td
-                  class="px-3 py-[6px] border border-gray-200 whitespace-nowrap text-center"
-                >
+                  {{ user.archived_by_email || user.archivedBy?.email || "" }}
+                </div>
+              </td>
+              <td class="px-3 py-3 text-center whitespace-nowrap">
+                <div class="flex items-center justify-center gap-1.5">
                   <button
                     @click="unarchiveUser(user.id)"
-                    class="text-gray-400 hover:text-green-600 transition-colors inline-flex items-center gap-1 text-[11px] font-medium"
+                    class="border border-gray-200 rounded-[6px] px-2 py-1 flex items-center gap-1 text-[11px] font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
                     title="Restore user"
                   >
                     <svg
-                      class="w-3.5 h-3.5"
+                      class="w-3.5 h-3.5 text-green-600"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2"
@@ -827,153 +688,391 @@
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 6H16"
                       />
                     </svg>
                     Restore
                   </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                  <button
+                    @click="deleteArchivedUser(user.id)"
+                    class="border border-gray-200 hover:border-red-500 hover:text-red-500 rounded-[6px] px-2 py-1 flex items-center gap-1 text-[11px] font-medium text-gray-700 bg-white hover:bg-red-50/30 transition-colors shadow-sm"
+                    title="Permanently delete user"
+                  >
+                    <svg
+                      class="w-3.5 h-3.5 text-[#F52C11]"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else class="text-center py-12 text-gray-400 text-[12px]">
+          No archived users found
+        </p>
+      </div>
 
-        <!-- Modal Footer -->
-        <div
-          class="px-5 py-3 border-t border-gray-100 flex items-center justify-end bg-white shrink-0"
-        >
-          <button
-            @click="showArchiveModal = false"
-            class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+      <div
+        class="border-t border-gray-100 px-6 py-4 flex items-center justify-between bg-white shrink-0"
+      >
+        <div class="flex items-center gap-1.5 text-[12px] text-gray-400">
+          <div
+            class="w-4 h-4 rounded-full border border-red-400 flex items-center justify-center text-red-500 text-[11px] font-bold shrink-0"
           >
-            Close
-          </button>
+            !
+          </div>
+          <span
+            >Restoring moves the user back to the active user list and restores
+            their system access.</span
+          >
         </div>
+        <button
+          @click="showArchiveModal = false"
+          class="border border-gray-300 rounded-[6px] px-4 py-1.5 text-gray-700 text-[12px] hover:bg-gray-50 transition-colors font-medium"
+        >
+          Close
+        </button>
       </div>
     </div>
-
-    <!-- Click outside to close dropdowns -->
-    <div
-      v-if="showRoleDropdown"
-      class="fixed inset-0 z-40"
-      @click="showRoleDropdown = false"
-    ></div>
   </div>
+
+  <div
+    v-if="showRoleDropdown"
+    class="fixed inset-0 z-40"
+    @click="showRoleDropdown = false"
+  ></div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useAuditLog } from "~/composables/useAuditLog";
 
+const router = useRouter();
+const { logAuditAction } = useAuditLog();
+const {
+  fetchUsers: getUsers,
+  archiveUsers,
+  fetchArchivedUsers,
+  restoreUser,
+  deleteUser,
+} = useUserApi();
+
+definePageMeta({
+  layout: "app",
+  middleware: "auth",
+});
+
+// --- API CONFIGURATION ---
+// Safely maps to fallback route if API endpoints are standard
+const API_BASE_URL = "/api";
+
+// --- STATE VARIABLES ---
+const isLoading = ref(false);
 const searchQuery = ref("");
+const archivedSearchQuery = ref("");
 const selectedRole = ref("All roles");
 const selectedIds = ref([]);
-
-const showRoleDropdown = ref(false);
-const showAddUserModal = ref(false);
-const showEditModal = ref(false);
-const showArchiveModal = ref(false);
-const showResetPasswordModal = ref(false);
-const editingUser = ref(null);
-const resettingUser = ref(null);
-
 const roleOptions = ["All roles", "Admin", "Sales"];
 
-const newUser = ref({
-  fullName: "",
-  email: "",
-  role: "",
-  password: "",
-  confirmPassword: "",
-});
+const showRoleDropdown = ref(false);
+const showArchiveModal = ref(false);
+const showResetPasswordModal = ref(false);
 
-const resetPasswordData = ref({
-  newPassword: "",
-  confirmPassword: "",
-});
+const resettingUser = ref(null);
+const resetPasswordData = ref({ newPassword: "", confirmPassword: "" });
 
-// Active users (with passwordChanged flag for demo)
-const users = ref([
-  {
-    id: 1,
-    fullName: "Mabby RWEB",
-    email: "mabby@rweb.com",
-    role: "Admin",
-    dateAdded: "Jan 10, 2026",
-    passwordChanged: false,
-  },
-  {
-    id: 2,
-    fullName: "Kef RWEB",
-    email: "kef@rweb.com",
-    role: "Sales",
-    dateAdded: "Feb 3, 2026",
-    passwordChanged: true,
-  },
-  {
-    id: 3,
-    fullName: "Kent RWEB",
-    email: "kent@rweb.com",
-    role: "Sales",
-    dateAdded: "Mar 15, 2026",
-    passwordChanged: false,
-  },
-  {
-    id: 4,
-    fullName: "Queen RWEB",
-    email: "queen@rweb.com",
-    role: "Admin",
-    dateAdded: "Apr 1, 2026",
-    passwordChanged: true,
-  },
-]);
+// --- PAGINATION STATE ---
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const goToPageInput = ref("");
 
-// Archived users storage
+// --- DATA CONTAINERS ---
+const users = ref([]);
 const archivedUsers = ref([]);
 
+// --- LIFECYCLE ---
+onMounted(() => {
+  fetchUsers();
+});
+
+// --- WATCHERS ---
+watch([searchQuery, selectedRole], () => {
+  currentPage.value = 1;
+});
+
+// --- NAVIGATION ---
+function navigateToAddUser() {
+  router.push("/users/create");
+}
+
+function goToEditUser(user) {
+  router.push({
+    path: "/users/edit",
+    query: { id: user.id },
+  });
+}
+
+// --- FORMATTERS ---
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+// --- FORMAT ARCHIVE DATES ---
+function formatArchiveDate(dateString) {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatArchiveTime(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString.includes(":") ? dateString : "";
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+// --- PAGINATION METHODS ---
+function prevPage() {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+}
+
+function nextPage() {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+}
+
+function handleGoToPage() {
+  const targetPage = parseInt(goToPageInput.value);
+  if (targetPage && targetPage >= 1 && targetPage <= totalPages.value) {
+    currentPage.value = targetPage;
+  }
+  goToPageInput.value = "";
+}
+
+// --- API ACTIONS ---
+async function fetchUsers() {
+  isLoading.value = true;
+  try {
+    const response = await getUsers();
+    users.value = response.data || [];
+  } catch (error) {
+    console.error("Error connecting to database:", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function openArchiveModal() {
+  showArchiveModal.value = true;
+  archivedSearchQuery.value = "";
+  try {
+    const response = await fetchArchivedUsers();
+    archivedUsers.value = response.data || [];
+  } catch (error) {
+    console.error("Error fetching archived users:", error);
+  }
+}
+
+async function archiveSelectedUsers() {
+  if (selectedIds.value.length === 0) return;
+  try {
+    const archivedNames = users.value
+      .filter((u) => selectedIds.value.includes(u.id))
+      .map((u) => u.full_name || u.name || u.email)
+      .join(", ");
+
+    await archiveUsers(selectedIds.value);
+    users.value = users.value.filter((u) => !selectedIds.value.includes(u.id));
+
+    logAuditAction({
+      module: "User Management",
+      description:
+        selectedIds.value.length === 1
+          ? `Archived user account: ${archivedNames}`
+          : `Archived ${selectedIds.value.length} user accounts: ${archivedNames}`,
+    });
+
+    selectedIds.value = [];
+  } catch (error) {
+    console.error("Error archiving users:", error);
+  }
+}
+
+async function unarchiveUser(id) {
+  try {
+    const restoredUser = archivedUsers.value.find((u) => u.id === id);
+    const restoredName =
+      restoredUser?.full_name ||
+      restoredUser?.name ||
+      restoredUser?.email ||
+      "user";
+
+    await restoreUser(id);
+    await fetchUsers();
+    await openArchiveModal();
+
+    logAuditAction({
+      module: "User Management",
+      description: `Restored user account: ${restoredName}`,
+    });
+  } catch (error) {
+    console.error("Error restoring user:", error);
+  }
+}
+
+async function deleteArchivedUser(id) {
+  if (
+    !window.confirm(
+      "Are you sure you want to permanently delete this user? This action cannot be undone."
+    )
+  ) {
+    return;
+  }
+  try {
+    const deletedUser = archivedUsers.value.find((u) => u.id === id);
+    const deletedName =
+      deletedUser?.full_name ||
+      deletedUser?.name ||
+      deletedUser?.email ||
+      "user";
+
+    await deleteUser(id);
+    archivedUsers.value = archivedUsers.value.filter((u) => u.id !== id);
+
+    logAuditAction({
+      module: "User Management",
+      description: `Permanently deleted user account: ${deletedName}`,
+    });
+  } catch (error) {
+    console.error("Error deleting user from database:", error);
+  }
+}
+
+async function submitPasswordReset() {
+  if (!isResetPasswordValid.value || !resettingUser.value) return;
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/users/${resettingUser.value.id}/reset-password`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: resetPasswordData.value.newPassword }),
+      }
+    );
+    if (response.ok) {
+      const resetName =
+        resettingUser.value.full_name ||
+        resettingUser.value.name ||
+        resettingUser.value.email ||
+        "user";
+
+      logAuditAction({
+        module: "User Management",
+        description: `Reset password for user: ${resetName}`,
+      });
+
+      closeResetPasswordModal();
+      fetchUsers();
+    }
+  } catch (error) {
+    console.error("Error resetting password:", error);
+  }
+}
+
+// --- COMPUTED PROPERTIES ---
 const filteredUsers = computed(() => {
   let result = users.value;
-
   const q = searchQuery.value.trim().toLowerCase();
+
   if (q) {
     result = result.filter(
       (u) =>
-        u.fullName.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q)
+        (u.full_name || u.name || "").toLowerCase().includes(q) ||
+        (u.email || "").toLowerCase().includes(q)
     );
   }
 
   if (selectedRole.value !== "All roles") {
-    result = result.filter((u) => u.role === selectedRole.value);
+    result = result.filter((u) => {
+      const roleName = u.role?.role_name || "";
+      return roleName.toLowerCase() === selectedRole.value.toLowerCase();
+    });
   }
+  return result;
+});
 
+const paginatedUsers = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage.value;
+  const endIndex = startIndex + itemsPerPage.value;
+  return filteredUsers.value.slice(startIndex, endIndex);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredUsers.value.length / itemsPerPage.value) || 1;
+});
+
+const filteredArchivedUsers = computed(() => {
+  let result = archivedUsers.value;
+  const q = archivedSearchQuery.value.trim().toLowerCase();
+  if (q) {
+    result = result.filter(
+      (u) =>
+        (u.fullName || u.name || u.full_name || "").toLowerCase().includes(q) ||
+        (u.email || "").toLowerCase().includes(q)
+    );
+  }
   return result;
 });
 
 const adminCount = computed(
-  () => users.value.filter((u) => u.role === "Admin").length
+  () =>
+    users.value.filter(
+      (u) => (u.role?.role_name || u.role || "").toLowerCase() === "admin"
+    ).length
 );
 const salesCount = computed(
-  () => users.value.filter((u) => u.role === "Sales").length
+  () =>
+    users.value.filter(
+      (u) => (u.role?.role_name || u.role || "").toLowerCase() === "sales"
+    ).length
 );
 
 const selectedCount = computed(() => selectedIds.value.length);
-const isAllSelected = computed(() => {
-  return (
-    filteredUsers.value.length > 0 &&
-    filteredUsers.value.every((u) => selectedIds.value.includes(u.id))
-  );
-});
 
-const isAddUserValid = computed(() => {
-  return (
-    newUser.value.fullName.trim() &&
-    newUser.value.email.trim() &&
-    newUser.value.role &&
-    newUser.value.password.trim() &&
-    newUser.value.confirmPassword.trim() &&
-    newUser.value.password === newUser.value.confirmPassword
-  );
-});
+const isAllSelected = computed(
+  () =>
+    paginatedUsers.value.length > 0 &&
+    paginatedUsers.value.every((u) => selectedIds.value.includes(u.id))
+);
 
 const isResetPasswordValid = computed(() => {
   return (
@@ -984,25 +1083,22 @@ const isResetPasswordValid = computed(() => {
   );
 });
 
+// --- HELPER FUNCTIONS ---
 function isSelected(id) {
   return selectedIds.value.includes(id);
 }
 
 function toggleSelection(id) {
   const idx = selectedIds.value.indexOf(id);
-  if (idx > -1) {
-    selectedIds.value.splice(idx, 1);
-  } else {
-    selectedIds.value.push(id);
-  }
+  if (idx > -1) selectedIds.value.splice(idx, 1);
+  else selectedIds.value.push(id);
 }
 
 function toggleAll() {
-  const visibleIds = filteredUsers.value.map((u) => u.id);
+  const visibleIds = paginatedUsers.value.map((u) => u.id);
   const allVisibleSelected = visibleIds.every((id) =>
     selectedIds.value.includes(id)
   );
-
   if (allVisibleSelected) {
     selectedIds.value = selectedIds.value.filter(
       (id) => !visibleIds.includes(id)
@@ -1013,35 +1109,19 @@ function toggleAll() {
   }
 }
 
-function getRoleBadgeClass(role) {
-  const map = {
-    Admin: "bg-red-100 text-red-600",
-    Sales: "bg-green-100 text-green-600",
-  };
-  return map[role] || "bg-gray-100 text-gray-700 border-gray-200";
+function getRoleBadgeClass(roleObj) {
+  const roleName =
+    typeof roleObj === "string" ? roleObj : roleObj?.role_name || "";
+  const normalizedRole = roleName.toLowerCase();
+
+  if (normalizedRole === "admin")
+    return "bg-red-50 text-red-600 border border-red-100/60";
+  if (normalizedRole === "sales")
+    return "bg-green-50 text-green-600 border border-green-100/60";
+
+  return "bg-gray-50 text-gray-600 border border-gray-200";
 }
 
-function openEditModal(user) {
-  editingUser.value = { ...user };
-  showEditModal.value = true;
-}
-
-function closeEditModal() {
-  showEditModal.value = false;
-  editingUser.value = null;
-}
-
-function saveEditChanges() {
-  if (!editingUser.value) return;
-
-  const idx = users.value.findIndex((u) => u.id === editingUser.value.id);
-  if (idx > -1) {
-    users.value[idx] = { ...editingUser.value };
-  }
-  closeEditModal();
-}
-
-// Open Reset Password Modal
 function openResetPasswordModal(user) {
   resettingUser.value = { ...user };
   resetPasswordData.value = { newPassword: "", confirmPassword: "" };
@@ -1053,123 +1133,6 @@ function closeResetPasswordModal() {
   resettingUser.value = null;
   resetPasswordData.value = { newPassword: "", confirmPassword: "" };
 }
-
-// Reset user password and clear the passwordChanged flag
-function resetUserPassword() {
-  if (!isResetPasswordValid.value || !resettingUser.value) return;
-
-  const idx = users.value.findIndex((u) => u.id === resettingUser.value.id);
-  if (idx > -1) {
-    users.value[idx].passwordChanged = false;
-  }
-
-  closeResetPasswordModal();
-}
-
-function deleteUser(id) {
-  const idx = users.value.findIndex((u) => u.id === id);
-  if (idx > -1) {
-    users.value.splice(idx, 1);
-  }
-  selectedIds.value = selectedIds.value.filter((sid) => sid !== id);
-}
-
-// Archive single user
-function archiveUser(id) {
-  const idx = users.value.findIndex((u) => u.id === id);
-  if (idx > -1) {
-    const user = users.value[idx];
-    const now = new Date();
-    const dateStr = now.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-
-    archivedUsers.value.push({
-      ...user,
-      dateArchived: dateStr,
-    });
-
-    users.value.splice(idx, 1);
-    selectedIds.value = selectedIds.value.filter((sid) => sid !== id);
-  }
-}
-
-// Archive selected users
-function archiveSelectedUsers() {
-  const idsToArchive = new Set(selectedIds.value);
-  const usersToArchive = users.value.filter((u) => idsToArchive.has(u.id));
-
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  usersToArchive.forEach((user) => {
-    archivedUsers.value.push({
-      ...user,
-      dateArchived: dateStr,
-    });
-  });
-
-  users.value = users.value.filter((u) => !idsToArchive.has(u.id));
-  selectedIds.value = [];
-}
-
-// Unarchive / Restore user
-function unarchiveUser(id) {
-  const idx = archivedUsers.value.findIndex((u) => u.id === id);
-  if (idx > -1) {
-    const user = archivedUsers.value[idx];
-    const { dateArchived, ...restoredUser } = user;
-
-    users.value.push(restoredUser);
-    archivedUsers.value.splice(idx, 1);
-  }
-}
-
-function closeAddUserModal() {
-  showAddUserModal.value = false;
-  newUser.value = {
-    fullName: "",
-    email: "",
-    role: "",
-    password: "",
-    confirmPassword: "",
-  };
-}
-
-function addUser() {
-  if (!isAddUserValid.value) return;
-
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
-  const newId =
-    Math.max(
-      ...users.value.map((u) => u.id),
-      ...archivedUsers.value.map((u) => u.id),
-      0
-    ) + 1;
-
-  users.value.push({
-    id: newId,
-    fullName: newUser.value.fullName.trim(),
-    email: newUser.value.email.trim(),
-    role: newUser.value.role,
-    dateAdded: dateStr,
-    passwordChanged: false,
-  });
-
-  closeAddUserModal();
-}
 </script>
 
 <style scoped>
@@ -1178,11 +1141,6 @@ function addUser() {
 .custom-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;
-}
-table th,
-table td {
-  border-left: none !important;
-  border-right: none !important;
 }
 .custom-scroll::-webkit-scrollbar-track {
   background: #f1f1f1;
@@ -1194,8 +1152,16 @@ table td {
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: #d9250e;
 }
-
 input[type="checkbox"] {
   accent-color: #f52c11;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  appearance: textfield;
 }
 </style>

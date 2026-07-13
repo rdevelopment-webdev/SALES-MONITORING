@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PerformancePlan extends Model
 {
     use HasFactory;
+
     protected $table = 'performanceplans';
 
     protected $fillable = [
@@ -26,29 +27,58 @@ class PerformancePlan extends Model
         'contact_name',
         'contact_number',
         'communication_id',
+        'archived_at',
     ];
 
-    public function User(){
+    // Relationship methods use camelCase to match controller's with() calls
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function Archive(){
-        return $this->hasMany(Archive::class);
-    }
-
-    public function Sales_Representative(){
-    return $this->belongsTo(SalesRepresentative::class, 'representative__id');
-    }
-
-    public function ProspectTechnique(){
+    public function technique()  // was ProspectTechnique()
+    {
         return $this->belongsTo(ProspectTechnique::class, 'technique_id');
     }
 
-    public function Service(){
+    public function service()  // already correct
+    {
         return $this->belongsTo(Service::class, 'service_id');
-    } 
+    }
 
-    public function Way_of_Communication(){
+    public function salesRepresentative()  // was Sales_Representative()
+    {
+        return $this->belongsTo(SalesRepresentative::class, 'representative__id');
+    }
+
+    public function waysOfCommunication()  // was Way_of_Communication()
+    {
         return $this->belongsTo(Way_of_Communication::class, 'communication_id');
+    }
+
+    /**
+     * Archive this record by stamping archived_at with the current time.
+     * Called from PerformancePlanController's archive route.
+     */
+    public function archive()
+    {
+        $this->update(['archived_at' => now()]);
+    }
+
+    /**
+     * Restore this record by clearing archived_at.
+     * Called from PerformancePlanController's unarchive route.
+     */
+    public function unarchive()
+    {
+        $this->update(['archived_at' => null]);
+    }
+
+    /**
+     * True if this record is currently archived.
+     */
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
     }
 }

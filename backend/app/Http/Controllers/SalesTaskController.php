@@ -9,7 +9,7 @@ class SalesTaskController extends Controller
 {
     public function index()
     {
-        $tasks = SalesTask::with('user')->get();
+        $tasks = SalesTask::active()->with('user')->get();
         return response()->json($tasks);
     }
 
@@ -18,8 +18,20 @@ class SalesTaskController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'task_date' => 'required|date',
-            'task_notes' => 'nullable|string', 
+            'checklist' => 'nullable|array',
+            'progress' => 'nullable|integer|min:0|max:100',
         ]);
+
+        // The sales_task table stores checklist + progress together as a
+        // JSON string in task_notes (see mapApiRecord() on the frontend,
+        // which parses task_notes back into { checklist, progress }).
+        // checklist/progress aren't real columns, so they're packed here
+        // and removed before create().
+        $validated['task_notes'] = json_encode([
+            'checklist' => $validated['checklist'] ?? [],
+            'progress' => $validated['progress'] ?? 0,
+        ]);
+        unset($validated['checklist'], $validated['progress']);
 
         $task = SalesTask::create($validated);
 
@@ -39,8 +51,19 @@ class SalesTaskController extends Controller
         $validated = $request->validate([
             'user_id' => 'sometimes|exists:users,id',
             'task_date' => 'sometimes|date',
-            'task_notes' => 'nullable|string',
+            'checklist' => 'nullable|array',
+            'progress' => 'nullable|integer|min:0|max:100',
         ]);
+
+        if (array_key_exists('checklist', $validated) || array_key_exists('progress', $validated)) {
+            $existing = json_decode($salestask->task_notes ?? '{}', true) ?: [];
+
+            $validated['task_notes'] = json_encode([
+                'checklist' => $validated['checklist'] ?? ($existing['checklist'] ?? []),
+                'progress' => $validated['progress'] ?? ($existing['progress'] ?? 0),
+            ]);
+        }
+        unset($validated['checklist'], $validated['progress']);
 
         $salestask->update($validated);
 

@@ -6,7 +6,8 @@ definePageMeta({
 });
 
 if (process.client) {
-  const token = localStorage.getItem("token");
+  const { read } = useBrowserStorage();
+  const token = read("token");
   await navigateTo(token ? "/users" : "/login");
 }
 </script>

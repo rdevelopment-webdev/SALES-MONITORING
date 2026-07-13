@@ -27,8 +27,9 @@ return new class extends Migration
             $table->string('contact_number');
             $table->foreignId('communication_id')->constrained('ways_of_communication')->onDelete('cascade');
             $table->timestamps();
+            $table->timestamp('archived_at')->nullable();
         });
-    } 
+    }
 
     public function down(): void
     {

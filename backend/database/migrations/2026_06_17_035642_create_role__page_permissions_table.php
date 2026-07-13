@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('permission_name');
             $table->boolean('can_create')->default(false);
             $table->boolean('can_edit')->default(false);
-            $table->boolean('can_update')->default(false);
+            $table->boolean('can_archive')->default(false);
             $table->boolean('can_view')->default(false);
             $table->timestamps();
 

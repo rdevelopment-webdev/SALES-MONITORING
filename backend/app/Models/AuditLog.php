@@ -11,10 +11,21 @@ class AuditLog extends Model
 {
     protected $fillable = [
         'user_id',
-        'time_log',
-        'action', 
-        
+        'module',
+        'action',
+        'record_id',
+        'old_values',
+        'new_values',
+        'ip_address',
+        'user_agent',
+        'time_log'
     ];
+
+    protected $casts = [
+        'old_values' => 'array',
+        'new_values' => 'array',
+    ];
+
 
     public function User(){
         return $this->belongsTo(User::class);

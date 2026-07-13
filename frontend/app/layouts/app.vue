@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-[#f4f6fa]">
+  <div class="flex h-screen min-h-screen overflow-hidden bg-[#f0f0f0]">
     <aside
       class="flex h-screen w-64 shrink-0 flex-col bg-[#1f2835] text-white font-overpass select-none"
     >
@@ -28,10 +28,10 @@
           </span>
 
           <ul class="space-y-0.5">
-            <li>
-              <button
-                type="button"
-                @click="goTo('/users')"
+            <li v-if="canView('user-management')">
+              <NuxtLink
+                to="/users"
+                @click="isAdminMenuOpen = false"
                 :class="[
                   'flex w-full items-center gap-3 rounded px-3 py-2 text-sm transition-colors',
                   isUserManagementActive
@@ -51,15 +51,22 @@
                   />
                 </svg>
                 <span class="font-medium">User Management</span>
-              </button>
+              </NuxtLink>
             </li>
 
-            <li>
+            <li
+              v-if="
+                canView('lead-tracker') ||
+                canView('industry') ||
+                canView('performance-improvement-plan')
+              "
+            >
               <button
                 type="button"
                 @click="toggleLeadsTracker"
+                :aria-expanded="isLeadsTrackerOpen"
                 :class="[
-                  'flex w-full items-center justify-between rounded px-3 py-2 text-sm transition-colors',
+                  'flex w-full items-center justify-between rounded px-3 py-2 text-sm transition-colors text-left',
                   isLeadTrackerActive
                     ? 'bg-[#f52c11]/20 text-white'
                     : 'text-gray-300 hover:bg-white/5 hover:text-white',
@@ -92,40 +99,53 @@
               </button>
 
               <ul v-show="isLeadsTrackerOpen" class="mt-0.5 space-y-0">
-                <li>
+                <li v-if="canView('lead-tracker') || canView('industry')">
                   <button
                     type="button"
-                    @click="goTo('/lead-tracker')"
+                    @click="toggleLeads"
+                    :aria-expanded="isLeadsOpen"
                     :class="[
-                      'ml-7 flex w-[calc(100%-1.75rem)] items-center justify-between rounded px-3 py-1.5 text-xs transition-colors',
-                      route.path === '/lead-tracker'
+                      'ml-7 flex w-[calc(100%-1.75rem)] items-center justify-between rounded px-3 py-1.5 text-left text-xs transition-colors',
+                      isLeadActive
                         ? 'bg-[#f52c11]/20 text-white'
                         : 'text-gray-400 hover:bg-white/5 hover:text-white',
                     ]"
                   >
                     <span class="font-medium">Leads</span>
+                    <svg
+                      :class="isLeadsOpen ? 'rotate-180' : ''"
+                      class="h-3 w-3 shrink-0 transition-transform duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M5 15l7-7 7 7" />
+                    </svg>
                   </button>
+
+                  <ul v-show="isLeadsOpen" class="mt-0.5 space-y-0">
+                    <li v-if="canView('industry')">
+                      <NuxtLink
+                        to="/industry"
+                        @click="isAdminMenuOpen = false"
+                        :class="[
+                          'ml-12 flex w-[calc(100%-3rem)] items-center rounded px-3 py-1.5 text-xs transition-colors',
+                          route.path.startsWith('/industry')
+                            ? 'bg-[#f52c11]/20 text-white'
+                            : 'text-gray-400 hover:bg-white/5 hover:text-white',
+                        ]"
+                      >
+                        Industry
+                      </NuxtLink>
+                    </li>
+                  </ul>
                 </li>
 
-                <li>
-                  <button
-                    type="button"
-                    @click="goTo('/lead-tracker/create')"
-                    :class="[
-                      'ml-12 flex w-[calc(100%-3rem)] items-center rounded px-3 py-1.5 text-xs transition-colors',
-                      route.path === '/lead-tracker/create'
-                        ? 'bg-[#f52c11]/20 text-white'
-                        : 'text-gray-400 hover:bg-white/5 hover:text-white',
-                    ]"
-                  >
-                    Industry
-                  </button>
-                </li>
-
-                <li>
-                  <button
-                    type="button"
-                    @click="goTo('/PIP')"
+                <li v-if="canView('performance-improvement-plan')">
+                  <NuxtLink
+                    to="/PIP"
+                    @click="isAdminMenuOpen = false"
                     :class="[
                       'ml-7 block w-[calc(100%-1.75rem)] rounded px-3 py-1.5 text-left text-xs leading-snug transition-colors',
                       isPipActive
@@ -134,15 +154,15 @@
                     ]"
                   >
                     Performance Improvement Plan
-                  </button>
+                  </NuxtLink>
                 </li>
               </ul>
             </li>
 
-            <li>
-              <button
-                type="button"
-                @click="goTo('/sales')"
+            <li v-if="canView('sales-task')">
+              <NuxtLink
+                to="/sales"
+                @click="isAdminMenuOpen = false"
                 :class="[
                   'flex w-full items-center gap-3 rounded px-3 py-2 text-sm transition-colors',
                   isSalesTaskActive
@@ -162,7 +182,7 @@
                   />
                 </svg>
                 <span>Sales Task</span>
-              </button>
+              </NuxtLink>
             </li>
           </ul>
         </div>
@@ -174,10 +194,10 @@
             Others
           </span>
           <ul class="space-y-0.5">
-            <li>
-              <button
-                type="button"
-                @click="goTo('/audit-logs')"
+            <li v-if="canView('audit-logs')">
+              <NuxtLink
+                to="/audit-logs"
+                @click="isAdminMenuOpen = false"
                 :class="[
                   'flex w-full items-center gap-3 rounded px-3 py-2 text-sm transition-colors',
                   isAuditLogsActive
@@ -197,7 +217,7 @@
                   />
                 </svg>
                 <span>Audit Logs</span>
-              </button>
+              </NuxtLink>
             </li>
           </ul>
         </div>
@@ -258,7 +278,7 @@
       </div>
     </aside>
 
-    <main class="min-w-0 flex-1 overflow-hidden bg-[#f4f6fa]">
+    <main class="min-w-0 flex-1 overflow-hidden">
       <slot />
     </main>
 
@@ -461,6 +481,7 @@ const route = useRoute();
 const { apiFetch } = useApi();
 
 const isLeadsTrackerOpen = ref(false);
+const isLeadsOpen = ref(false);
 const isAdminMenuOpen = ref(false);
 const isProfileModalOpen = ref(false);
 const isSettingsModalOpen = ref(false);
@@ -472,13 +493,48 @@ const settingsForm = ref({
   password: "",
   password_confirmation: "",
 });
+const activeItem = ref("user-management");
 const adminFooter = ref(null);
+const permissionsReady = ref(false);
+const { read, write, remove } = useBrowserStorage();
 const profileUser = ref({
   full_name: "Super Admin",
   email: "super@company.com",
   role: "Admin",
   role_id: null,
+  permissions: [],
 });
+
+function normalizePermissionKey(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function normalizePermissionList(input) {
+  if (!Array.isArray(input)) return [];
+
+  return input
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+
+      return {
+        page_name: item.page_name ?? item.page?.page_name ?? "",
+        permission_name:
+          item.permission_name ?? item.page?.permission_name ?? "",
+        can_view: Boolean(
+          item.can_view ??
+            item.canView ??
+            item.page?.can_view ??
+            item.page?.canView
+        ),
+      };
+    })
+    .filter(Boolean);
+}
 
 function normalizeUser(rawUser) {
   if (!rawUser || typeof rawUser !== "object") {
@@ -486,6 +542,15 @@ function normalizeUser(rawUser) {
   }
 
   const rawRole = rawUser.role || rawUser.Role || null;
+  const permissions =
+    rawUser.permissions ||
+    rawRole?.permissions ||
+    rawRole?.role_page_permissions ||
+    rawRole?.rolePagePermissions ||
+    rawUser.Role?.permissions ||
+    rawUser.Role?.role_page_permissions ||
+    rawUser.Role?.rolePagePermissions ||
+    [];
 
   return {
     full_name:
@@ -500,7 +565,49 @@ function normalizeUser(rawUser) {
           rawUser.Role?.name ||
           "Admin",
     role_id: rawUser.role_id ?? rawUser.roleId ?? null,
+    permissions: normalizePermissionList(permissions),
   };
+}
+
+function setActiveItemFromRoute(path) {
+  const normalizedPath = String(path || "").toLowerCase();
+
+  if (normalizedPath.startsWith("/users")) {
+    activeItem.value = "user-management";
+    isLeadsTrackerOpen.value = false;
+    isLeadsOpen.value = false;
+    return;
+  }
+
+  if (normalizedPath.startsWith("/industry")) {
+    activeItem.value = "industry";
+    isLeadsTrackerOpen.value = true;
+    isLeadsOpen.value = true;
+    return;
+  }
+
+  if (normalizedPath.startsWith("/pip")) {
+    activeItem.value = "performance-improvement-plan";
+    isLeadsTrackerOpen.value = true;
+    isLeadsOpen.value = false;
+    return;
+  }
+
+  if (normalizedPath.startsWith("/sales")) {
+    activeItem.value = "sales-task";
+    isLeadsTrackerOpen.value = false;
+    isLeadsOpen.value = false;
+    return;
+  }
+
+  if (normalizedPath.startsWith("/audit-logs")) {
+    activeItem.value = "audit-logs";
+    isLeadsTrackerOpen.value = false;
+    isLeadsOpen.value = false;
+    return;
+  }
+
+  activeItem.value = "";
 }
 
 const userInitials = computed(() => {
@@ -516,33 +623,33 @@ const userInitials = computed(() => {
 });
 
 const isUserManagementActive = computed(() => route.path.startsWith("/users"));
-const isLeadTrackerActive = computed(
-  () => route.path.startsWith("/lead-tracker") || route.path.startsWith("/PIP")
+const isLeadTrackerActive = computed(() => {
+  const path = route.path.toLowerCase();
+  return path.startsWith("/industry") || path.startsWith("/pip");
+});
+const isPipActive = computed(() => route.path.toLowerCase().startsWith("/pip"));
+const isLeadActive = computed(() =>
+  route.path.toLowerCase().startsWith("/industry")
 );
-const isPipActive = computed(() => route.path.startsWith("/PIP"));
 const isSalesTaskActive = computed(() => route.path.startsWith("/sales"));
 const isAuditLogsActive = computed(() => route.path.startsWith("/audit-logs"));
 
 watch(
   () => route.path,
   (path) => {
-    const inLeadSection =
-      path.startsWith("/lead-tracker") || path.startsWith("/PIP");
-    isLeadsTrackerOpen.value = inLeadSection;
+    setActiveItemFromRoute(path);
   },
   { immediate: true }
 );
 
-function goTo(path) {
+function toggleLeadsTracker() {
   isAdminMenuOpen.value = false;
-  navigateTo(path);
+  isLeadsTrackerOpen.value = !isLeadsTrackerOpen.value;
 }
 
-function toggleLeadsTracker() {
-  isLeadsTrackerOpen.value = !isLeadsTrackerOpen.value;
-  if (isLeadsTrackerOpen.value) {
-    navigateTo("/lead-tracker");
-  }
+function toggleLeads() {
+  isAdminMenuOpen.value = false;
+  isLeadsOpen.value = !isLeadsOpen.value;
 }
 
 function openProfileModal() {
@@ -613,10 +720,33 @@ async function submitPasswordChange() {
   }
 }
 
+function canView(pageName) {
+  const roleName = normalizePermissionKey(profileUser.value?.role);
+  if (!permissionsReady.value) return true;
+
+  const permissions = normalizePermissionList(profileUser.value?.permissions);
+  if (!permissions.length) {
+    return roleName === "super-admin" || roleName === "admin";
+  }
+
+  const targetPage = normalizePermissionKey(pageName);
+  const permission = permissions.find(
+    (p) =>
+      normalizePermissionKey(p.page_name) === targetPage ||
+      normalizePermissionKey(p.permission_name) === targetPage
+  );
+
+  if (!permission) {
+    return roleName === "super-admin" || roleName === "admin";
+  }
+
+  return permission.can_view !== false;
+}
+
 async function handleLogout() {
   isAdminMenuOpen.value = false;
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  remove("token");
+  remove("user");
   await navigateTo("/login");
 }
 
@@ -626,9 +756,9 @@ function handleClickOutside(event) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   try {
-    const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+    const storedUser = JSON.parse(read("user") || "null");
     const normalizedUser = normalizeUser(storedUser);
 
     if (normalizedUser) {
@@ -638,19 +768,20 @@ onMounted(() => {
     // Keep fallback profile values when storage is unavailable or malformed.
   }
 
-  apiFetch("/me")
-    .then((response) => {
-      const apiUser = response?.data?.user || response?.user;
-      const normalizedUser = normalizeUser(apiUser);
+  try {
+    const response = await apiFetch("/me");
+    const apiUser = response?.data?.user || response?.user;
+    const normalizedUser = normalizeUser(apiUser);
 
-      if (normalizedUser) {
-        profileUser.value = normalizedUser;
-        localStorage.setItem("user", JSON.stringify(normalizedUser));
-      }
-    })
-    .catch(() => {
-      // Keep the cached user if the profile request fails.
-    });
+    if (normalizedUser) {
+      profileUser.value = normalizedUser;
+      write("user", JSON.stringify(normalizedUser));
+    }
+  } catch {
+    // Keep the cached user if the profile request fails.
+  } finally {
+    permissionsReady.value = true;
+  }
 
   document.addEventListener("click", handleClickOutside);
 });

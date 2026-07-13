@@ -197,6 +197,7 @@ definePageMeta({
 });
 
 const { apiFetch } = useApi();
+const { write } = useBrowserStorage();
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
@@ -228,8 +229,8 @@ const handleLogin = async () => {
       throw new Error("Login succeeded but the server did not return a token.");
     }
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
+    write("token", token);
+    write("user", JSON.stringify(user));
 
     await navigateTo("/users");
   } catch (err) {

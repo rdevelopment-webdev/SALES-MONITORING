@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  srcDir: "app",
   devtools: { enabled: true },
 
   modules: ["@nuxtjs/tailwindcss", "@sidebase/nuxt-auth"],
@@ -16,11 +17,9 @@ export default defineNuxtConfig({
   },
 
   auth: {
-    baseURL: "http://localhost:8000/api",
-
+    baseURL: process.env.NUXT_PUBLIC_API_BASE || "http://localhost:8000/api",
     provider: {
       type: "local",
-
       endpoints: {
         signIn: {
           path: "/login",
@@ -34,6 +33,13 @@ export default defineNuxtConfig({
           path: "/me",
           method: "get",
         },
+      },
+      token: {
+        signInResponseTokenPointer: "/data/token",
+        type: "Bearer",
+      },
+      session: {
+        dataResponsePointer: "/data/user",
       },
     },
   },

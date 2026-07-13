@@ -18,7 +18,26 @@ class LoginController extends Controller
 
     private function formatUser(User $user): array
     {
-        $user->load('Role');
+        $user->load('Role.rolePagePermissions.page');
+
+        $permissions = $user->Role
+            ? $user->Role->rolePagePermissions->map(function ($permission) {
+                return [
+                    'id' => $permission->id,
+                    'role_id' => $permission->role_id,
+                    'page_id' => $permission->page_id,
+                    'permission_name' => $permission->permission_name,
+                    'can_view' => (bool) $permission->can_view,
+                    'can_create' => (bool) $permission->can_create,
+                    'can_edit' => (bool) $permission->can_edit,
+                    'can_archive' => (bool) $permission->can_archive,
+                    'page' => $permission->page ? [
+                        'id' => $permission->page->id,
+                        'page_name' => $permission->page->page_name,
+                    ] : null,
+                ];
+            })->values()
+            : collect();
 
         return [
             'id' => $user->id,
@@ -28,7 +47,9 @@ class LoginController extends Controller
             'role' => $user->Role ? [
                 'id' => $user->Role->id,
                 'role_name' => $user->Role->role_name,
+                'permissions' => $permissions,
             ] : null,
+            'permissions' => $permissions,
         ];
     }
 

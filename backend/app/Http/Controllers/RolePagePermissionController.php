@@ -32,7 +32,7 @@ class RolePagePermissionController extends Controller
             'can_view'        => 'required|boolean',
             'can_create'      => 'required|boolean',
             'can_edit'        => 'required|boolean',
-            'can_update'      => 'required|boolean',
+            'can_archive'     => 'required|boolean',
         ]);
 
         // Prevent duplicate role + page combination
@@ -75,7 +75,7 @@ class RolePagePermissionController extends Controller
             'can_view'        => 'sometimes|boolean',
             'can_create'      => 'sometimes|boolean',
             'can_edit'        => 'sometimes|boolean',
-            'can_update'      => 'sometimes|boolean',
+            'can_archive'     => 'sometimes|boolean',
         ]);
 
         // Check for duplicates if role_id or page_id is changing

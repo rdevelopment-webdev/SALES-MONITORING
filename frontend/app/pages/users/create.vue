@@ -1,8 +1,7 @@
 <template>
   <div
-    class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#e5e5e5] font-['Overpass'] text-[13px] text-[#1F2835]"
+    class="flex h-full min-h-0 flex-col overflow-hidden bg-[#e5e5e5] font-['Overpass'] text-[13px] text-[#1F2835]"
   >
-    <!-- Top Header: Breadcrumb -->
     <div
       class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
     >
@@ -20,6 +19,7 @@
             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
           />
         </svg>
+        <i class="pi pi-users text-gray-600 text-xl"></i>
         <span class="cursor-pointer transition-colors hover:text-[#F52C11]"
           >User Management</span
         >
@@ -40,14 +40,11 @@
       </div>
     </div>
 
-    <!-- Main Content - Aligned Left -->
-    <main class="flex-1 p-3 flex items-start justify-start overflow-hidden">
-      <div class="w-full max-w-[860px] space-y-2">
-        <!-- Account Information Card -->
+    <main class="min-h-0 flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
+      <div class="mx-auto w-full max-w-[920px] space-y-3">
         <div
           class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
         >
-          <!-- Card Header -->
           <div class="flex items-center gap-1.5 px-3 py-1.5">
             <div
               class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
@@ -76,10 +73,8 @@
             </div>
           </div>
 
-          <!-- Form Fields -->
           <div class="px-3 pb-2.5">
-            <div class="grid grid-cols-2 gap-3">
-              <!-- First name -->
+            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -91,7 +86,7 @@
                   type="text"
                   placeholder="First name"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
                     errors.firstName
                       ? 'border-[#F52C11]'
                       : 'border-gray-200 focus:border-[#F52C11]',
@@ -105,7 +100,6 @@
                 </p>
               </div>
 
-              <!-- Last name -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -117,7 +111,7 @@
                   type="text"
                   placeholder="Last name"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
                     errors.lastName
                       ? 'border-[#F52C11]'
                       : 'border-gray-200 focus:border-[#F52C11]',
@@ -131,7 +125,6 @@
                 </p>
               </div>
 
-              <!-- Email address -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -143,7 +136,7 @@
                   type="email"
                   placeholder="example@company.com"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
                     errors.email
                       ? 'border-[#F52C11]'
                       : 'border-gray-200 focus:border-[#F52C11]',
@@ -157,7 +150,6 @@
                 </p>
               </div>
 
-              <!-- Date added with clickable calendar icon -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -170,7 +162,7 @@
                     type="text"
                     placeholder="-- -- ----"
                     readonly
-                    class="w-full bg-gray-100 border border-gray-200 rounded-[4px] px-2.5 py-[5px] pr-8 text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer"
+                    class="w-full bg-gray-100 border border-gray-200 rounded-[4px] px-3 py-2 pr-8 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer"
                     @click="showDatePicker = true"
                   />
                   <button
@@ -198,11 +190,9 @@
           </div>
         </div>
 
-        <!-- Password Settings Card -->
         <div
           class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
         >
-          <!-- Card Header -->
           <div class="flex items-center gap-1.5 px-3 py-1.5">
             <div
               class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
@@ -231,10 +221,8 @@
             </div>
           </div>
 
-          <!-- Form Fields -->
           <div class="px-3 pb-2.5">
-            <div class="grid grid-cols-2 gap-3">
-              <!-- Create Password -->
+            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -246,7 +234,7 @@
                   type="password"
                   placeholder="Create a password"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
                     errors.password
                       ? 'border-[#F52C11]'
                       : 'border-gray-200 focus:border-[#F52C11]',
@@ -266,7 +254,6 @@
                 </p>
               </div>
 
-              <!-- Confirm Password -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -279,7 +266,7 @@
                   placeholder="Re-enter new password"
                   :disabled="!form.password"
                   :class="[
-                    'w-full border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                    'w-full border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
                     !form.password
                       ? 'bg-gray-100 cursor-not-allowed border-gray-200'
                       : 'bg-white border-gray-200 focus:border-[#F52C11]',
@@ -298,11 +285,9 @@
           </div>
         </div>
 
-        <!-- Role & Permissions Card -->
         <div
           class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden flex flex-col"
         >
-          <!-- Card Header -->
           <div class="flex items-center gap-1.5 px-3 py-1.5">
             <div
               class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
@@ -331,10 +316,10 @@
             </div>
           </div>
 
-          <!-- Form Fields -->
           <div class="px-3 pb-2">
-            <div class="grid grid-cols-2 gap-4">
-              <!-- Assign role -->
+            <div
+              class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,1.2fr)]"
+            >
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -344,17 +329,27 @@
                 <div class="relative">
                   <select
                     v-model="form.role"
+                    :disabled="rolesLoading"
                     :class="[
-                      'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer',
+                      'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] focus:outline-none transition-colors appearance-none cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed',
                       errors.role
                         ? 'border-[#F52C11]'
                         : 'border-gray-200 focus:border-[#F52C11]',
                       form.role ? 'text-[#1F2835]' : 'text-gray-400',
                     ]"
                   >
-                    <option value="" disabled>- Please select -</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Sales">Sales</option>
+                    <option value="" disabled>
+                      {{
+                        rolesLoading ? "Loading roles..." : "- Please select -"
+                      }}
+                    </option>
+                    <option
+                      v-for="role in roles"
+                      :key="role.id"
+                      :value="role.role_name"
+                    >
+                      {{ role.role_name }}
+                    </option>
                   </select>
                   <svg
                     class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
@@ -375,17 +370,38 @@
                 </p>
               </div>
 
-              <!-- Permissions Table -->
               <div>
                 <label
-                  class="block text-[10px] font-semibold text-[#1F2835] mb-1"
+                  class="block text-[10px] font-semibold text-[#1F2835] mb-2"
                 >
                   Permissions
                 </label>
-                <div
-                  class="border border-gray-200 rounded-[4px] overflow-hidden"
+
+                <label
+                  class="flex items-start gap-2.5 p-2.5 mb-2 border border-gray-200 rounded-[6px] bg-white cursor-pointer hover:bg-gray-50 transition-colors"
                 >
-                  <table class="w-full border-collapse">
+                  <input
+                    type="checkbox"
+                    v-model="globalFullAccess"
+                    @change="toggleGlobalFullAccess"
+                    class="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer shrink-0"
+                  />
+                  <div>
+                    <h3
+                      class="text-[12px] font-bold text-[#1F2835] leading-tight mb-0.5"
+                    >
+                      Full Access
+                    </h3>
+                    <p class="text-[10px] text-gray-500 leading-tight">
+                      Grants all available permissions across the system.
+                    </p>
+                  </div>
+                </label>
+
+                <div
+                  class="overflow-x-auto rounded-[4px] border border-gray-200"
+                >
+                  <table class="min-w-[360px] w-full border-collapse">
                     <thead>
                       <tr class="border-b border-gray-200">
                         <th
@@ -414,15 +430,25 @@
                       <tr
                         v-for="module in permissions"
                         :key="module.name"
-                        class="border-b border-gray-100 last:border-b-0"
+                        class="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/30 transition-colors"
                       >
                         <td class="px-2 py-[3px] text-[10px] text-[#1F2835]">
-                          {{ module.name }}
+                          <span class="inline-flex items-center gap-1">
+                            {{ module.name }}
+                            <span
+                              v-if="isRowOverridden(module)"
+                              class="px-1 py-[1px] rounded-[3px] bg-[#F52C11]/10 text-[7px] font-semibold text-[#F52C11] leading-none"
+                              title="Differs from this role's default"
+                            >
+                              Custom
+                            </span>
+                          </span>
                         </td>
                         <td class="px-1.5 py-[3px] text-center">
                           <input
                             type="checkbox"
                             v-model="module.view"
+                            @change="checkGlobalFullAccess"
                             class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                           />
                         </td>
@@ -430,6 +456,7 @@
                           <input
                             type="checkbox"
                             v-model="module.edit"
+                            @change="checkGlobalFullAccess"
                             class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                           />
                         </td>
@@ -437,8 +464,25 @@
                           <input
                             type="checkbox"
                             v-model="module.add"
+                            @change="checkGlobalFullAccess"
                             class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                           />
+                        </td>
+                      </tr>
+                      <tr v-if="!pagesLoading && permissions.length === 0">
+                        <td
+                          colspan="4"
+                          class="px-2 py-4 text-center text-[10px] text-gray-400"
+                        >
+                          No pages found in the database.
+                        </td>
+                      </tr>
+                      <tr v-if="pagesLoading">
+                        <td
+                          colspan="4"
+                          class="px-2 py-4 text-center text-[10px] text-gray-400"
+                        >
+                          Loading pages...
                         </td>
                       </tr>
                     </tbody>
@@ -448,34 +492,35 @@
             </div>
           </div>
 
-          <!-- Action Buttons -->
           <div
-            class="px-3 py-2 border-t border-gray-100 flex items-center justify-end gap-2"
+            class="flex flex-col-reverse gap-2 border-t border-gray-100 px-3 py-3 sm:flex-row sm:items-center sm:justify-end"
           >
             <button
               @click="cancel"
-              class="px-3 py-[4px] rounded-[4px] text-[10px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+              class="w-full rounded-[4px] border border-gray-300 bg-white px-4 py-2 text-[11px] font-medium text-[#1F2835] transition-colors hover:bg-gray-50 sm:w-auto"
             >
               Cancel
             </button>
             <button
               @click="createUser"
-              :disabled="!isFormValid"
+              :disabled="!isFormValid || saving"
               :class="[
-                'px-3 py-[4px] rounded-[4px] text-[10px] font-medium flex items-center gap-1 transition-colors shadow-sm',
-                isFormValid
+                'flex w-full items-center justify-center gap-1 rounded-[4px] px-4 py-2 text-[11px] font-medium transition-colors shadow-sm sm:w-auto',
+                isFormValid && !saving
                   ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed',
               ]"
             >
-              Create User
+              {{ saving ? "Creating..." : "Create User" }}
             </button>
           </div>
         </div>
+        <p v-if="submitMessage" class="text-[10px] text-[#F52C11]">
+          {{ submitMessage }}
+        </p>
       </div>
     </main>
 
-    <!-- Date Picker Modal -->
     <div
       v-if="showDatePicker"
       class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
@@ -504,7 +549,6 @@
           </button>
         </div>
 
-        <!-- Month/Year Navigation -->
         <div class="flex items-center justify-between mb-2">
           <button
             @click="prevMonth"
@@ -547,7 +591,6 @@
           </button>
         </div>
 
-        <!-- Calendar Grid -->
         <div class="grid grid-cols-7 gap-0.5 mb-1">
           <div
             v-for="day in ['S', 'M', 'T', 'W', 'T', 'F', 'S']"
@@ -597,7 +640,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import { useAuditLog } from "~/composables/useAuditLog";
+
+definePageMeta({
+  layout: "app",
+  middleware: "auth",
+});
 
 const form = ref({
   firstName: "",
@@ -608,6 +657,17 @@ const form = ref({
   role: "",
   dateAdded: "",
 });
+
+const { apiFetch } = useApi();
+const router = useRouter();
+const roles = ref([]);
+const rolesLoading = ref(false);
+const pagesLoading = ref(false);
+const saving = ref(false);
+const submitMessage = ref("");
+const permissions = ref([]);
+const rolePagePermissions = ref([]);
+const globalFullAccess = ref(false);
 
 const errors = ref({
   firstName: false,
@@ -633,16 +693,13 @@ const currentMonthYear = computed(() => {
 const calendarDates = computed(() => {
   const year = viewDate.value.getFullYear();
   const month = viewDate.value.getMonth();
-
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const startDayOfWeek = firstDay.getDay();
-
   const dates = [];
   const today = new Date();
-
-  // Previous month padding
   const prevMonthLastDay = new Date(year, month, 0).getDate();
+
   for (let i = startDayOfWeek - 1; i >= 0; i--) {
     dates.push({
       key: `prev-${i}`,
@@ -653,25 +710,20 @@ const calendarDates = computed(() => {
     });
   }
 
-  // Current month
   for (let day = 1; day <= lastDay.getDate(); day++) {
     const dateObj = new Date(year, month, day);
-    const isToday = dateObj.toDateString() === today.toDateString();
-    const isSelected =
-      selectedDate.value &&
-      dateObj.toDateString() === selectedDate.value.toDateString();
-
     dates.push({
       key: `current-${day}`,
       day,
       isCurrentMonth: true,
-      isSelected,
-      isToday,
+      isSelected:
+        selectedDate.value &&
+        dateObj.toDateString() === selectedDate.value.toDateString(),
+      isToday: dateObj.toDateString() === today.toDateString(),
       dateObj,
     });
   }
 
-  // Next month padding
   const remaining = 42 - dates.length;
   for (let day = 1; day <= remaining; day++) {
     dates.push({
@@ -711,6 +763,7 @@ function selectDate(date) {
     }
     return;
   }
+
   selectedDate.value = date.dateObj;
 }
 
@@ -734,19 +787,6 @@ function checkPasswordFirst() {
   }
 }
 
-const permissions = ref([
-  { name: "User Management", view: false, edit: false, add: false },
-  { name: "Industry", view: false, edit: false, add: false },
-  {
-    name: "Performance Improvement Plan",
-    view: false,
-    edit: false,
-    add: false,
-  },
-  { name: "Sales Task", view: false, edit: false, add: false },
-  { name: "Audit Logs", view: false, edit: false, add: false },
-]);
-
 const isFormValid = computed(() => {
   return (
     form.value.firstName.trim() &&
@@ -755,8 +795,17 @@ const isFormValid = computed(() => {
     form.value.password.trim() &&
     form.value.confirmPassword.trim() &&
     form.value.password === form.value.confirmPassword &&
-    form.value.role
+    form.value.role &&
+    selectedRoleId.value
   );
+});
+
+const selectedRoleId = computed(() => {
+  const selectedRole = roles.value.find(
+    (role) =>
+      role.role_name?.toLowerCase() === form.value.role.trim().toLowerCase()
+  );
+  return selectedRole?.id || null;
 });
 
 function validateForm() {
@@ -773,23 +822,7 @@ function validateForm() {
 }
 
 function cancel() {
-  form.value = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    role: "",
-    dateAdded: "",
-  };
-  selectedDate.value = null;
-  passwordReminder.value = false;
-  permissions.value.forEach((p) => {
-    p.view = false;
-    p.edit = false;
-    p.add = false;
-  });
-  resetErrors();
+  router.push("/users");
 }
 
 function resetErrors() {
@@ -803,16 +836,194 @@ function resetErrors() {
   };
 }
 
-function createUser() {
-  if (!validateForm()) return;
-  console.log("Created", form.value, permissions.value);
+// Utility to format "user-management" to "User Management"
+function formatPageName(slug) {
+  if (!slug) return "";
+  return String(slug)
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
+
+function unwrapData(response) {
+  return Array.isArray(response) ? response : response?.data || [];
+}
+
+function buildPermissionRows(pages) {
+  permissions.value = pages.map((page) => ({
+    page_id: page.id,
+    page_name: page.page_name,
+    name: formatPageName(page.page_name),
+    view: false,
+    edit: false,
+    add: false,
+    // the selected role's default for this page, used to detect overrides
+    roleDefault: { view: false, edit: false, add: false },
+  }));
+}
+
+// True when this row's current checkboxes differ from the role's default,
+// i.e. this page will be saved as a per-user override for the new user.
+function isRowOverridden(row) {
+  if (!row.roleDefault) return false;
+  return (
+    row.view !== row.roleDefault.view ||
+    row.edit !== row.roleDefault.edit ||
+    row.add !== row.roleDefault.add
+  );
+}
+
+// Selects or deselects all checkboxes based on master checkbox state
+function toggleGlobalFullAccess() {
+  const state = globalFullAccess.value;
+  permissions.value.forEach((module) => {
+    module.view = state;
+    module.edit = state;
+    module.add = state;
+  });
+}
+
+// Verifies if all checkmarks are clicked, and automatically toggles the master checkbox
+function checkGlobalFullAccess() {
+  if (permissions.value.length === 0) {
+    globalFullAccess.value = false;
+    return;
+  }
+  globalFullAccess.value = permissions.value.every(
+    (module) => module.view && module.edit && module.add
+  );
+}
+
+function applySelectedRolePermissions() {
+  const selectedId = selectedRoleId.value;
+
+  permissions.value.forEach((permissionRow) => {
+    const savedPermission = rolePagePermissions.value.find(
+      (permission) =>
+        Number(permission.role_id) === Number(selectedId) &&
+        Number(permission.page_id) === Number(permissionRow.page_id)
+    );
+
+    const roleDefault = {
+      view: Boolean(savedPermission?.can_view),
+      edit: Boolean(savedPermission?.can_edit),
+      add: Boolean(savedPermission?.can_create),
+    };
+    permissionRow.roleDefault = roleDefault;
+
+    permissionRow.view = roleDefault.view;
+    permissionRow.edit = roleDefault.edit;
+    permissionRow.add = roleDefault.add;
+  });
+
+  // Re-evaluate global tickbox whenever we load new module ticks
+  checkGlobalFullAccess();
+}
+
+// Saves per-user overrides for the newly created user. Only pages whose
+// checkboxes were changed away from the role's default get a row here —
+// this does NOT touch role_page_permissions, so other users in the same
+// role are unaffected.
+async function saveUserPermissionOverrides(userId) {
+  if (!userId) return;
+
+  for (const permissionRow of permissions.value) {
+    if (!isRowOverridden(permissionRow)) continue;
+
+    await apiFetch("/user_page_permissions", {
+      method: "POST",
+      body: {
+        user_id: userId,
+        page_id: permissionRow.page_id,
+        permission_name: permissionRow.page_name,
+        can_view: Boolean(permissionRow.view),
+        can_create: Boolean(permissionRow.add),
+        can_edit: Boolean(permissionRow.edit),
+      },
+    });
+  }
+}
+
+const { logAuditAction } = useAuditLog();
+
+async function createUser() {
+  if (!validateForm()) return;
+
+  if (!selectedRoleId.value) {
+    errors.value.role = true;
+    submitMessage.value = "Selected role was not found in the database.";
+    return;
+  }
+
+  saving.value = true;
+  submitMessage.value = "";
+
+  try {
+    const fullName =
+      `${form.value.firstName.trim()} ${form.value.lastName.trim()}`.trim();
+
+    const userResponse = await apiFetch("/users", {
+      method: "POST",
+      body: {
+        full_name: fullName,
+        email: form.value.email.trim(),
+        password: form.value.password,
+        role_id: selectedRoleId.value,
+      },
+    });
+
+    const createdUser = userResponse?.data || userResponse;
+    await saveUserPermissionOverrides(createdUser?.id);
+
+    logAuditAction({
+      module: "User Management",
+      description: `Created new user account for ${fullName} (${form.value.email.trim()})`,
+    });
+
+    await router.push("/users");
+  } catch (error) {
+    submitMessage.value =
+      error?.data?.message || error?.message || "Unable to create user.";
+  } finally {
+    saving.value = false;
+  }
+}
+
+onMounted(async () => {
+  rolesLoading.value = true;
+  pagesLoading.value = true;
+
+  try {
+    const [rolesResponse, pagesResponse, permissionsResponse] =
+      await Promise.all([
+        apiFetch("/roles"),
+        apiFetch("/pages"),
+        apiFetch("/role_page_permissions"),
+      ]);
+
+    roles.value = unwrapData(rolesResponse);
+    rolePagePermissions.value = unwrapData(permissionsResponse);
+    buildPermissionRows(unwrapData(pagesResponse));
+    applySelectedRolePermissions();
+  } catch (error) {
+    submitMessage.value = "Unable to load initial data from the database.";
+  } finally {
+    rolesLoading.value = false;
+    pagesLoading.value = false;
+  }
+});
+
+watch(selectedRoleId, () => {
+  applySelectedRolePermissions();
+});
 </script>
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&display=swap");
 
 input[type="checkbox"] {
-  saccent-color: #f52c11;
+  accent-color: #f52c11;
 }
 </style>

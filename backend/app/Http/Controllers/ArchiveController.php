@@ -7,6 +7,26 @@ use Illuminate\Http\Request;
 
 class ArchiveController extends Controller
 {
+    private const ARCHIVABLE_MODELS = [
+        'industry' => \App\Models\Industry::class,
+        'lead' => \App\Models\Lead::class,
+        'performance_plan' => \App\Models\performancePlan::class,
+        'sales_task' => \App\Models\SalesTask::class,
+        'user' => \App\Models\User::class,
+    ];
+
+    private function resolveArchivableModel(string $type): string
+    {
+        abort_unless(isset(self::ARCHIVABLE_MODELS[$type]), 404, 'Archive type not found');
+
+        return self::ARCHIVABLE_MODELS[$type];
+    }
+
+    public function types()
+    {
+        return response()->json(array_keys(self::ARCHIVABLE_MODELS));
+    }
+
     public function index() 
     {
         // Use RELATIONSHIP names, not column names
@@ -48,6 +68,39 @@ class ArchiveController extends Controller
     public function show(Archive $archive)
     {
         return response()->json($archive->load('lead', 'auditLog', 'performancePlan', 'salesTask'));
+    }
+
+    public function archived(string $type)
+    {
+        $model = $this->resolveArchivableModel($type);
+
+        return response()->json([
+            'data' => $model::archived()->get(),
+        ]);
+    }
+
+    public function archive(string $type, int $id)
+    {
+        $model = $this->resolveArchivableModel($type);
+        $record = $model::findOrFail($id);
+        $record->archive();
+
+        return response()->json([
+            'message' => ucfirst($type) . ' archived successfully',
+            'data' => $record->fresh(),
+        ]);
+    }
+
+    public function unarchive(string $type, int $id)
+    {
+        $model = $this->resolveArchivableModel($type);
+        $record = $model::findOrFail($id);
+        $record->unarchive();
+
+        return response()->json([
+            'message' => ucfirst($type) . ' restored successfully',
+            'data' => $record->fresh(),
+        ]);
     }
 
     public function destroy(Archive $archive)

@@ -1,6 +1,9 @@
 export const useApi = () => {
   const config = useRuntimeConfig();
-  const baseURL = `${config.public.apiBase as string}/api`;
+  const configuredBase = (config.public.apiBase as string).replace(/\/$/, "");
+  const baseURL = configuredBase.endsWith("/api")
+    ? configuredBase
+    : `${configuredBase}/api`;
 
   const apiFetch = $fetch.create({
     baseURL,
