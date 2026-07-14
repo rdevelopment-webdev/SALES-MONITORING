@@ -54,7 +54,8 @@
         <span class="text-[#F52C11] font-medium">Industry</span>
       </div>
     </div>
-    <main class="flex-1 p-6 md:p-8 overflow-auto">
+    <main class="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div class="flex-1 overflow-y-auto p-6 md:p-8">
       <div class="max-w-4xl mx-auto w-full">
         <div class="mb-4">
           <h1 class="text-[15px] font-bold text-[#1F2835] leading-tight">
@@ -150,7 +151,7 @@
                   <label
                     class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                   >
-                    Contact person <span class="text-[#F52C11]">*</span>
+                    Contact person
                   </label>
                   <input
                     v-model="form.contactPerson"
@@ -164,12 +165,6 @@
                     ]"
                     @keyup.enter="saveRecord"
                   />
-                  <p
-                    v-if="errors.contactPerson"
-                    class="text-[8px] text-[#F52C11] mt-0.5"
-                  >
-                    Contact person is required
-                  </p>
                 </div>
 
                 <div>
@@ -203,7 +198,7 @@
                   <label
                     class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                   >
-                    Contact number <span class="text-[#F52C11]">*</span>
+                    Contact number
                   </label>
                   <input
                     v-model="form.contactNumber"
@@ -237,40 +232,102 @@
                     Service
                   </label>
                   <div class="relative">
-                    <select
-                      v-model="form.service"
+                    <button
+                      type="button"
+                      ref="serviceTriggerRef"
+                      @click="toggleServiceDropdown"
                       :class="[
-                        'w-full border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer',
+                        'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
                         errors.service
                           ? 'border-[#F52C11]'
-                          : 'border-gray-200 focus:border-[#F52C11]',
-                        form.service
-                          ? 'text-[#1F2835] bg-white'
-                          : 'text-gray-400 bg-gray-100',
+                          : showServiceDropdown
+                          ? 'border-[#F52C11]'
+                          : 'border-gray-200',
+                        form.service ? 'text-[#1F2835]' : 'text-gray-400',
                       ]"
                     >
-                      <option value="" disabled>Select a service</option>
-                      <option
-                        v-for="service in serviceOptions"
-                        :key="service"
-                        :value="service"
+                      <span class="truncate">{{
+                        form.service || "Select a service"
+                      }}</span>
+                      <svg
+                        :class="[
+                          'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
+                          showServiceDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
+                        ]"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
                       >
-                        {{ service }}
-                      </option>
-                    </select>
-                    <svg
-                      class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+
+                    <teleport to="body">
+                      <div
+                        v-if="showServiceDropdown"
+                        ref="servicePanelRef"
+                        :style="servicePanelStyle"
+                        class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
+                      >
+                        <div class="max-h-48 overflow-y-auto">
+                          <div
+                            v-for="service in serviceOptions"
+                            :key="service"
+                            class="group flex items-center justify-between px-3 py-1.5 cursor-pointer hover:bg-gray-50 transition-colors"
+                            @click="selectService(service)"
+                          >
+                            <span class="text-[11px] text-[#1F2835]">{{
+                              service
+                            }}</span>
+                            <button
+                              type="button"
+                              @click.stop="deleteService(service)"
+                              class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[#F52C11] transition-opacity shrink-0 ml-2"
+                            >
+                              <svg
+                                class="w-3 h-3"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-9 0h12"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        <div
+                          class="flex items-center gap-1 px-3 py-1.5 border-t border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+                          @click="handleAddNewServiceClick"
+                        >
+                          <svg
+                            class="w-2.5 h-2.5 text-[#F52C11]"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 4v16m8-8H4"
+                            />
+                          </svg>
+                          <span class="text-[11px] font-medium text-[#F52C11]"
+                            >Add new service</span
+                          >
+                        </div>
+                      </div>
+                    </teleport>
                   </div>
                   <p
                     v-if="errors.service"
@@ -547,31 +604,34 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      </div>
 
-          <div class="flex justify-end pt-1">
-            <button
-              type="button"
-              @click="clearAllFields"
-              class="flex items-center gap-1.5 px-3 py-[5px] rounded-[4px] text-[10px] font-medium text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
+      <div class="shrink-0 border-t border-gray-200 bg-white px-6 md:px-8 py-3">
+        <div class="max-w-4xl mx-auto w-full flex items-center justify-between gap-2">
+          <button
+            type="button"
+            @click="clearAllFields"
+            class="flex items-center gap-1.5 px-3 py-[5px] rounded-[4px] text-[10px] font-medium text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
+          >
+            <svg
+              class="w-3 h-3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
-              <svg
-                class="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Clear all fields
-            </button>
-          </div>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            Clear all fields
+          </button>
 
-          <div class="flex items-center justify-end gap-2 pt-10 pb-6">
+          <div class="flex items-center gap-2">
             <button
               type="button"
               @click="cancel"
@@ -732,6 +792,73 @@
         </div>
       </div>
     </div>
+
+    <div
+      v-if="showCreateService"
+      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      @click.self="closeCreateService"
+    >
+      <div class="bg-white rounded-[8px] w-[300px] shadow-xl p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[13px] font-bold text-[#1F2835]">
+            Create new service
+          </h3>
+          <button
+            @click="closeCreateService"
+            class="text-gray-400 hover:text-[#1F2835]"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <label class="block text-[10px] font-semibold text-[#1F2835] mb-0.5">
+          Service name
+        </label>
+        <input
+          v-model="newServiceName"
+          type="text"
+          placeholder="Enter service name"
+          class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
+          @keyup.enter="createService"
+        />
+        <p
+          v-if="createServiceError"
+          class="text-[8px] text-[#F52C11] mt-1"
+        >
+          {{ createServiceError }}
+        </p>
+
+        <div
+          class="flex items-center justify-end gap-2 mt-3 pt-2 border-t border-gray-100"
+        >
+          <button
+            @click="closeCreateService"
+            class="px-3 py-[4px] rounded-[4px] text-[10px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            @click="createService"
+            :disabled="isCreatingService"
+            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-3 py-[4px] rounded-[4px] text-[10px] font-medium transition-colors disabled:opacity-60"
+          >
+            {{ isCreatingService ? "Creating..." : "Create" }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -741,7 +868,7 @@ definePageMeta({
   middleware: "auth",
 });
 
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useAuditLog } from "~/composables/useAuditLog";
@@ -815,6 +942,143 @@ const serviceOptions = ref([
   "Hosting & Server",
 ]);
 
+// Create-new-service modal state
+const showCreateService = ref(false);
+const newServiceName = ref("");
+const isCreatingService = ref(false);
+const createServiceError = ref("");
+
+// Custom Service dropdown state
+const showServiceDropdown = ref(false);
+const serviceTriggerRef = ref(null);
+const servicePanelRef = ref(null);
+const servicePanelStyle = ref({});
+
+// The panel is teleported to <body> (so the card's overflow-hidden can't
+// clip it), so its position has to be computed manually from the trigger.
+function updateServicePanelPosition() {
+  if (!serviceTriggerRef.value) return;
+  const rect = serviceTriggerRef.value.getBoundingClientRect();
+  servicePanelStyle.value = {
+    top: `${rect.bottom + 4}px`,
+    left: `${rect.left}px`,
+    width: `${rect.width}px`,
+  };
+}
+
+function toggleServiceDropdown() {
+  showServiceDropdown.value = !showServiceDropdown.value;
+  if (showServiceDropdown.value) {
+    nextTick(updateServicePanelPosition);
+  }
+}
+
+function selectService(service) {
+  form.value.service = service;
+  errors.value.service = false;
+  showServiceDropdown.value = false;
+}
+
+function handleAddNewServiceClick() {
+  showServiceDropdown.value = false;
+  openCreateService();
+}
+
+async function deleteService(service) {
+  const confirmed = window.confirm(
+    `Delete "${service}"? This can't be undone.`
+  );
+  if (!confirmed) return;
+
+  const previousOptions = serviceOptions.value;
+  serviceOptions.value = serviceOptions.value.filter((s) => s !== service);
+  if (form.value.service === service) {
+    form.value.service = "";
+  }
+
+  try {
+    await apiFetch("/services", {
+      method: "DELETE",
+      body: { service_name: service, name: service },
+    });
+  } catch (error) {
+    // Roll back if the deletion didn't actually succeed server-side
+    serviceOptions.value = previousOptions;
+    console.error("Failed to delete service:", error);
+  }
+}
+
+function handleClickOutsideServiceDropdown(event) {
+  const clickedTrigger =
+    serviceTriggerRef.value && serviceTriggerRef.value.contains(event.target);
+  const clickedPanel =
+    servicePanelRef.value && servicePanelRef.value.contains(event.target);
+  if (!clickedTrigger && !clickedPanel) {
+    showServiceDropdown.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutsideServiceDropdown);
+  window.addEventListener("resize", updateServicePanelPosition);
+  window.addEventListener("scroll", updateServicePanelPosition, true);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutsideServiceDropdown);
+  window.removeEventListener("resize", updateServicePanelPosition);
+  window.removeEventListener("scroll", updateServicePanelPosition, true);
+});
+
+
+function openCreateService() {
+  newServiceName.value = "";
+  createServiceError.value = "";
+  showCreateService.value = true;
+}
+
+function closeCreateService() {
+  showCreateService.value = false;
+}
+
+async function createService() {
+  const name = newServiceName.value.trim();
+
+  if (!name) {
+    createServiceError.value = "Service name is required";
+    return;
+  }
+
+  if (serviceOptions.value.some((s) => s.toLowerCase() === name.toLowerCase())) {
+    createServiceError.value = "This service already exists";
+    return;
+  }
+
+  isCreatingService.value = true;
+  createServiceError.value = "";
+
+  try {
+    await apiFetch("/services", {
+      method: "POST",
+      body: { service_name: name, name },
+    });
+
+    serviceOptions.value = [...serviceOptions.value, name];
+    form.value.service = name;
+    errors.value.service = false;
+    showCreateService.value = false;
+  } catch (error) {
+    createServiceError.value =
+      error?.data?.message ||
+      error?.response?._data?.message ||
+      error?.statusMessage ||
+      error?.message ||
+      "Unable to create this service. Please try again.";
+  } finally {
+    isCreatingService.value = false;
+  }
+}
+
 function payloadData(response) {
   return response?.data ?? response;
 }
@@ -867,8 +1131,11 @@ function handleContactKeydown(e) {
   if (!/^[0-9]$/.test(e.key)) e.preventDefault();
 }
 
+// Contact number is now optional. If left blank, it's valid.
+// If the user starts typing, it must resolve to a complete 11-digit number.
 function isValidContactNumber(value) {
   const digits = (value || "").replace(/\D/g, "");
+  if (digits.length === 0) return true;
   return digits.length === 11;
 }
 
@@ -982,9 +1249,11 @@ const calendarDates = computed(() => {
   return dates;
 });
 
+// Only Location remains a hard requirement on the frontend.
+// Contact person / Contact number are optional but still validated
+// for shape if the user chooses to fill them in.
 const isFormValid = computed(() => {
   return (
-    form.value.contactPerson.trim() &&
     form.value.location &&
     isValidContactNumber(form.value.contactNumber) &&
     isValidEmail(form.value.email)
@@ -1030,7 +1299,7 @@ function validateForm() {
   errors.value.businessName = false;
   errors.value.service = false;
   errors.value.date = false;
-  errors.value.contactPerson = !form.value.contactPerson.trim();
+  errors.value.contactPerson = false;
   errors.value.contactNumber = !isValidContactNumber(form.value.contactNumber);
   errors.value.email = !isValidEmail(form.value.email);
   errors.value.location = !form.value.location;
@@ -1063,6 +1332,7 @@ function clearAllFields() {
     location: "",
     progress: 0,
   };
+  showServiceDropdown.value = false;
   selectedDate.value = null;
   resetErrors();
 }

@@ -53,99 +53,84 @@
 
             <!-- Client Name -->
             <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Client Name <span class="text-[#F52C11]">*</span></label>
+              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Client Name</label>
               <input 
                 v-model="form.clientName"
                 type="text" 
                 placeholder="Enter a name"
-                :class="[
-                  'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors h-[28px]',
-                  errors.clientName ? 'border-[#F52C11]' : 'border-gray-300 focus:border-[#F52C11]'
-                ]"
+                class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors h-[28px]"
               >
-              <p v-if="errors.clientName" class="text-[8px] text-[#F52C11] mt-0.5">Client name is required</p>
             </div>
 
             <!-- Prospect Technique (Select Dropdown) -->
             <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Prospect Technique <span class="text-[#F52C11]">*</span></label>
+              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Prospect Technique</label>
               <div class="relative">
                 <select 
                   v-model="form.prospectTechnique"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer h-[28px]',
-                    errors.prospectTechnique ? 'border-[#F52C11]' : 'border-gray-300 focus:border-[#F52C11]',
+                    'w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer h-[28px]',
                     form.prospectTechnique ? 'text-[#1F2835]' : 'text-gray-400'
                   ]"
                 >
-                  <option value="" disabled class="text-gray-400">Select a prospect technique</option>
+                  <option value="" class="text-gray-400">Select a prospect technique</option>
                   <option v-for="technique in prospectTechniqueOptions" :key="technique.id" :value="technique.id" class="text-[#1F2835]">{{ technique.name }}</option>
                 </select>
                 <svg class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                 </svg>
               </div>
-              <p v-if="errors.prospectTechnique" class="text-[8px] text-[#F52C11] mt-0.5">Prospect technique is required</p>
             </div>
 
             <!-- Email -->
             <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Email <span class="text-[#F52C11]">*</span></label>
+              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Email</label>
               <input 
                 v-model="form.email"
                 type="email" 
                 placeholder="example@company.com"
-                :class="[
-                  'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors h-[28px]',
-                  errors.email ? 'border-[#F52C11]' : 'border-gray-300 focus:border-[#F52C11]'
-                ]"
-                @blur="validateEmailField"
+                class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors h-[28px]"
               >
-              <p v-if="errors.email" class="text-[8px] text-[#F52C11] mt-0.5">Enter a valid email (must include @)</p>
             </div>
 
             <!-- Service (Select Dropdown) -->
             <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Service <span class="text-[#F52C11]">*</span></label>
+              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Service</label>
               <div class="relative">
                 <select 
                   v-model="form.service"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer h-[28px]',
-                    errors.service ? 'border-[#F52C11]' : 'border-gray-300 focus:border-[#F52C11]',
+                    'w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer h-[28px]',
                     form.service ? 'text-[#1F2835]' : 'text-gray-400'
                   ]"
                 >
-                  <option value="" disabled class="text-gray-400">Select a service</option>
+                  <option value="" class="text-gray-400">Select a service</option>
                   <option v-for="service in serviceOptions" :key="service.id" :value="service.id" class="text-[#1F2835]">{{ service.name }}</option>
                 </select>
                 <svg class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                 </svg>
               </div>
-              <p v-if="errors.service" class="text-[8px] text-[#F52C11] mt-0.5">Service is required</p>
             </div>
 
             <!-- Lead Status (Select Dropdown) -->
             <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Lead Status <span class="text-[#F52C11]">*</span></label>
+              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Lead Status</label>
               <div class="relative">
                 <select 
                   v-model="form.leadStatus"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer h-[28px]',
-                    errors.leadStatus ? 'border-[#F52C11]' : 'border-gray-300 focus:border-[#F52C11]',
+                    'w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer h-[28px]',
                     form.leadStatus ? 'text-[#1F2835]' : 'text-gray-400'
                   ]"
                 >
-                  <option value="" disabled class="text-gray-400">Select a lead status</option>
+                  <option value="" class="text-gray-400">Select a lead status</option>
                   <option v-for="statusOption in statusOptions" :key="statusOption" :value="statusOption" class="text-[#1F2835]">{{ statusOption }}</option>
                 </select>
                 <svg class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                 </svg>
               </div>
-              <p v-if="errors.leadStatus" class="text-[8px] text-[#F52C11] mt-0.5">Lead status is required</p>
             </div>
           </div>
 
@@ -194,8 +179,7 @@
                   type="button"
                   @click="toggleSalesRepDropdown"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[3px] text-[11px] focus:outline-none transition-colors text-left flex items-center justify-between h-[28px]',
-                    errors.salesRepresentative ? 'border-[#F52C11]' : 'border-gray-300 focus:border-[#F52C11]',
+                    'w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[3px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors text-left flex items-center justify-between h-[28px]',
                     form.salesRepresentative.length > 0 ? 'text-[#1F2835]' : 'text-gray-400'
                   ]"
                 >
@@ -256,24 +240,22 @@
 
             <!-- Ways of Communication (Select Dropdown) -->
             <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Ways of Communication <span class="text-[#F52C11]">*</span></label>
+              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Ways of Communication</label>
               <div class="relative">
                 <select 
                   v-model="form.waysOfCommunication"
                   :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer h-[28px]',
-                    errors.waysOfCommunication ? 'border-[#F52C11]' : 'border-gray-300 focus:border-[#F52C11]',
+                    'w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer h-[28px]',
                     form.waysOfCommunication ? 'text-[#1F2835]' : 'text-gray-400'
                   ]"
                 >
-                  <option value="" disabled class="text-gray-400">Select a way of communication</option>
+                  <option value="" class="text-gray-400">Select a way of communication</option>
                   <option v-for="way in communicationOptions" :key="way.id" :value="way.id" class="text-[#1F2835]">{{ way.name }}</option>
                 </select>
                 <svg class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                 </svg>
               </div>
-              <p v-if="errors.waysOfCommunication" class="text-[8px] text-[#F52C11] mt-0.5">Way of communication is required</p>
             </div>
 
             <!-- Remarks -->
@@ -431,10 +413,10 @@
         <button
           type="button"
           @click="saveChanges"
-          :disabled="!isFormValid || isSaving"
+          :disabled="isSaving"
           :class="[
             'px-3 py-[4px] rounded-[4px] text-[10px] font-medium flex items-center gap-1 transition-colors',
-            isFormValid && !isSaving ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            !isSaving ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           ]"
         >
           <svg v-if="isSaving" class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -563,6 +545,7 @@ const sampleRecord = {
 
 // ============================================
 // FORM DATA - Initialize from prop or sample
+// All fields are optional/nullable — nothing here is required to save.
 // prospectTechnique / service / waysOfCommunication hold the selected
 // lookup's id; salesRepresentative holds an array of selected ids.
 // ============================================
@@ -581,18 +564,6 @@ const form = reactive({
   contactPersonPhone: '',
   status: 30,
   leadStatus: ''
-})
-
-// ============================================
-// ERROR STATE
-// ============================================
-const errors = reactive({
-  clientName: false,
-  prospectTechnique: false,
-  email: false,
-  waysOfCommunication: false,
-  service: false,
-  leadStatus: false
 })
 
 // ============================================
@@ -703,18 +674,6 @@ function handleContactKeydown(e) {
 }
 
 // ============================================
-// EMAIL VALIDATION
-// ============================================
-function isValidEmail(value) {
-  if (!value || !value.trim()) return false
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
-}
-
-function validateEmailField() {
-  errors.email = !isValidEmail(form.email)
-}
-
-// ============================================
 // STATUS / PROGRESS
 // ============================================
 const progressColorPalette = [
@@ -802,16 +761,6 @@ const calendarDates = computed(() => {
   return dates
 })
 
-const isFormValid = computed(() => {
-  return form.clientName.trim() &&
-         form.prospectTechnique &&
-         form.email &&
-         isValidEmail(form.email) &&
-         form.waysOfCommunication &&
-         form.service &&
-         form.leadStatus
-})
-
 // ============================================
 // CALENDAR METHODS
 // ============================================
@@ -848,41 +797,17 @@ function confirmDate() {
 }
 
 // ============================================
-// VALIDATION
-// ============================================
-function validateForm() {
-  errors.clientName = !form.clientName.trim()
-  errors.prospectTechnique = !form.prospectTechnique
-  errors.email = !isValidEmail(form.email)
-  errors.waysOfCommunication = !form.waysOfCommunication
-  errors.service = !form.service
-  errors.leadStatus = !form.leadStatus
-  
-  return !Object.values(errors).some(error => error)
-}
-
-function resetErrors() {
-  errors.clientName = false
-  errors.prospectTechnique = false
-  errors.email = false
-  errors.waysOfCommunication = false
-  errors.service = false
-  errors.leadStatus = false
-}
-
-// ============================================
 // ACTIONS
+// No validation gate — every field is optional/nullable, so the form can
+// be saved as-is at any time.
 // ============================================
 function close() {
-  resetErrors()
   showDatePickerFor.value = null
   showSalesRepDropdown.value = false
   emit('close')
 }
 
 async function saveChanges() {
-  if (!validateForm()) return
-  
   isSaving.value = true
   
   try {
@@ -897,6 +822,8 @@ async function saveChanges() {
     // Field values here are already lookup ids (technique/service/comm/reps)
     // and a lead-status string. index.vue's updateRecord() converts this
     // into the exact shape PerformancePlanController::update() expects.
+    // Empty strings are sent through as-is; the backend should treat
+    // empty/missing values as null since all fields are optional here.
     const payload = {
       dateRecorded: form.dateRecorded,
       onboardingDate: form.onboardingDate,

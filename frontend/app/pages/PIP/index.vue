@@ -35,7 +35,7 @@
           />
         </svg>
         <span class="text-[#f52c11] font-medium"
-          >Performance Improvement Plan</span
+          >PIP</span
         >
       </div>
     </div>
@@ -43,7 +43,7 @@
     <!-- Title + Search + View Archive -->
     <div class="px-4 py-2 flex items-center justify-between gap-4 shrink-0">
       <h1 class="font-bold text-[16px] tracking-tight whitespace-nowrap">
-        Performance Improvement Plan (PIP)
+        PIP
       </h1>
 
       <div class="flex items-center gap-1.5">
@@ -107,7 +107,7 @@
             @click="showDatePicker = !showDatePicker"
             class="bg-white border border-gray-300 px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
           >
-            {{ selectedDate }}
+            {{ selectedDate || "Select date" }}
             <svg
               class="w-3 h-3 text-[#F52C11]"
               fill="none"
@@ -122,6 +122,29 @@
               />
             </svg>
           </button>
+
+          <!-- Clear date filter -->
+          <button
+            v-if="selectedDate"
+            @click="clearDateFilter"
+            title="Clear date filter"
+            class="ml-1 text-gray-400 hover:text-[#F52C11] transition-colors align-middle"
+          >
+            <svg
+              class="w-3.5 h-3.5 inline"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
           <div
             v-if="showDatePicker"
             class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 p-3 w-64"
@@ -168,17 +191,31 @@
             <div class="grid grid-cols-7 gap-1">
               <button
                 v-for="day in calendarDays"
-                :key="day.date"
+                :key="day.date + '-' + day.day"
                 @click="selectDate(day.date)"
                 :class="[
-                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
+                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors box-border',
                   day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
                   day.isSelected
                     ? 'bg-[#F52C11] text-white'
                     : 'hover:bg-gray-100',
+                  day.isToday && !day.isSelected
+                    ? 'border border-[#F52C11] font-semibold'
+                    : 'border border-transparent',
                 ]"
               >
                 {{ day.day }}
+              </button>
+            </div>
+            <div
+              v-if="selectedDate"
+              class="mt-2 flex justify-end"
+            >
+              <button
+                @click="clearDateFilter"
+                class="text-[10px] text-gray-500 hover:text-[#F52C11] font-medium transition-colors"
+              >
+                Clear date
               </button>
             </div>
           </div>
@@ -659,7 +696,7 @@
             </div>
           </div>
           <button
-            @click="showArchiveModal = false"
+            @click="closeArchiveModal"
             class="text-gray-400 hover:text-[#1F2835] transition-colors"
           >
             <svg
@@ -702,6 +739,14 @@
           <table v-else class="w-full border-collapse text-left">
             <thead class="bg-white sticky top-0 z-10">
               <tr class="border-b border-gray-200">
+                <th class="w-6 px-3 py-[6px] text-center">
+                  <input
+                    type="checkbox"
+                    :checked="isArchivedAllSelected"
+                    @change="toggleAllArchived"
+                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                  />
+                </th>
                 <th
                   class="px-3 py-[6px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
                 >
@@ -738,12 +783,22 @@
               <tr
                 v-for="(record, index) in archivedRecords"
                 :key="record.id"
-                class="bg-white hover:bg-gray-50 transition-colors"
+                class="transition-colors"
                 :class="{
+                  'bg-[#F52C11]/15': isArchivedSelected(record.id),
+                  'bg-white hover:bg-gray-50': !isArchivedSelected(record.id),
                   'border-b border-gray-100':
                     index !== archivedRecords.length - 1,
                 }"
               >
+                <td class="px-3 py-[6px] text-center">
+                  <input
+                    type="checkbox"
+                    :checked="isArchivedSelected(record.id)"
+                    @change="toggleArchivedSelection(record.id)"
+                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                  />
+                </td>
                 <td
                   class="px-3 py-[6px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
                 >
@@ -785,37 +840,113 @@
                   </div>
                 </td>
                 <td class="px-3 py-[6px] whitespace-nowrap text-center">
-                  <button
-                    @click="unarchiveRecord(record.id)"
-                    class="text-gray-400 hover:text-green-600 transition-colors inline-flex items-center gap-1 text-[11px] font-medium"
-                    title="Restore record"
-                  >
-                    <svg
-                      class="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
+                  <div class="flex items-center justify-center gap-2.5">
+                    <button
+                      @click="unarchiveRecord(record.id)"
+                      class="text-gray-400 hover:text-green-600 transition-colors inline-flex items-center gap-1 text-[11px] font-medium"
+                      title="Restore record"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
-                    Restore
-                  </button>
+                      <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Restore
+                    </button>
+                    <button
+                      @click="deleteArchivedRecord(record.id)"
+                      class="text-gray-400 hover:text-[#F52C11] transition-colors"
+                      title="Delete permanently"
+                    >
+                      <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9.5 4h5a1 1 0 011 1v2h-7V5a1 1 0 011-1zM4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
+        <!-- Bulk selection bar for archived records -->
+        <div
+          v-if="archivedSelectedCount > 0"
+          class="shrink-0 bg-white border-t border-gray-100 px-4 py-[6px] flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+            <span class="font-medium"
+              >{{ archivedSelectedCount }} record(s) selected</span
+            >
+            <span v-if="archiveDeleteError" class="text-[#F52C11] ml-2">{{
+              archiveDeleteError
+            }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              @click="restoreSelectedArchivedRecords"
+              class="bg-white hover:bg-gray-50 border border-gray-300 text-[#1F2835] px-2.5 py-[3px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+            >
+              <svg
+                class="w-3 h-3 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Restore selected
+            </button>
+            <button
+              @click="deleteSelectedArchivedRecords"
+              class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[3px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9.5 4h5a1 1 0 011 1v2h-7V5a1 1 0 011-1zM4 7h16"
+                />
+              </svg>
+              Delete selected
+            </button>
+          </div>
+        </div>
+
         <div
           class="px-5 py-3 border-t border-gray-100 flex items-center justify-end bg-white shrink-0"
         >
           <button
-            @click="showArchiveModal = false"
+            @click="closeArchiveModal"
             class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
           >
             Close
@@ -894,6 +1025,7 @@ const viewingRecord = ref(null);
 const editingRecord = ref(null);
 const saveError = ref(""); // error message shown inside Create/Edit modal on a failed save
 const archiveActionError = ref(""); // error message shown when archive/unarchive fails
+const archiveDeleteError = ref(""); // error message shown when deleting archived records fails
 
 // Backend lookups (populated on mount) + current logged-in user
 // (currentUser is read from localStorage — see loadCurrentUser() below —
@@ -917,7 +1049,7 @@ const showServicesDropdown = ref(false);
 // Service options - COPIED FROM LEADS
 const serviceOptions = ref([
   "All Services",
-  "Web Development",
+  "Website Development",
   "Custom Software",
   "Mobile Application",
   "Digital Marketing",
@@ -928,6 +1060,7 @@ const serviceOptions = ref([
 // Empty arrays — backend will populate these
 const records = ref([]);
 const archivedRecords = ref([]);
+const archivedSelectedIds = ref([]);
 
 // ==================== COMPUTED ====================
 const filteredRecords = computed(() => {
@@ -960,6 +1093,16 @@ const isAllSelected = computed(() => {
   return (
     paginatedRecords.value.length > 0 &&
     paginatedRecords.value.every((r) => selectedIds.value.includes(r.id))
+  );
+});
+
+const archivedSelectedCount = computed(() => archivedSelectedIds.value.length);
+const isArchivedAllSelected = computed(() => {
+  return (
+    archivedRecords.value.length > 0 &&
+    archivedRecords.value.every((r) =>
+      archivedSelectedIds.value.includes(r.id)
+    )
   );
 });
 
@@ -1029,8 +1172,17 @@ watch(filteredRecords, () => {
 });
 
 // ==================== CALENDAR - COPIED FROM LEADS ====================
-const currentMonth = ref(new Date().getMonth());
-const currentYear = ref(new Date().getFullYear());
+const today = new Date();
+const currentMonth = ref(today.getMonth());
+const currentYear = ref(today.getFullYear());
+
+// Same format used by selectDate()/filteredRecords: MM/DD/YY
+const todayDateStr = `${String(today.getMonth() + 1).padStart(
+  2,
+  "0"
+)}/${String(today.getDate()).padStart(2, "0")}/${String(
+  today.getFullYear()
+).slice(-2)}`;
 
 const currentMonthYear = computed(() => {
   const months = [
@@ -1077,6 +1229,7 @@ const calendarDays = computed(() => {
       isCurrentMonth: true,
       date: dateStr,
       isSelected: selectedDate.value === dateStr,
+      isToday: dateStr === todayDateStr,
     });
   }
   const remaining = 42 - days.length;
@@ -1105,6 +1258,11 @@ function selectDate(date) {
   }
 }
 
+function clearDateFilter() {
+  selectedDate.value = "";
+  showDatePicker.value = false;
+}
+
 function closeAllDropdowns() {
   showDatePicker.value = false;
   showServicesDropdown.value = false;
@@ -1115,14 +1273,16 @@ function closeAllDropdowns() {
 /**
  * FETCH all active records from backend
  * Backend dev: Replace with your API call (GET /api/pip-records)
+ * Records are sorted newest-first so the most recently added/restored
+ * record shows at the top of the table.
  */
 async function fetchRecords() {
   isLoading.value = true;
   try {
     const plans = await api.getPerformancePlans();
-    records.value = (plans || []).map((plan) =>
-      api.toFrontendRecord(plan, lookups.value)
-    );
+    records.value = (plans || [])
+      .map((plan) => api.toFrontendRecord(plan, lookups.value))
+      .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
   } catch (error) {
     console.error("Failed to fetch records:", error);
   } finally {
@@ -1137,10 +1297,14 @@ async function fetchRecords() {
 async function fetchArchivedRecords() {
   try {
     const plans = await api.getArchivedPerformancePlans();
-    archivedRecords.value = (plans || []).map((plan) => ({
-      ...api.toFrontendRecord(plan, lookups.value),
-      dateArchived: plan.dateArchived || plan.archived_at || "",
-    }));
+    archivedRecords.value = (plans || [])
+      .map((plan) => ({
+        ...api.toFrontendRecord(plan, lookups.value),
+        dateArchived: plan.dateArchived || plan.archived_at || "",
+      }))
+      .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+    archivedSelectedIds.value = [];
+    archiveDeleteError.value = "";
   } catch (error) {
     console.error("Failed to fetch archived records:", error);
   }
@@ -1175,7 +1339,7 @@ async function archiveRecordApi(id) {
     const idx = records.value.findIndex((r) => r.id === id);
     if (idx > -1) {
       const record = records.value[idx];
-      archivedRecords.value.push({
+      archivedRecords.value.unshift({
         ...record,
         dateArchived: new Date().toLocaleDateString("en-US", {
           month: "short",
@@ -1215,12 +1379,15 @@ async function archiveRecordsBatchApi(ids) {
     });
 
     const recordsToArchive = records.value.filter((r) => ids.includes(r.id));
-    recordsToArchive.forEach((record) => {
-      archivedRecords.value.push({
-        ...record,
-        dateArchived: dateStr,
+    recordsToArchive
+      .slice()
+      .reverse()
+      .forEach((record) => {
+        archivedRecords.value.unshift({
+          ...record,
+          dateArchived: dateStr,
+        });
       });
-    });
 
     records.value = records.value.filter((r) => !ids.includes(r.id));
 
@@ -1243,6 +1410,7 @@ async function archiveRecordsBatchApi(ids) {
 /**
  * UNARCHIVE a record
  * Backend dev: Replace with your API call (POST /api/pip-records/:id/unarchive)
+ * Restored records are placed at the top (index 0) of the active list.
  */
 async function unarchiveRecordApi(id) {
   try {
@@ -1251,8 +1419,11 @@ async function unarchiveRecordApi(id) {
     if (idx > -1) {
       const record = archivedRecords.value[idx];
       const { dateArchived, ...restoredRecord } = record;
-      records.value.push(restoredRecord);
+      records.value.unshift(restoredRecord);
       archivedRecords.value.splice(idx, 1);
+      archivedSelectedIds.value = archivedSelectedIds.value.filter(
+        (sid) => sid !== id
+      );
 
       logAuditAction({
         module: "Performance Improvement Plan",
@@ -1264,19 +1435,123 @@ async function unarchiveRecordApi(id) {
   }
 }
 
+/**
+ * UNARCHIVE multiple records
+ * Backend dev: Replace with your API call (POST /api/pip-records/unarchive-batch)
+ * Restored records are placed at the top of the active list, latest of the
+ * batch first.
+ */
+async function unarchiveRecordsBatchApi(ids) {
+  archiveActionError.value = "";
+  try {
+    // No batch-unarchive route exists on the backend, so restore one by one.
+    await Promise.all(ids.map((id) => api.unarchivePerformancePlan(id)));
+
+    const recordsToRestore = archivedRecords.value.filter((r) =>
+      ids.includes(r.id)
+    );
+    recordsToRestore
+      .slice()
+      .reverse()
+      .forEach((record) => {
+        const { dateArchived, ...restoredRecord } = record;
+        records.value.unshift(restoredRecord);
+      });
+
+    archivedRecords.value = archivedRecords.value.filter(
+      (r) => !ids.includes(r.id)
+    );
+
+    const restoredNames = recordsToRestore.map((r) => r.clientName).join(", ");
+    logAuditAction({
+      module: "Performance Improvement Plan",
+      description:
+        ids.length === 1
+          ? `Restored PIP record: ${restoredNames}`
+          : `Restored ${ids.length} PIP records: ${restoredNames}`,
+    });
+
+    archivedSelectedIds.value = [];
+  } catch (error) {
+    console.error("Failed to restore records:", error);
+    archiveActionError.value = describeApiError(error);
+  }
+}
+
+/**
+ * PERMANENTLY DELETE a single archived record
+ * Backend dev: Replace with your API call (DELETE /api/pip-records/:id)
+ */
+async function deleteArchivedRecordApi(id) {
+  archiveDeleteError.value = "";
+  try {
+    await api.deletePerformancePlan(id);
+    const idx = archivedRecords.value.findIndex((r) => r.id === id);
+    if (idx > -1) {
+      const record = archivedRecords.value[idx];
+      archivedRecords.value.splice(idx, 1);
+      archivedSelectedIds.value = archivedSelectedIds.value.filter(
+        (sid) => sid !== id
+      );
+
+      logAuditAction({
+        module: "Performance Improvement Plan",
+        description: `Permanently deleted PIP record: ${record.clientName}`,
+      });
+    }
+  } catch (error) {
+    console.error("Failed to delete archived record:", error);
+    archiveDeleteError.value = describeApiError(error);
+  }
+}
+
+/**
+ * PERMANENTLY DELETE multiple archived records
+ * Backend dev: Replace with your API call (POST /api/pip-records/delete-batch)
+ */
+async function deleteArchivedRecordsBatchApi(ids) {
+  archiveDeleteError.value = "";
+  try {
+    // No batch-delete route exists on the backend, so delete one by one.
+    await Promise.all(ids.map((id) => api.deletePerformancePlan(id)));
+
+    const recordsToDelete = archivedRecords.value.filter((r) =>
+      ids.includes(r.id)
+    );
+    archivedRecords.value = archivedRecords.value.filter(
+      (r) => !ids.includes(r.id)
+    );
+
+    const deletedNames = recordsToDelete.map((r) => r.clientName).join(", ");
+    logAuditAction({
+      module: "Performance Improvement Plan",
+      description:
+        ids.length === 1
+          ? `Permanently deleted PIP record: ${deletedNames}`
+          : `Permanently deleted ${ids.length} PIP records: ${deletedNames}`,
+    });
+
+    archivedSelectedIds.value = [];
+  } catch (error) {
+    console.error("Failed to delete archived records:", error);
+    archiveDeleteError.value = describeApiError(error);
+  }
+}
+
 // ==================== UI HANDLERS ====================
 
+// Status color scale (10% -> 100%)
 function getStatusColor(status) {
-  if (status === 100) return "#006400";
-  if (status >= 90) return "#90ee90";
-  if (status >= 80) return "#7fffd4";
-  if (status >= 70) return "#ffd700";
-  if (status >= 60) return "#daa520";
-  if (status >= 50) return "#ff8c00";
-  if (status >= 40) return "#ba55d3";
-  if (status >= 30) return "#4b0082";
-  if (status >= 20) return "#800000";
-  if (status >= 10) return "#000000";
+  if (status >= 100) return "#639922";
+  if (status >= 90) return "#4f772d";
+  if (status >= 80) return "#5e8c31";
+  if (status >= 70) return "#7fb069";
+  if (status >= 60) return "#6b7a8f";
+  if (status >= 50) return "#888888";
+  if (status >= 40) return "#ffd60a";
+  if (status >= 30) return "#ffb300";
+  if (status >= 20) return "#fa6f10";
+  if (status >= 10) return "#f52c11";
   return "#9ca3af";
 }
 
@@ -1306,6 +1581,32 @@ function toggleAll() {
   } else {
     const newIds = visibleIds.filter((id) => !selectedIds.value.includes(id));
     selectedIds.value.push(...newIds);
+  }
+}
+
+function isArchivedSelected(id) {
+  return archivedSelectedIds.value.includes(id);
+}
+
+function toggleArchivedSelection(id) {
+  const idx = archivedSelectedIds.value.indexOf(id);
+  if (idx > -1) {
+    archivedSelectedIds.value.splice(idx, 1);
+  } else {
+    archivedSelectedIds.value.push(id);
+  }
+}
+
+function toggleAllArchived() {
+  const visibleIds = archivedRecords.value.map((r) => r.id);
+  const allVisibleSelected = visibleIds.every((id) =>
+    archivedSelectedIds.value.includes(id)
+  );
+
+  if (allVisibleSelected) {
+    archivedSelectedIds.value = [];
+  } else {
+    archivedSelectedIds.value = [...visibleIds];
   }
 }
 
@@ -1374,6 +1675,24 @@ function unarchiveRecord(id) {
   unarchiveRecordApi(id);
 }
 
+function deleteArchivedRecord(id) {
+  deleteArchivedRecordApi(id);
+}
+
+function deleteSelectedArchivedRecords() {
+  deleteArchivedRecordsBatchApi([...archivedSelectedIds.value]);
+}
+
+function restoreSelectedArchivedRecords() {
+  unarchiveRecordsBatchApi([...archivedSelectedIds.value]);
+}
+
+function closeArchiveModal() {
+  showArchiveModal.value = false;
+  archivedSelectedIds.value = [];
+  archiveDeleteError.value = "";
+}
+
 // Reads the user object login.vue stored in localStorage after a
 // successful sign-in. login.vue stores it via
 // localStorage.setItem('user', JSON.stringify(user)), where `user` is
@@ -1411,7 +1730,7 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 input[type="number"] {
-  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .custom-scroll::-webkit-scrollbar {
