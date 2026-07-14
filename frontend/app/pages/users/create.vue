@@ -75,53 +75,28 @@
 
           <div class="px-3 pb-2.5">
             <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-              <div>
+              <div class="md:col-span-2">
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
-                  First name <span class="text-[#F52C11]">*</span>
+                  Full name <span class="text-[#F52C11]">*</span>
                 </label>
                 <input
-                  v-model="form.firstName"
+                  v-model="form.fullName"
                   type="text"
-                  placeholder="First name"
+                  placeholder="Full name"
                   :class="[
                     'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                    errors.firstName
+                    errors.fullName
                       ? 'border-[#F52C11]'
                       : 'border-gray-200 focus:border-[#F52C11]',
                   ]"
                 />
                 <p
-                  v-if="errors.firstName"
+                  v-if="errors.fullName"
                   class="text-[8px] text-[#F52C11] mt-0.5"
                 >
-                  First name is required
-                </p>
-              </div>
-
-              <div>
-                <label
-                  class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                >
-                  Last name <span class="text-[#F52C11]">*</span>
-                </label>
-                <input
-                  v-model="form.lastName"
-                  type="text"
-                  placeholder="Last name"
-                  :class="[
-                    'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                    errors.lastName
-                      ? 'border-[#F52C11]'
-                      : 'border-gray-200 focus:border-[#F52C11]',
-                  ]"
-                />
-                <p
-                  v-if="errors.lastName"
-                  class="text-[8px] text-[#F52C11] mt-0.5"
-                >
-                  Last name is required
+                  Full name is required
                 </p>
               </div>
 
@@ -288,31 +263,42 @@
         <div
           class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden flex flex-col"
         >
-          <div class="flex items-center gap-1.5 px-3 py-1.5">
+          <div class="px-3 py-1.5">
             <div
-              class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
+              class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,1.2fr)] items-center"
             >
-              <svg
-                class="w-2.5 h-2.5 text-[#F52C11]"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
-            </div>
-            <div>
+              <div class="flex items-center gap-1.5">
+                <div
+                  class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
+                >
+                  <svg
+                    class="w-2.5 h-2.5 text-[#F52C11]"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h2
+                    class="text-[11px] font-bold text-[#1F2835] leading-tight"
+                  >
+                    Role & permissions
+                  </h2>
+                  <p class="text-[9px] text-gray-400 leading-tight">
+                    Controls what this user can access and do
+                  </p>
+                </div>
+              </div>
               <h2 class="text-[11px] font-bold text-[#1F2835] leading-tight">
-                Role & permissions
+                Permissions
               </h2>
-              <p class="text-[9px] text-gray-400 leading-tight">
-                Controls what this user can access and do
-              </p>
             </div>
           </div>
 
@@ -371,12 +357,6 @@
               </div>
 
               <div>
-                <label
-                  class="block text-[10px] font-semibold text-[#1F2835] mb-2"
-                >
-                  Permissions
-                </label>
-
                 <label
                   class="flex items-start gap-2.5 p-2.5 mb-2 border border-gray-200 rounded-[6px] bg-white cursor-pointer hover:bg-gray-50 transition-colors"
                 >
@@ -642,6 +622,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useAuditLog } from "~/composables/useAuditLog";
+import { useToast } from "~/composables/useToast";
 
 definePageMeta({
   layout: "app",
@@ -649,8 +630,7 @@ definePageMeta({
 });
 
 const form = ref({
-  firstName: "",
-  lastName: "",
+  fullName: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -670,8 +650,7 @@ const rolePagePermissions = ref([]);
 const globalFullAccess = ref(false);
 
 const errors = ref({
-  firstName: false,
-  lastName: false,
+  fullName: false,
   email: false,
   password: false,
   confirmPassword: false,
@@ -789,8 +768,7 @@ function checkPasswordFirst() {
 
 const isFormValid = computed(() => {
   return (
-    form.value.firstName.trim() &&
-    form.value.lastName.trim() &&
+    form.value.fullName.trim() &&
     form.value.email.trim() &&
     form.value.password.trim() &&
     form.value.confirmPassword.trim() &&
@@ -809,8 +787,7 @@ const selectedRoleId = computed(() => {
 });
 
 function validateForm() {
-  errors.value.firstName = !form.value.firstName.trim();
-  errors.value.lastName = !form.value.lastName.trim();
+  errors.value.fullName = !form.value.fullName.trim();
   errors.value.email = !form.value.email.trim();
   errors.value.password = !form.value.password.trim();
   errors.value.confirmPassword =
@@ -827,8 +804,7 @@ function cancel() {
 
 function resetErrors() {
   errors.value = {
-    firstName: false,
-    lastName: false,
+    fullName: false,
     email: false,
     password: false,
     confirmPassword: false,
@@ -947,13 +923,18 @@ async function saveUserPermissionOverrides(userId) {
 }
 
 const { logAuditAction } = useAuditLog();
+const toast = useToast();
 
 async function createUser() {
-  if (!validateForm()) return;
+  if (!validateForm()) {
+    toast.error("Please fill in all required fields correctly.");
+    return;
+  }
 
   if (!selectedRoleId.value) {
     errors.value.role = true;
     submitMessage.value = "Selected role was not found in the database.";
+    toast.error("Selected role was not found in the database.");
     return;
   }
 
@@ -961,8 +942,7 @@ async function createUser() {
   submitMessage.value = "";
 
   try {
-    const fullName =
-      `${form.value.firstName.trim()} ${form.value.lastName.trim()}`.trim();
+    const fullName = form.value.fullName.trim();
 
     const userResponse = await apiFetch("/users", {
       method: "POST",
@@ -975,17 +955,41 @@ async function createUser() {
     });
 
     const createdUser = userResponse?.data || userResponse;
-    await saveUserPermissionOverrides(createdUser?.id);
+
+    const hasOverrides = permissions.value.some((row) => isRowOverridden(row));
+    try {
+      await saveUserPermissionOverrides(createdUser?.id);
+      if (hasOverrides) {
+        toast.success("Permission overrides saved for the new user.");
+      }
+    } catch (overrideError) {
+      console.error("Error saving permission overrides:", overrideError);
+      toast.warning(
+        "User was created, but permission overrides could not be saved."
+      );
+    }
 
     logAuditAction({
       module: "User Management",
       description: `Created new user account for ${fullName} (${form.value.email.trim()})`,
     });
 
+    toast.success(`${fullName} was created successfully.`);
+
     await router.push("/users");
   } catch (error) {
-    submitMessage.value =
-      error?.data?.message || error?.message || "Unable to create user.";
+    const message = error?.data?.message || error?.message || "";
+    const isDuplicate =
+      error?.status === 409 || /already exists|duplicate/i.test(message || "");
+
+    submitMessage.value = message || "Unable to create user.";
+
+    if (isDuplicate) {
+      errors.value.email = true;
+      toast.error("A user with this email already exists.");
+    } else {
+      toast.error(message || "Unable to create user. Please try again.");
+    }
   } finally {
     saving.value = false;
   }
@@ -1009,6 +1013,9 @@ onMounted(async () => {
     applySelectedRolePermissions();
   } catch (error) {
     submitMessage.value = "Unable to load initial data from the database.";
+    toast.error(
+      "Unable to load roles and permissions. Please refresh the page."
+    );
   } finally {
     rolesLoading.value = false;
     pagesLoading.value = false;
