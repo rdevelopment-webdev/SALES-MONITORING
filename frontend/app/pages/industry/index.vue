@@ -208,25 +208,28 @@
                 @click="day.date && selectDate(day.date)"
                 :disabled="!day.date"
                 :class="[
-                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
+                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors border',
                   day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
                   day.isSelected
-                    ? 'bg-[#F52C11] text-white'
+                    ? 'bg-[#F52C11] text-white border-[#F52C11]'
+                    : day.isToday
+                    ? 'border-[#F52C11] hover:bg-gray-100'
                     : day.date
-                    ? 'hover:bg-gray-100'
-                    : 'cursor-default',
+                    ? 'border-transparent hover:bg-gray-100'
+                    : 'border-transparent cursor-default',
                 ]"
               >
                 {{ day.day }}
               </button>
             </div>
-            <button
-              v-if="selectedDate"
-              @click="selectDate('')"
-              class="w-full mt-2 text-center text-[10px] text-red-500 hover:underline"
-            >
-              Clear Date Filter
-            </button>
+            <div v-if="selectedDate" class="flex justify-end mt-2">
+              <button
+                @click="selectDate('')"
+                class="text-[10px] text-gray-400 hover:underline"
+              >
+                Clear date
+              </button>
+            </div>
           </div>
         </div>
 
@@ -752,7 +755,7 @@
               :disabled="page.value === '...'"
               :class="[
                 page.value === currentPage
-                  ? 'bg-[#F52C11] text-white font-bold'
+                  ? 'bg-white text-[#1F2835] font-bold'
                   : page.value === '...'
                   ? 'cursor-default text-gray-400'
                   : 'hover:bg-gray-200 text-slate-700',
@@ -997,7 +1000,24 @@
           </button>
         </div>
 
-        <div class="px-5 py-3 shrink-0">
+        <div class="px-5 pt-3 pb-1 shrink-0 flex items-center gap-1.5">
+          <span class="text-[11px] text-gray-400 mr-0.5">Location</span>
+          <button
+            v-for="loc in ['All', ...locationOptions]"
+            :key="loc"
+            @click="setArchiveLocationFilter(loc)"
+            :class="
+              archiveLocationFilter === loc
+                ? 'bg-[#1F2835] text-white'
+                : 'bg-gray-100 text-[#1F2835] border border-gray-200'
+            "
+            class="px-2.5 py-[2px] rounded-[4px] text-[11px] font-medium transition-colors"
+          >
+            {{ loc }}
+          </button>
+        </div>
+
+        <div class="px-5 py-2 shrink-0">
           <div class="relative">
             <svg
               class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
@@ -1025,6 +1045,30 @@
           </div>
         </div>
 
+        <div
+          v-if="
+            (archiveTab === 'records' && filteredArchivedRecords.length > 0) ||
+            (archiveTab === 'industries' && filteredArchivedIndustries.length > 0)
+          "
+          class="px-5 pb-1 shrink-0 flex items-center gap-1.5"
+        >
+          <input
+            type="checkbox"
+            :checked="
+              archiveTab === 'records'
+                ? isAllArchivedRecordsSelected
+                : isAllArchivedIndustriesSelected
+            "
+            @change="
+              archiveTab === 'records'
+                ? toggleAllArchivedRecords()
+                : toggleAllArchivedIndustries()
+            "
+            class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+          />
+          <span class="text-[11px] text-gray-400">Select all</span>
+        </div>
+
         <div class="flex-1 overflow-y-auto custom-scroll px-5 pb-4 min-h-[200px]">
           <div
             v-if="isLoadingArchive"
@@ -1047,6 +1091,12 @@
                 class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-[10px]"
               >
                 <div class="flex items-center gap-3 min-w-0">
+                  <input
+                    type="checkbox"
+                    :checked="isArchiveRecordSelected(rec.id)"
+                    @change="toggleArchiveRecordSelection(rec.id)"
+                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer shrink-0"
+                  />
                   <div
                     class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
                   >
@@ -1131,6 +1181,12 @@
                 class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-[10px]"
               >
                 <div class="flex items-center gap-3 min-w-0">
+                  <input
+                    type="checkbox"
+                    :checked="isArchiveIndustrySelected(ind.name)"
+                    @change="toggleArchiveIndustrySelection(ind.name)"
+                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer shrink-0"
+                  />
                   <div
                     class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
                   >
@@ -1204,6 +1260,72 @@
                 </div>
               </div>
             </template>
+          </div>
+        </div>
+
+        <div
+          v-if="
+            (archiveTab === 'records' && archiveSelectedRecordIds.length > 0) ||
+            (archiveTab === 'industries' && archiveSelectedIndustryNames.length > 0)
+          "
+          class="px-5 py-2.5 border-t border-gray-200 flex items-center justify-between shrink-0 bg-white text-[11px]"
+        >
+          <div class="flex items-center gap-1.5 text-gray-500">
+            <svg
+              class="w-3.5 h-3.5 text-[#F52C11]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 8h.01M11 12h1v4h1"
+              />
+            </svg>
+            {{
+              archiveTab === "records"
+                ? archiveSelectedRecordIds.length
+                : archiveSelectedIndustryNames.length
+            }}
+            item(s) selected
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button
+              @click="
+                archiveTab === 'records'
+                  ? restoreSelectedArchivedRecords()
+                  : restoreSelectedArchivedIndustries()
+              "
+              class="flex items-center gap-1 px-3 py-1.5 rounded-[6px] border border-gray-200 bg-white text-[#F52C11] text-[11px] font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Restore selected
+            </button>
+            <button
+              @click="
+                archiveTab === 'records'
+                  ? deleteSelectedArchivedRecords()
+                  : deleteSelectedArchivedIndustries()
+              "
+              class="px-3 py-1.5 rounded-[6px] bg-[#F52C11] text-white text-[11px] font-semibold hover:bg-[#d9250e] transition-colors"
+            >
+              Delete selected
+            </button>
           </div>
         </div>
 
@@ -1328,6 +1450,12 @@ const newIndustryName = ref("");
 const addIndustryError = ref("");
 const archiveSearchQuery = ref("");
 const archiveTab = ref("records");
+const archiveLocationFilter = ref("All");
+
+// Archive multi-select state (kept separate per tab since records use
+// numeric ids and industries are keyed by name)
+const archiveSelectedRecordIds = ref([]);
+const archiveSelectedIndustryNames = ref([]);
 
 // Loading Indicators
 const isSubmittingIndustry = ref(false);
@@ -1475,9 +1603,14 @@ async function fetchRecords() {
 async function fetchArchive() {
   isLoadingArchive.value = true;
   try {
-    const response = await apiFetch("/leads/archived", {
-      query: { location: selectedLocation.value },
-    });
+    const query = {};
+    // "All" means don't scope by location at all; otherwise scope the
+    // archive listing to whichever location the modal filter is set to
+    // (independent from the main table's location toggle).
+    if (archiveLocationFilter.value !== "All") {
+      query.location = archiveLocationFilter.value;
+    }
+    const response = await apiFetch("/leads/archived", { query });
     const data = payloadData(response);
     archivedRecords.value = Array.isArray(data)
       ? data.map(normalizeRecord)
@@ -1783,6 +1916,135 @@ async function permanentDeleteRecord(id) {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Archive Multi-Select Bulk Action Handlers Matrix */
+/* ---------------------------------------------------------------------- */
+async function restoreSelectedArchivedRecords() {
+  if (archiveSelectedRecordIds.value.length === 0) return;
+  const count = archiveSelectedRecordIds.value.length;
+  try {
+    await Promise.all(
+      archiveSelectedRecordIds.value.map((id) =>
+        apiFetch(`/leads/${id}/restore`, { method: "PUT" })
+      )
+    );
+    logAuditAction({
+      module: "Leads Tracker",
+      description: `Restored ${count} lead record(s)`,
+    });
+    archiveSelectedRecordIds.value = [];
+    await fetchArchive();
+    await fetchRecords();
+  } catch (err) {
+    console.error("Bulk restore of archived records failed:", err);
+  }
+}
+
+async function deleteSelectedArchivedRecords() {
+  if (archiveSelectedRecordIds.value.length === 0) return;
+  const count = archiveSelectedRecordIds.value.length;
+  if (
+    !confirm(
+      `Are you completely certain you want to permanently delete ${count} record(s) from backend database systems storage? This cannot be undone.`
+    )
+  )
+    return;
+  try {
+    await Promise.all(
+      archiveSelectedRecordIds.value.map((id) =>
+        apiFetch(`/leads/${id}`, { method: "DELETE" })
+      )
+    );
+    logAuditAction({
+      module: "Leads Tracker",
+      description: `Permanently deleted ${count} lead record(s)`,
+    });
+    archiveSelectedRecordIds.value = [];
+    await fetchArchive();
+  } catch (err) {
+    console.error("Bulk permanent delete of archived records failed:", err);
+  }
+}
+
+async function restoreSelectedArchivedIndustries() {
+  if (archiveSelectedIndustryNames.value.length === 0) return;
+  const count = archiveSelectedIndustryNames.value.length;
+  try {
+    await Promise.all(
+      archiveSelectedIndustryNames.value.map((name) => {
+        const id = industryIdByName.value[name];
+        return id
+          ? apiFetch(`/unarchive/industry/${id}`, { method: "POST" })
+          : Promise.resolve();
+      })
+    );
+    logAuditAction({
+      module: "Industry",
+      description: `Restored ${count} industry(ies)`,
+    });
+    archiveSelectedIndustryNames.value = [];
+    await fetchIndustries();
+    await fetchArchivedIndustries();
+  } catch (err) {
+    console.error("Bulk restore of archived industries failed:", err);
+  }
+}
+
+async function deleteSelectedArchivedIndustries() {
+  if (archiveSelectedIndustryNames.value.length === 0) return;
+  const count = archiveSelectedIndustryNames.value.length;
+  if (
+    !confirm(
+      `Are you completely certain you want to permanently delete ${count} industry(ies) from backend database systems storage? This cannot be undone.`
+    )
+  )
+    return;
+  try {
+    await Promise.all(
+      archiveSelectedIndustryNames.value.map((name) => {
+        const id = industryIdByName.value[name];
+        return id
+          ? apiFetch(`/industries/${id}`, { method: "DELETE" })
+          : Promise.resolve();
+      })
+    );
+    logAuditAction({
+      module: "Industry",
+      description: `Permanently deleted ${count} industry(ies)`,
+    });
+    archiveSelectedIndustryNames.value = [];
+    await fetchArchivedIndustries();
+  } catch (err) {
+    console.error("Bulk permanent delete of archived industries failed:", err);
+  }
+}
+
+function isArchiveRecordSelected(id) {
+  return archiveSelectedRecordIds.value.includes(id);
+}
+
+function toggleArchiveRecordSelection(id) {
+  const idx = archiveSelectedRecordIds.value.indexOf(id);
+  if (idx > -1) archiveSelectedRecordIds.value.splice(idx, 1);
+  else archiveSelectedRecordIds.value.push(id);
+}
+
+function isArchiveIndustrySelected(name) {
+  return archiveSelectedIndustryNames.value.includes(name);
+}
+
+function toggleArchiveIndustrySelection(name) {
+  const idx = archiveSelectedIndustryNames.value.indexOf(name);
+  if (idx > -1) archiveSelectedIndustryNames.value.splice(idx, 1);
+  else archiveSelectedIndustryNames.value.push(name);
+}
+
+function setArchiveLocationFilter(loc) {
+  archiveLocationFilter.value = loc;
+  archiveSelectedRecordIds.value = [];
+  fetchArchive();
+}
+
+/* ---------------------------------------------------------------------- */
 /* Computed Representation Elements Filter Pipeline Transformers Matrix */
 /* ---------------------------------------------------------------------- */
 const sortedIndustries = computed(() => {
@@ -1849,6 +2111,21 @@ const filteredArchivedRecords = computed(() => {
   );
 });
 
+const isAllArchivedRecordsSelected = computed(() => {
+  const ids = filteredArchivedRecords.value.map((r) => r.id);
+  return (
+    ids.length > 0 && ids.every((id) => archiveSelectedRecordIds.value.includes(id))
+  );
+});
+
+const isAllArchivedIndustriesSelected = computed(() => {
+  const names = filteredArchivedIndustries.value.map((i) => i.name);
+  return (
+    names.length > 0 &&
+    names.every((n) => archiveSelectedIndustryNames.value.includes(n))
+  );
+});
+
 /* ---------------------------------------------------------------------- */
 /* Archive Modal Presentation Helpers Matrix */
 /* ---------------------------------------------------------------------- */
@@ -1905,6 +2182,34 @@ function isSelected(id) {
   return selectedIds.value.includes(id);
 }
 
+function toggleAllArchivedRecords() {
+  const ids = filteredArchivedRecords.value.map((r) => r.id);
+  if (isAllArchivedRecordsSelected.value) {
+    archiveSelectedRecordIds.value = archiveSelectedRecordIds.value.filter(
+      (id) => !ids.includes(id)
+    );
+  } else {
+    ids.forEach((id) => {
+      if (!archiveSelectedRecordIds.value.includes(id))
+        archiveSelectedRecordIds.value.push(id);
+    });
+  }
+}
+
+function toggleAllArchivedIndustries() {
+  const names = filteredArchivedIndustries.value.map((i) => i.name);
+  if (isAllArchivedIndustriesSelected.value) {
+    archiveSelectedIndustryNames.value = archiveSelectedIndustryNames.value.filter(
+      (n) => !names.includes(n)
+    );
+  } else {
+    names.forEach((n) => {
+      if (!archiveSelectedIndustryNames.value.includes(n))
+        archiveSelectedIndustryNames.value.push(n);
+    });
+  }
+}
+
 function goToPage(page) {
   if (page >= 1 && page <= totalPages.value) currentPage.value = page;
 }
@@ -1948,6 +2253,8 @@ async function switchLocation(loc) {
 
 async function openArchiveModal() {
   showArchiveModal.value = true;
+  archiveSelectedRecordIds.value = [];
+  archiveSelectedIndustryNames.value = [];
   await fetchArchivedIndustries();
   await fetchArchive();
 }
@@ -2026,6 +2333,14 @@ const calendarDays = computed(() => {
   ).getDate();
   const days = [];
 
+  // Compute "today" as YYYY-MM-DD once per render so we can flag the
+  // matching cell in the currently-displayed month/year with a border.
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(now.getDate()).padStart(2, "0")}`;
+
   for (let i = 0; i < startDay; i++)
     days.push({ day: "", isCurrentMonth: false, date: null });
   for (let i = 1; i <= daysInMonth; i++) {
@@ -2037,6 +2352,7 @@ const calendarDays = computed(() => {
       isCurrentMonth: true,
       date: dateStr,
       isSelected: selectedDate.value === dateStr,
+      isToday: dateStr === todayStr,
     });
   }
   return days;
@@ -2143,6 +2459,14 @@ watch(
 
 watch(pageSize, () => {
   currentPage.value = 1;
+});
+
+// Switching tabs inside the archive modal clears the other tab's
+// selection so a stray "Delete selected" click can't act on rows that
+// aren't currently visible.
+watch(archiveTab, () => {
+  archiveSelectedRecordIds.value = [];
+  archiveSelectedIndustryNames.value = [];
 });
 </script>
 

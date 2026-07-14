@@ -81,4 +81,14 @@ class PerformancePlan extends Model
     {
         return $this->archived_at !== null;
     }
+
+    public function scopeActive($query)
+    {
+        return $query->whereNull('archived_at');
+    }
+
+    public function scopeArchived($query)
+    {
+        return $query->whereNotNull('archived_at');
+    }
 }

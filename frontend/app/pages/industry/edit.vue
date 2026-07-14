@@ -85,26 +85,15 @@
               <label
                 class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
               >
-                Business name <span class="text-[#F52C11]">*</span>
+                Business name
               </label>
               <input
                 v-model="form.businessName"
                 type="text"
                 placeholder="Enter business name"
-                :class="[
-                  'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                  errors.businessName
-                    ? 'border-[#F52C11]'
-                    : 'border-gray-200 focus:border-[#F52C11]',
-                ]"
+                class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
                 @keyup.enter="save"
               />
-              <p
-                v-if="errors.businessName"
-                class="text-[8px] text-[#F52C11] mt-0.5"
-              >
-                Business name is required
-              </p>
             </div>
 
             <!-- Contact person -->
@@ -112,34 +101,23 @@
               <label
                 class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
               >
-                Contact person <span class="text-[#F52C11]">*</span>
+                Contact person
               </label>
               <input
                 v-model="form.contactPerson"
                 type="text"
                 placeholder="Enter a name"
-                :class="[
-                  'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                  errors.contactPerson
-                    ? 'border-[#F52C11]'
-                    : 'border-gray-200 focus:border-[#F52C11]',
-                ]"
+                class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
                 @keyup.enter="save"
               />
-              <p
-                v-if="errors.contactPerson"
-                class="text-[8px] text-[#F52C11] mt-0.5"
-              >
-                Contact person is required
-              </p>
             </div>
 
-            <!-- Contact number - Philippine format, digits only, auto-dash, required + must be complete -->
+            <!-- Contact number - Philippine format, digits only, auto-dash, optional but must be complete if provided -->
             <div>
               <label
                 class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
               >
-                Contact number <span class="text-[#F52C11]">*</span>
+                Contact number
               </label>
               <input
                 v-model="form.contactNumber"
@@ -171,20 +149,15 @@
               <label
                 class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
               >
-                Service <span class="text-[#F52C11]">*</span>
+                Service
               </label>
               <div class="relative">
                 <select
                   v-model="form.service"
-                  :class="[
-                    'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer',
-                    errors.service
-                      ? 'border-[#F52C11]'
-                      : 'border-gray-200 focus:border-[#F52C11]',
-                    form.service ? 'text-[#1F2835]' : 'text-gray-400',
-                  ]"
+                  class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer"
+                  :class="form.service ? 'text-[#1F2835]' : 'text-gray-400'"
                 >
-                  <option value="" disabled>--</option>
+                  <option value="">--</option>
                   <option
                     v-for="service in serviceOptions"
                     :key="service"
@@ -207,9 +180,6 @@
                   />
                 </svg>
               </div>
-              <p v-if="errors.service" class="text-[8px] text-[#F52C11] mt-0.5">
-                Service is required
-              </p>
             </div>
 
             <!-- Remarks -->
@@ -234,26 +204,15 @@
               <label
                 class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
               >
-                Location <span class="text-[#F52C11]">*</span>
+                Location
               </label>
               <input
                 v-model="form.location"
                 type="text"
                 placeholder="Type a location"
-                :class="[
-                  'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                  errors.location
-                    ? 'border-[#F52C11]'
-                    : 'border-gray-200 focus:border-[#F52C11]',
-                ]"
+                class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
                 @keyup.enter="save"
               />
-              <p
-                v-if="errors.location"
-                class="text-[8px] text-[#F52C11] mt-0.5"
-              >
-                Location is required
-              </p>
             </div>
 
             <!-- Job position -->
@@ -298,7 +257,7 @@
               <label
                 class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
               >
-                Date <span class="text-[#F52C11]">*</span>
+                Date
               </label>
               <div class="relative">
                 <input
@@ -306,12 +265,7 @@
                   type="text"
                   placeholder="mm/dd/yyyy"
                   readonly
-                  :class="[
-                    'w-full border rounded-[4px] px-2.5 py-[5px] pr-8 text-[11px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer',
-                    errors.date
-                      ? 'border-[#F52C11] bg-white'
-                      : 'border-gray-200 bg-white',
-                  ]"
+                  class="w-full border border-gray-200 bg-white rounded-[4px] px-2.5 py-[5px] pr-8 text-[11px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer"
                   @click="showDatePicker = true"
                 />
                 <button
@@ -334,9 +288,6 @@
                   </svg>
                 </button>
               </div>
-              <p v-if="errors.date" class="text-[8px] text-[#F52C11] mt-0.5">
-                Date is required
-              </p>
             </div>
 
             <!-- Status -->
@@ -649,25 +600,16 @@ watch(() => props.record, initForm, { immediate: true });
 
 // ============================================
 // ERROR STATE
+// Only fields with a format (not a presence) requirement remain here.
 // ============================================
 const errors = reactive({
-  businessName: false,
-  contactPerson: false,
-  service: false,
-  date: false,
   email: false,
   contactNumber: false,
-  location: false,
 });
 
 function resetErrors() {
-  errors.businessName = false;
-  errors.contactPerson = false;
-  errors.service = false;
-  errors.date = false;
   errors.email = false;
   errors.contactNumber = false;
-  errors.location = false;
 }
 
 // ============================================
@@ -684,6 +626,8 @@ const serviceOptions = [
 
 // ============================================
 // CONTACT NUMBER - Philippine format 0917-123-4567
+// Optional (nullable): empty is valid; if the user starts typing, it
+// must resolve to a complete 11-digit number.
 // ============================================
 function formatContactNumber() {
   const digitsOnly = form.contactNumber.replace(/\D/g, "").slice(0, 11);
@@ -706,6 +650,7 @@ function handleContactKeydown(e) {
 }
 
 function isValidContactNumber(value) {
+  if (!value || !value.trim()) return true; // nullable
   const digits = (value || "").replace(/\D/g, "");
   return digits.length === 11;
 }
@@ -718,7 +663,7 @@ function validateContactNumberField() {
 // EMAIL VALIDATION
 // ============================================
 function isValidEmail(value) {
-  if (!value || !value.trim()) return true;
+  if (!value || !value.trim()) return true; // nullable
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
@@ -889,29 +834,18 @@ watch(showDatePicker, (val) => {
 
 // ============================================
 // VALIDATION
+// All fields are now nullable (optional). Only format-based checks
+// remain: email and contact number must be well-formed *if* provided.
 // ============================================
 function validateForm() {
-  errors.businessName = !form.businessName.trim();
-  errors.contactPerson = !form.contactPerson.trim();
-  errors.service = !form.service;
-  errors.date = !form.date;
   errors.email = !isValidEmail(form.email);
   errors.contactNumber = !isValidContactNumber(form.contactNumber);
-  errors.location = !form.location.trim();
 
   return !Object.values(errors).some((error) => error);
 }
 
 const isFormValid = computed(() => {
-  return (
-    form.businessName.trim() &&
-    form.contactPerson.trim() &&
-    form.service &&
-    form.date &&
-    form.location.trim() &&
-    isValidEmail(form.email) &&
-    isValidContactNumber(form.contactNumber)
-  );
+  return isValidEmail(form.email) && isValidContactNumber(form.contactNumber);
 });
 
 // ============================================

@@ -49,7 +49,7 @@
             Add new record
           </h3>
           <p class="text-[9.5px] text-gray-400 leading-tight">
-            Performance Improvement Plan – Leads Tracker
+            PIP – Leads Tracker
           </p>
         </div>
       </div>
