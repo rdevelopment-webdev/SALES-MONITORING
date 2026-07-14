@@ -177,7 +177,9 @@
         </div>
 
         <!-- Checklist Section -->
-        <div class="mt-3 flex-1 flex flex-col min-h-0">
+        <div
+          class="mt-3 flex-1 flex flex-col min-h-0 border border-gray-200 rounded-[4px] overflow-hidden"
+        >
           <div
             class="border border-gray-200 rounded-[4px] overflow-hidden flex flex-col h-full"
           >
@@ -201,74 +203,208 @@
                 No checklist items yet — type below and press Enter to add one.
               </div>
 
-              <!-- Checklist items -->
+              <!-- Main Checklist items -->
               <div
                 v-for="(item, index) in form.checklist"
                 :key="item.id"
-                class="group flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 transition-colors border-b border-gray-100"
+                class="border-b border-gray-100"
               >
-                <!-- Checkbox -->
+                <!-- Main Item Row -->
                 <div
-                  @click="toggleChecklistItem(index)"
-                  :class="[
-                    'w-3.5 h-3.5 rounded border flex items-center justify-center transition-colors cursor-pointer shrink-0',
-                    item.completed
-                      ? 'bg-[#F52C11] border-[#F52C11]'
-                      : 'border-gray-300 hover:border-gray-400',
-                  ]"
+                  class="group flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 transition-colors"
                 >
-                  <svg
-                    v-if="item.completed"
-                    class="w-2.5 h-2.5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    viewBox="0 0 24 24"
+                  <!-- Checkbox -->
+                  <div
+                    @click="toggleChecklistItem(index)"
+                    :class="[
+                      'w-3.5 h-3.5 rounded border flex items-center justify-center transition-colors cursor-pointer shrink-0',
+                      item.completed
+                        ? 'bg-[#F52C11] border-[#F52C11]'
+                        : 'border-gray-300 hover:border-gray-400',
+                    ]"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                    <svg
+                      v-if="item.completed"
+                      class="w-2.5 h-2.5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+
+                  <!-- Editable Text -->
+                  <input
+                    v-model="item.text"
+                    type="text"
+                    class="flex-1 text-[10px] bg-transparent border-none focus:outline-none focus:ring-0 p-0"
+                    :class="[
+                      item.completed
+                        ? 'text-gray-400 line-through'
+                        : 'text-[#1F2835]',
+                    ]"
+                    @keydown.enter.prevent="addItemBelow(index)"
+                    @keydown.backspace="handleBackspace(index, $event)"
+                    placeholder="Type here..."
+                  />
+
+                  <!-- Sub-item count badge -->
+                  <span
+                    v-if="item.subItems && item.subItems.length > 0"
+                    class="text-[8px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 shrink-0"
+                  >
+                    {{ item.subItems.filter(s => s.completed).length }}/{{ item.subItems.length }}
+                  </span>
+
+                  <!-- Toggle sub-items button -->
+                  <button
+                    type="button"
+                    @click="item.showSubItems = !item.showSubItems"
+                    v-if="item.subItems && item.subItems.length > 0"
+                    class="text-gray-400 hover:text-[#F52C11] transition-colors shrink-0 p-0.5 rounded hover:bg-gray-100"
+                    :class="item.showSubItems ? 'rotate-180' : ''"
+                    style="transition: transform 0.2s;"
+                  >
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  <!-- Add sub-item button -->
+                  <button
+                    type="button"
+                    @click="addSubItem(index)"
+                    class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[#F52C11] transition-all duration-200 shrink-0 p-0.5 rounded hover:bg-gray-100"
+                    title="Add sub-item"
+                  >
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                  </button>
+
+                  <!-- Delete X button -->
+                  <button
+                    type="button"
+                    @click="deleteChecklistItem(index)"
+                    class="opacity-0 group-hover:opacity-100 text-[#F52C11] hover:text-[#d9250e] transition-all duration-200 shrink-0 p-0.5 rounded hover:bg-red-50"
+                    title="Delete item"
+                  >
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
                 </div>
 
-                <!-- Editable Text -->
-                <input
-                  v-model="item.text"
-                  type="text"
-                  class="flex-1 text-[10px] bg-transparent border-none focus:outline-none focus:ring-0 p-0"
-                  :class="[
-                    item.completed
-                      ? 'text-gray-400 line-through'
-                      : 'text-[#1F2835]',
-                  ]"
-                  @keydown.enter.prevent="addItemBelow(index)"
-                  @keydown.backspace="handleBackspace(index, $event)"
-                  placeholder="Type here..."
-                />
-
-                <!-- Delete X button - appears on hover -->
-                <button
-                  type="button"
-                  @click="deleteChecklistItem(index)"
-                  class="opacity-0 group-hover:opacity-100 text-[#F52C11] hover:text-[#d9250e] transition-all duration-200 shrink-0 p-0.5 rounded hover:bg-red-50"
-                  title="Delete item"
+                <!-- Sub-items Container -->
+                <div
+                  v-if="item.showSubItems && item.subItems && item.subItems.length > 0"
+                  class="bg-gray-50/50 border-t border-gray-100/50"
                 >
-                  <svg
-                    class="w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    viewBox="0 0 24 24"
+                  <div
+                    v-for="(subItem, subIndex) in item.subItems"
+                    :key="subItem.id"
+                    class="group flex items-center gap-2 pl-8 pr-3 py-1 hover:bg-gray-100/50 transition-colors border-b border-gray-100/30 last:border-b-0"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
+                    <!-- Sub-item checkbox -->
+                    <div
+                      @click="toggleSubItem(index, subIndex)"
+                      :class="[
+                        'w-3 h-3 rounded border flex items-center justify-center transition-colors cursor-pointer shrink-0',
+                        subItem.completed
+                          ? 'bg-[#F52C11] border-[#F52C11]'
+                          : 'border-gray-300 hover:border-gray-400',
+                      ]"
+                    >
+                      <svg
+                        v-if="subItem.completed"
+                        class="w-2 h-2 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+
+                    <!-- Sub-item text -->
+                    <input
+                      v-model="subItem.text"
+                      type="text"
+                      class="flex-1 text-[9.5px] bg-transparent border-none focus:outline-none focus:ring-0 p-0"
+                      :class="[
+                        subItem.completed
+                          ? 'text-gray-400 line-through'
+                          : 'text-[#1F2835]',
+                      ]"
+                      @keydown.enter.prevent="addSubItemBelow(index, subIndex)"
+                      @keydown.backspace="handleSubBackspace(index, subIndex, $event)"
+                      placeholder="Sub task..."
                     />
-                  </svg>
-                </button>
+
+                    <!-- Delete sub-item -->
+                    <button
+                      type="button"
+                      @click="deleteSubItem(index, subIndex)"
+                      class="opacity-0 group-hover:opacity-100 text-[#F52C11] hover:text-[#d9250e] transition-all duration-200 shrink-0 p-0.5 rounded hover:bg-red-50"
+                      title="Delete sub-item"
+                    >
+                      <svg
+                        class="w-2.5 h-2.5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -485,19 +621,29 @@ const emit = defineEmits(["close", "save"]);
 const sampleTask = {
   date: "06/22/2026",
   checklist: [
-    { id: 1, text: "Send proposal email", completed: true },
-    { id: 2, text: "Schedule discovery call", completed: true },
-    { id: 3, text: "Follow up on pricing", completed: true },
-    { id: 4, text: "Collect client requirements", completed: true },
-    { id: 5, text: "Prepare service quotation", completed: true },
-    { id: 6, text: "Send contract for signature", completed: true },
-    { id: 7, text: "Confirm onboarding date", completed: true },
-    { id: 8, text: "Set up project workspace", completed: false },
-    { id: 9, text: "Assign account manager", completed: false },
-    { id: 10, text: "Send welcome email to client", completed: false },
+    {
+      id: 1,
+      text: "Send proposal email",
+      completed: true,
+      subItems: [
+        { id: 101, text: "Draft email content", completed: true },
+        { id: 102, text: "Attach pricing PDF", completed: true },
+      ],
+    },
+    {
+      id: 2,
+      text: "Schedule discovery call",
+      completed: false,
+      subItems: [
+        { id: 201, text: "Check calendar availability", completed: true },
+        { id: 202, text: "Send invite to client", completed: false },
+        { id: 203, text: "Prepare agenda", completed: false },
+      ],
+    },
+    { id: 3, text: "Follow up on pricing", completed: true, subItems: [] },
+    { id: 4, text: "Collect client requirements", completed: false, subItems: [] },
   ],
 };
-
 // ============================================
 // FORM DATA
 // ============================================
@@ -526,6 +672,12 @@ function initializeForm() {
     id: item.id || Date.now() + Math.random(),
     text: item.text || "",
     completed: item.completed || false,
+    subItems: (item.subItems || []).map((sub) => ({
+      id: sub.id || Date.now() + Math.random(),
+      text: sub.text || "",
+      completed: sub.completed || false,
+    })),
+    showSubItems: true,
   }));
 }
 
@@ -546,8 +698,22 @@ watch(
 // ============================================
 const computedProgress = computed(() => {
   if (form.checklist.length === 0) return 0;
-  const completed = form.checklist.filter((item) => item.completed).length;
-  return Math.round((completed / form.checklist.length) * 100);
+
+  let totalItems = 0;
+  let completedItems = 0;
+
+  form.checklist.forEach((item) => {
+    if (item.subItems && item.subItems.length > 0) {
+      totalItems += item.subItems.length;
+      completedItems += item.subItems.filter((s) => s.completed).length;
+    } else {
+      totalItems += 1;
+      if (item.completed) completedItems += 1;
+    }
+  });
+
+  if (totalItems === 0) return 0;
+  return Math.round((completedItems / totalItems) * 100);
 });
 
 const progressColor = computed(() => {
@@ -573,29 +739,36 @@ const progressColorPalette = [
 ];
 
 function incrementProgress() {
-  const current = Number(computedProgress.value) || 0;
-  const target = Math.min(100, current + 10);
-  const total = form.checklist.length;
-  const needed = Math.round((target / 100) * total);
-  const completed = form.checklist.filter((i) => i.completed).length;
-  const toCheck = needed - completed;
-  for (let i = 0; i < form.checklist.length && toCheck > 0; i++) {
-    if (!form.checklist[i].completed) {
-      form.checklist[i].completed = true;
+  for (const item of form.checklist) {
+    if (item.subItems && item.subItems.length > 0) {
+      const unchecked = item.subItems.find((s) => !s.completed);
+      if (unchecked) {
+        unchecked.completed = true;
+        const allChecked = item.subItems.every((s) => s.completed);
+        item.completed = allChecked;
+        return;
+      }
+    } else if (!item.completed) {
+      item.completed = true;
+      return;
     }
   }
 }
 
 function decrementProgress() {
-  const current = Number(computedProgress.value) || 0;
-  const target = Math.max(0, current - 10);
-  const total = form.checklist.length;
-  const needed = Math.round((target / 100) * total);
-  const completed = form.checklist.filter((i) => i.completed).length;
-  const toUncheck = completed - needed;
-  for (let i = form.checklist.length - 1; i >= 0 && toUncheck > 0; i--) {
-    if (form.checklist[i].completed) {
-      form.checklist[i].completed = false;
+  for (let i = form.checklist.length - 1; i >= 0; i--) {
+    const item = form.checklist[i];
+    if (item.subItems && item.subItems.length > 0) {
+      for (let j = item.subItems.length - 1; j >= 0; j--) {
+        if (item.subItems[j].completed) {
+          item.subItems[j].completed = false;
+          item.completed = false;
+          return;
+        }
+      }
+    } else if (item.completed) {
+      item.completed = false;
+      return;
     }
   }
 }
@@ -603,43 +776,124 @@ function decrementProgress() {
 // ============================================
 // CHECKLIST METHODS
 // ============================================
+// Toggle main item — also toggles ALL sub-items
 function toggleChecklistItem(index) {
-  form.checklist[index].completed = !form.checklist[index].completed;
+  const item = form.checklist[index];
+  item.completed = !item.completed;
+
+  if (item.subItems && item.subItems.length > 0) {
+    item.subItems.forEach((sub) => {
+      sub.completed = item.completed;
+    });
+  }
 }
 
-// Add item from the bottom "Add new item" input
-function addChecklistItemFromBottom() {
-  const text = newItemText.value.trim();
-  if (!text) return;
-  form.checklist.push({
-    id: Date.now() + Math.random(),
-    text,
-    completed: false,
-  });
-  newItemText.value = "";
+// Toggle sub-item — update main item based on all sub-items state
+function toggleSubItem(index, subIndex) {
+  const item = form.checklist[index];
+  item.subItems[subIndex].completed = !item.subItems[subIndex].completed;
 
-  // Scroll to bottom to show the new item
+  // Main item is checked ONLY if ALL sub-items are checked
+  const allChecked = item.subItems.every((s) => s.completed);
+  item.completed = allChecked;
+}
+
+// Add sub-item to a main item (via + button)
+function addSubItem(index) {
+  const item = form.checklist[index];
+  if (!item.subItems) item.subItems = [];
+  item.showSubItems = true;
+  const newSub = {
+    id: Date.now() + Math.random(),
+    text: "",
+    completed: false,
+  };
+  item.subItems.push(newSub);
+  if (item.subItems.length === 1) {
+    item.completed = false;
+  }
   nextTick(() => {
-    const scrollContainer = document.querySelector(".checklist-scroll");
-    if (scrollContainer) {
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    const containers = document.querySelectorAll(".checklist-scroll > div");
+    if (containers[index]) {
+      const subInputs = containers[index].querySelectorAll('input[placeholder="Sub task..."]');
+      if (subInputs.length > 0) {
+        subInputs[subInputs.length - 1].focus();
+      }
     }
   });
 }
 
-// Add new item below a specific index (when pressing Enter on an existing item)
+// Add sub-item below specific sub-item (when pressing Enter)
+function addSubItemBelow(index, subIndex) {
+  const item = form.checklist[index];
+  const newSub = {
+    id: Date.now() + Math.random(),
+    text: "",
+    completed: false,
+  };
+  item.subItems.splice(subIndex + 1, 0, newSub);
+
+  nextTick(() => {
+    const containers = document.querySelectorAll(".checklist-scroll > div");
+    if (containers[index]) {
+      const subInputs = containers[index].querySelectorAll('input[placeholder="Sub task..."]');
+      if (subInputs[subIndex + 1]) {
+        subInputs[subIndex + 1].focus();
+      }
+    }
+  });
+}
+
+// Delete sub-item
+function deleteSubItem(index, subIndex) {
+  const item = form.checklist[index];
+  item.subItems.splice(subIndex, 1);
+
+  // Update main item completion after deletion
+  if (item.subItems.length > 0) {
+    const allChecked = item.subItems.every((s) => s.completed);
+    item.completed = allChecked;
+  }
+}
+
+// Handle backspace on empty sub-item
+function handleSubBackspace(index, subIndex, event) {
+  const item = form.checklist[index];
+  const subItem = item.subItems[subIndex];
+  if (subItem.text === "" && item.subItems.length > 0) {
+    event.preventDefault();
+    item.subItems.splice(subIndex, 1);
+
+    nextTick(() => {
+      const containers = document.querySelectorAll(".checklist-scroll > div");
+      if (containers[index]) {
+        const subInputs = containers[index].querySelectorAll('input[placeholder="Sub task..."]');
+        if (subInputs.length > 0 && subIndex > 0) {
+          const focusIndex = Math.min(subIndex - 1, subInputs.length - 1);
+          subInputs[focusIndex].focus();
+        } else if (subInputs.length > 0) {
+          subInputs[0].focus();
+        }
+      }
+    });
+  }
+}
+
+// Add new item below a specific index
 function addItemBelow(index) {
   const newItem = {
     id: Date.now() + Math.random(),
     text: "",
     completed: false,
+    subItems: [],
+    showSubItems: true,
+    newSubText: "",
   };
   form.checklist.splice(index + 1, 0, newItem);
 
-  // Focus the new item after render
   nextTick(() => {
     const inputs = document.querySelectorAll(
-      '.checklist-scroll input[type="text"]'
+      '.checklist-scroll input[type="text"]:not([placeholder="Sub task..."])'
     );
     if (inputs[index + 1]) {
       inputs[index + 1].focus();
@@ -647,26 +901,20 @@ function addItemBelow(index) {
   });
 }
 
-// Handle backspace on empty item to delete it
+// Handle backspace on empty main item
 function handleBackspace(index, event) {
   const item = form.checklist[index];
   if (item.text === "" && form.checklist.length > 0) {
     event.preventDefault();
     deleteChecklistItem(index);
 
-    // Focus previous item or the add new item input
     nextTick(() => {
       const inputs = document.querySelectorAll(
-        '.checklist-scroll input[type="text"]'
+        '.checklist-scroll input[type="text"]:not([placeholder="Sub task..."])'
       );
       if (inputs.length > 0 && index > 0) {
         const focusIndex = Math.min(index - 1, inputs.length - 1);
         inputs[focusIndex].focus();
-      } else {
-        // Focus the "Add new item" input if no items left
-        if (newItemInput.value) {
-          newItemInput.value.focus();
-        }
       }
     });
   }
@@ -799,6 +1047,11 @@ function saveChanges() {
       id: item.id,
       text: item.text,
       completed: item.completed,
+      subItems: item.subItems ? item.subItems.map((sub) => ({
+        id: sub.id,
+        text: sub.text,
+        completed: sub.completed,
+      })) : [],
     })),
     progress: computedProgress.value,
   };

@@ -32,7 +32,7 @@
 
       <button
         @click="openArchiveModal"
-        class="bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-2.5 py-[3px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+        class="relative bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-2.5 py-[3px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
       >
         <svg
           class="w-3 h-3"
@@ -48,6 +48,12 @@
           />
         </svg>
         View Archive
+        <span
+          v-if="archivedRecords.length > 0"
+          class="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-[#F52C11] text-white text-[9px] font-bold leading-none"
+        >
+          {{ archivedBadgeCount }}
+        </span>
       </button>
     </div>
 
@@ -77,7 +83,6 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Date Picker -->
         <!-- Date Picker -->
         <div class="relative">
           <button
@@ -142,20 +147,32 @@
               <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
               ><span>Th</span><span>Fr</span><span>Sa</span>
             </div>
-            <div class="grid grid-cols-7 gap-1">
+                        <div class="grid grid-cols-7 gap-1">
               <button
-                v-for="day in calendarDays"
+                v-for="day in calendarDays.filter(d => d.isCurrentMonth)"
                 :key="day.date"
                 @click="selectDate(day.date)"
                 :class="[
                   'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
                   day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
                   day.isSelected
-                    ? 'bg-[#F52C11] text-white'
+                    ? 'bg-[#F52C11] text-white font-semibold'
+                    : day.isToday
+                    ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
                     : 'hover:bg-gray-100',
                 ]"
               >
                 {{ day.day }}
+              </button>
+            </div>
+
+            <!-- Clear date -->
+            <div class="flex justify-end mt-2 pt-2">
+              <button
+                @click="clearDate"
+                class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
+              >
+                Clear date
               </button>
             </div>
           </div>
@@ -188,7 +205,7 @@
       class="flex-1 flex justify-center pt-0.5 px-2.5 pb-2 gap-1.5 min-h-0 overflow-hidden"
     >
       <section
-        class="w-full max-w-[955px] flex flex-col bg-white border border-gray-200 overflow-hidden relative rounded-[6px]"
+        class="w-full flex flex-col bg-white border border-gray-200 overflow-hidden relative rounded-[6px]"
       >
         <!-- Table Header Info -->
         <div
@@ -270,16 +287,16 @@
         <div v-else class="flex-1 overflow-auto custom-scroll relative">
           <table class="w-full border-collapse text-left table-fixed">
             <colgroup>
-              <col class="w-8" />
-              <col class="w-6" />
-              <col class="w-0.5/5" />
-              <col class="w-4/6" />
-              <col class="w-0.5/5" />
+              <col class="w-[7%]" />
+              <col class="w-[6%]" />
+              <col class="w-[15%]" />
+              <col class="w-[57%]" />
+              <col class="w-[15%]" />
             </colgroup>
             <thead class="bg-gray-100 sticky top-0 z-20">
               <tr class="border-b border-gray-200">
-                <th class="w-8 px-1.5 py-[2px]"></th>
-                <th class="w-6 px-1.5 py-[2px]">
+                <th class="px-1.5 py-[2px]"></th>
+                <th class="px-1.5 py-[2px]">
                   <div class="flex items-center justify-center">
                     <input
                       type="checkbox"
@@ -319,13 +336,10 @@
                 }"
               >
                 <td
-                  class="px-1.5 py-[2px] text-center text-[11px] font-medium"
-                  :class="
-                    isSelected(record.id) ? 'text-white' : 'text-gray-500'
-                  "
-                >
-                  {{ recordsRangeStart + index }}
-                </td>
+  class="px-1.5 py-[2px] text-center text-[11px] font-medium text-gray-500"
+>
+  {{ recordsRangeStart + index }}
+</td>
                 <td class="px-1.5 py-[2px]">
                   <div class="flex items-center justify-center h-full">
                     <input
@@ -337,13 +351,13 @@
                   </div>
                 </td>
                 <td
-                  class="pl-1.5 pr-4 py-[2px] whitespace-nowrap text-[11px] font-medium text-left"
-                  :class="
-                    isSelected(record.id) ? 'text-white' : 'text-[#1F2835]'
-                  "
-                >
-                  {{ record.date }}
-                </td>
+  class="pl-1.5 pr-4 py-[2px] whitespace-nowrap text-[11px] font-medium text-left"
+  :class="
+    isSelected(record.id) ? 'text-[#1F2835]' : 'text-[#1F2835]'
+  "
+>
+  {{ record.date }}
+</td>
                 <td class="px-4 py-[2px] whitespace-nowrap text-center">
                   <div class="flex items-center justify-center gap-2">
                     <div
@@ -358,13 +372,11 @@
                       ></div>
                     </div>
                     <span
-                      class="text-[10px] font-semibold"
-                      :style="{
-                        color: isSelected(record.id)
-                          ? '#ffffff'
-                          : getStatusColor(record.status),
-                      }"
-                      >{{ record.status }}%</span
+  class="text-[10px] font-semibold"
+  :style="{
+    color: getStatusColor(record.status),
+  }"
+  >{{ record.status }}%</span
                     >
                   </div>
                 </td>
@@ -378,15 +390,10 @@
                 >
                   <div class="flex items-center justify-center gap-1.5">
                     <button
-                      @click="openEditModal(record)"
-                      class="transition-colors"
-                      :class="
-                        isSelected(record.id)
-                          ? 'text-white hover:text-gray-100'
-                          : 'text-gray-400 hover:text-[#F52C11]'
-                      "
-                      title="Edit"
-                    >
+  @click="openEditModal(record)"
+  class="text-gray-400 hover:text-[#F52C11] transition-colors"
+  title="Edit"
+>
                       <svg
                         class="w-3.5 h-3.5"
                         fill="none"
@@ -407,11 +414,16 @@
 
               <tr v-if="paginatedRecords.length === 0">
                 <td colspan="5" class="px-4 py-12 text-center text-gray-400">
-                  <div v-if="searchQuery">
-                    No records found matching "<span
-                      class="font-semibold text-[#1F2835]"
-                      >{{ searchQuery }}</span
-                    >"
+                  <div v-if="searchQuery || selectedDate">
+                    No records found<span v-if="searchQuery">
+                      matching "<span class="font-semibold text-[#1F2835]">{{
+                        searchQuery
+                      }}</span>"</span
+                    ><span v-if="selectedDate">
+                      for <span class="font-semibold text-[#1F2835]">{{
+                        selectedDate
+                      }}</span></span
+                    >
                   </div>
                   <div v-else>No records available</div>
                 </td>
@@ -564,13 +576,13 @@
       </section>
     </main>
 
-    <!-- Archived Items Modal -->
+        <!-- Archived Items Modal -->
     <div
       v-if="showArchiveModal"
       class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
     >
       <div
-        class="bg-white rounded-[12px] w-[700px] max-h-[80vh] shadow-xl flex flex-col overflow-hidden"
+        class="bg-white rounded-[12px] w-[800px] h-[550px] shadow-xl flex flex-col overflow-hidden"
       >
         <div
           class="flex items-center justify-between px-5 py-2 border-b border-gray-100 bg-white shrink-0"
@@ -704,6 +716,15 @@
               :key="record.id"
               class="flex items-start gap-2 p-2 bg-gray-50 rounded-[6px] border border-gray-200 hover:border-gray-300 transition-colors"
             >
+              <div class="flex items-center justify-center pt-0.5">
+                <input
+                  type="checkbox"
+                  :checked="isArchivedSelected(record.id)"
+                  @change="toggleArchivedSelection(record.id)"
+                  class="w-4 h-4 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
+                />
+              </div>
+
               <svg
                 class="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0"
                 fill="none"
@@ -724,58 +745,106 @@
                 </div>
                 <div class="text-[9px] text-gray-500">
                   Archived {{ record.dateArchived }} •
-                  <span class="text-green-600 font-medium">Completed</span>
+                  <span
+                    v-if="Number(record.status) >= 100"
+                    class="text-green-600 font-medium"
+                    >Completed</span
+                  >
+                  <span v-else class="text-gray-500 font-medium"
+                    >{{ Number(record.status) || 0 }}% complete</span
+                  >
                 </div>
               </div>
 
-              <button
-                @click="unarchiveRecord(record.id)"
-                :disabled="isRestoring[record.id] || isDeleting[record.id]"
-                class="text-[#1F2835] hover:text-black transition-colors flex items-center gap-1 text-[10px] font-medium flex-shrink-0 disabled:opacity-50"
-                title="Restore record"
-              >
-                <svg
-                  class="w-3 h-3 text-[#F52C11]"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                <span class="text-[#1F2835]">
-                  {{ isRestoring[record.id] ? "Restoring..." : "Restore" }}
-                </span>
-              </button>
-
-              <button
-                @click="deleteArchivedRecord(record.id)"
-                :disabled="isRestoring[record.id] || isDeleting[record.id]"
-                class="text-gray-400 hover:text-red-600 transition-colors flex items-center gap-1 text-[10px] font-medium flex-shrink-0 disabled:opacity-50"
-                title="Delete permanently"
-              >
-                <svg
-                  class="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-                <span>
-                  {{ isDeleting[record.id] ? "Deleting..." : "Delete" }}
-                </span>
-              </button>
             </div>
+          </div>
+        </div>
+
+               <!-- Bulk Actions Bar -->
+        <div
+          v-if="archivedSelectedCount > 0"
+          class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+            <svg
+              class="w-3.5 h-3.5 text-[#F52C11]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="font-medium"
+              >{{ archivedSelectedCount }} record(s) selected</span
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Select All Button -->
+            <button
+              @click="toggleAllArchived"
+              class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] hover:text-[#F52C11] text-[10px] font-medium transition-colors"
+            >
+              <svg
+                class="w-3 h-3 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Select all
+            </button>
+
+            <button
+              @click="bulkUnarchiveSelected"
+              :disabled="isBulkRestoring"
+              class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors disabled:opacity-50"
+            >
+              <svg
+                class="w-3 h-3 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              {{ isBulkRestoring ? "Restoring..." : "Restore" }}
+            </button>
+            <button
+              @click="bulkDeleteSelected"
+              :disabled="isBulkDeleting"
+              class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors disabled:opacity-50"
+            >
+              <svg
+                class="w-3 h-3 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              {{ isBulkDeleting ? "Deleting..." : "Delete" }}
+            </button>
           </div>
         </div>
 
@@ -887,6 +956,104 @@ const archivedSearchQuery = ref("");
 const isRestoring = ref({}); // Track per-record restore state
 const isDeleting = ref({}); // Track per-record permanent-delete state
 const showDatePicker = ref(false);
+// ==================== ARCHIVED SELECTION STATE ====================
+// ==================== ARCHIVED SELECTION STATE ====================
+const archivedSelectedIds = ref([]);
+const isBulkRestoring = ref(false);
+const isBulkDeleting = ref(false);
+
+// ==================== ARCHIVED COMPUTED ====================
+const archivedSelectedCount = computed(() => archivedSelectedIds.value.length);
+
+const isAllArchivedSelected = computed(() => {
+  if (filteredArchivedRecords.value.length === 0) return false;
+  return filteredArchivedRecords.value.every((r) =>
+    archivedSelectedIds.value.includes(r.id)
+  );
+});
+
+// ==================== ARCHIVED SELECTION METHODS ====================
+function isArchivedSelected(id) {
+  return archivedSelectedIds.value.includes(id);
+}
+
+function toggleArchivedSelection(id) {
+  const idx = archivedSelectedIds.value.indexOf(id);
+  if (idx > -1) {
+    archivedSelectedIds.value.splice(idx, 1);
+  } else {
+    archivedSelectedIds.value.push(id);
+  }
+}
+
+function toggleAllArchived() {
+  const visibleIds = filteredArchivedRecords.value.map((r) => r.id);
+  
+  // If all visible are already selected, deselect all
+  const allVisibleSelected = visibleIds.every((id) =>
+    archivedSelectedIds.value.includes(id)
+  );
+
+  if (allVisibleSelected) {
+    // Deselect all visible
+    archivedSelectedIds.value = archivedSelectedIds.value.filter(
+      (id) => !visibleIds.includes(id)
+    );
+  } else {
+    // Select all visible (avoid duplicates)
+    const newIds = visibleIds.filter(
+      (id) => !archivedSelectedIds.value.includes(id)
+    );
+    archivedSelectedIds.value.push(...newIds);
+  }
+}
+
+// ==================== BULK ACTIONS ====================
+async function bulkUnarchiveSelected() {
+  if (archivedSelectedIds.value.length === 0) return;
+  isBulkRestoring.value = true;
+
+  try {
+    await Promise.all(
+      archivedSelectedIds.value.map((id) => unarchiveRecordApi(id))
+    );
+    archivedSelectedIds.value = [];
+  } catch (err) {
+    console.error("Bulk unarchive error:", err);
+  } finally {
+    isBulkRestoring.value = false;
+  }
+}
+
+async function bulkDeleteSelected() {
+  if (archivedSelectedIds.value.length === 0) return;
+
+  const confirmed = window.confirm(
+    `This will permanently delete ${archivedSelectedIds.value.length} task(s). This cannot be undone. Continue?`
+  );
+  if (!confirmed) return;
+
+  isBulkDeleting.value = true;
+
+  try {
+    await Promise.all(
+      archivedSelectedIds.value.map((id) => deleteRecordApi(id))
+    );
+    archivedSelectedIds.value = [];
+  } catch (err) {
+    console.error("Bulk delete error:", err);
+  } finally {
+    isBulkDeleting.value = false;
+  }
+}
+
+// Clear archived selection when modal closes or search changes
+watch(showArchiveModal, (val) => {
+  if (!val) archivedSelectedIds.value = [];
+});
+watch(archivedSearchQuery, () => {
+  archivedSelectedIds.value = [];
+});
 
 // Real saving/error state for the Create and Edit modals, driven by the
 // actual API calls below (not a fake timer inside the modals).
@@ -911,6 +1078,14 @@ const filteredRecords = computed(() => {
     result = result.filter((r) => r.date?.toLowerCase().includes(q));
   }
 
+  // Filter by the date selected in the header date picker. Both sides
+  // are normalized to YYYY-MM-DD via toIsoDate() so it doesn't matter
+  // whether the record date is MM/DD/YYYY or the picker gave MM/DD/YY.
+  if (selectedDate.value) {
+    const target = toIsoDate(selectedDate.value);
+    result = result.filter((r) => toIsoDate(r.date) === target);
+  }
+
   return result;
 });
 
@@ -923,6 +1098,13 @@ const filteredArchivedRecords = computed(() => {
   }
 
   return result;
+});
+
+// Badge shown on the "View Archive" button. Caps the display at "99+" so
+// a large archive count doesn't blow up the pill's layout.
+const archivedBadgeCount = computed(() => {
+  const count = archivedRecords.value.length;
+  return count > 99 ? "99+" : String(count);
 });
 
 const selectedCount = computed(() => selectedIds.value.length);
@@ -956,6 +1138,7 @@ const currentMonthYear = computed(() => {
 
 const calendarDays = computed(() => {
   const days = [];
+  const today = new Date();
   const firstDay = new Date(currentYear.value, currentMonth.value, 1).getDay();
   const daysInMonth = new Date(
     currentYear.value,
@@ -981,6 +1164,10 @@ const calendarDays = computed(() => {
       isCurrentMonth: true,
       date: dateStr,
       isSelected: selectedDate.value === dateStr,
+      isToday:
+        currentYear.value === today.getFullYear() &&
+        currentMonth.value === today.getMonth() &&
+        i === today.getDate(),
     });
   }
   const remaining = 42 - days.length;
@@ -991,7 +1178,7 @@ const calendarDays = computed(() => {
 });
 
 // ==================== PAGINATION ====================
-const rowsPerPageOptions = [10, 13, 25, 50, 100];
+const rowsPerPageOptions = [13, 26, 39, 52, 65];
 const recordsRowsPerPage = ref(13);
 const recordsCurrentPage = ref(1);
 const recordsPageInput = ref("");
@@ -1063,6 +1250,9 @@ function selectDate(date) {
     selectedDate.value = date;
     showDatePicker.value = false;
   }
+}
+function clearDate() {
+  selectedDate.value = "";
 }
 
 watch(recordsRowsPerPage, () => {
@@ -1161,6 +1351,19 @@ function mapApiRecord(record) {
 }
 
 /**
+ * Sort archived records so the most recently archived task is always
+ * first in the list (falls back to 0 for records with no archivedAt,
+ * which just pushes them to the bottom instead of crashing the sort).
+ */
+function sortArchivedByLatest() {
+  archivedRecords.value.sort((a, b) => {
+    const aTime = a.archivedAt ? new Date(a.archivedAt).getTime() : 0;
+    const bTime = b.archivedAt ? new Date(b.archivedAt).getTime() : 0;
+    return bTime - aTime;
+  });
+}
+
+/**
  * FETCH all active records from backend
  */
 async function fetchRecords() {
@@ -1195,6 +1398,7 @@ async function fetchArchivedRecords() {
         dateArchived: formatDateForDisplay(mapped.archivedAt) || null,
       };
     });
+    sortArchivedByLatest();
   } catch (err) {
     console.error("Fetch archived error:", err);
   } finally {
@@ -1277,10 +1481,21 @@ async function archiveRecordsBatchApi(ids) {
         year: "2-digit",
       })
       .replace(/\//g, "-");
+    // Full ISO timestamp so sortArchivedByLatest() can compare these
+    // freshly-archived records against ones already fetched from the API.
+    const nowIso = now.toISOString();
 
     recordsToArchive.forEach((record) => {
-      archivedRecords.value.unshift({ ...record, dateArchived: dateStr });
+      archivedRecords.value.unshift({
+        ...record,
+        dateArchived: dateStr,
+        archivedAt: nowIso,
+      });
     });
+    // Re-sort (rather than relying purely on unshift order) so the newest
+    // archived task is always first, even across repeated archive actions
+    // and previously-fetched archive data.
+    sortArchivedByLatest();
 
     records.value = records.value.filter((r) => !ids.includes(r.id));
 
@@ -1312,7 +1527,7 @@ async function unarchiveRecordApi(id) {
 
     const record = archivedRecords.value.find((r) => r.id === id);
     if (record) {
-      const { dateArchived, ...rest } = record;
+      const { dateArchived, archivedAt, ...rest } = record;
       records.value.push(rest);
       archivedRecords.value = archivedRecords.value.filter((r) => r.id !== id);
 
@@ -1407,6 +1622,7 @@ function toggleAll() {
 
 function openArchiveModal() {
   showArchiveModal.value = true;
+  archivedSelectedIds.value = [];
   fetchArchivedRecords();
 }
 
@@ -1488,7 +1704,10 @@ function archiveSelectedRecords() {
 }
 
 function unarchiveRecord(id) {
-  unarchiveRecordApi(id);
+  unarchiveRecordApi(id).then(() => {
+    const idx = archivedSelectedIds.value.indexOf(id);
+    if (idx > -1) archivedSelectedIds.value.splice(idx, 1);
+  });
 }
 
 function deleteArchivedRecord(id) {
@@ -1496,13 +1715,19 @@ function deleteArchivedRecord(id) {
     "This will permanently delete this task. This cannot be undone. Continue?"
   );
   if (confirmed) {
-    deleteRecordApi(id);
+    deleteRecordApi(id).then(() => {
+      const idx = archivedSelectedIds.value.indexOf(id);
+      if (idx > -1) archivedSelectedIds.value.splice(idx, 1);
+    });
   }
 }
 
 // ==================== LIFECYCLE ====================
 onMounted(() => {
   fetchRecords();
+  // Fetch archived records on load too (not just when the modal opens) so
+  // the notification badge on "View Archive" is accurate right away.
+  fetchArchivedRecords();
 });
 </script>
 
