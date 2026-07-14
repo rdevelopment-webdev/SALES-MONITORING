@@ -518,6 +518,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useAuditLog } from "~/composables/useAuditLog";
+import { useToast } from "~/composables/useToast";
 
 definePageMeta({
   layout: "app",
@@ -629,6 +630,9 @@ async function loadEditData() {
     } catch (overrideError) {
       console.error("Unable to load user permission overrides:", overrideError);
       userPagePermissions.value = [];
+      toast.warning(
+        "Permission overrides couldn't be loaded. Defaults are shown instead."
+      );
     }
 
     fillForm(userResponse.data);
@@ -640,6 +644,7 @@ async function loadEditData() {
     console.error("Error loading user:", error);
     submitError.value = true;
     submitMessage.value = "Unable to load this user. Please try again.";
+    toast.error("Unable to load this user. Please try again.");
   } finally {
     loading.value = false;
   }
@@ -846,9 +851,13 @@ async function syncUserPermissions() {
 }
 
 const { logAuditAction } = useAuditLog();
+const toast = useToast();
 
 async function saveChanges() {
-  if (!validateForm()) return;
+  if (!validateForm()) {
+    toast.error("Please fill in all required fields correctly.");
+    return;
+  }
 
   saving.value = true;
   submitMessage.value = "";
@@ -870,7 +879,15 @@ async function saveChanges() {
     }
 
     await updateUser(route.query.id, body);
-    await syncUserPermissions();
+
+    try {
+      await syncUserPermissions();
+    } catch (syncError) {
+      console.error("Error syncing user permissions:", syncError);
+      toast.warning(
+        "User was updated, but permission changes could not be saved."
+      );
+    }
 
     submitMessage.value = "User updated successfully.";
 
@@ -881,6 +898,8 @@ async function saveChanges() {
         : `Updated user account for ${fullName}`,
     });
 
+    toast.success(`${fullName} was updated successfully.`);
+
     originalForm.value = { ...form.value };
     originalPermissions.value = JSON.parse(JSON.stringify(permissions.value));
     resetErrors();
@@ -889,8 +908,10 @@ async function saveChanges() {
   } catch (error) {
     console.error("Error updating user:", error);
     submitError.value = true;
-    submitMessage.value =
+    const message =
       error?.data?.message || "Unable to save changes. Please try again.";
+    submitMessage.value = message;
+    toast.error(message);
   } finally {
     saving.value = false;
   }

@@ -574,8 +574,16 @@
         >
           <thead class="bg-gray-50/70 sticky top-0 z-10">
             <tr>
+              <th class="w-[5%] px-3 py-2.5 text-center">
+                <input
+                  type="checkbox"
+                  :checked="isAllArchivedSelected"
+                  @change="toggleAllArchived"
+                  class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                />
+              </th>
               <th
-                class="w-[20%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider"
+                class="w-[15%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider"
               >
                 Full Name
               </th>
@@ -611,7 +619,16 @@
               v-for="user in filteredArchivedUsers"
               :key="user.id"
               class="bg-white hover:bg-gray-50/80 transition-colors"
+              :class="{ 'bg-[#F52C11]/5': isArchivedSelected(user.id) }"
             >
+              <td class="px-3 py-3 text-center">
+                <input
+                  type="checkbox"
+                  :checked="isArchivedSelected(user.id)"
+                  @change="toggleArchivedSelection(user.id)"
+                  class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                />
+              </td>
               <td
                 class="px-3 py-3 text-[12px] text-[#1F2835] truncate"
                 :title="user.fullName || user.name || user.full_name"
@@ -679,7 +696,7 @@
                     title="Restore user"
                   >
                     <svg
-                      class="w-3.5 h-3.5 text-green-600"
+                      class="w-3.5 h-3.5 text-[#F52C11]"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2"
@@ -723,6 +740,73 @@
       </div>
 
       <div
+        v-if="selectedArchivedCount > 0"
+        class="px-6 py-3 flex items-center justify-between bg-[#f8fafc] border-t border-gray-100 shrink-0"
+      >
+        <div class="flex items-center gap-2 text-[12.5px] text-[#1F2835]">
+          <svg
+            class="w-4 h-4 text-[#F52C11]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v4m0 4h.01M12 3a9 9 0 100 18 9 9 0 000-18z"
+            />
+          </svg>
+          <span class="font-normal">
+            <span class="font-medium">{{ selectedArchivedCount }}</span>
+            {{ selectedArchivedCount === 1 ? "user" : "users" }} selected
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            @click="restoreSelectedUsers"
+            class="flex items-center gap-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors shadow-sm bg-white"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-[#F52C11]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 6H16"
+              />
+            </svg>
+            Restore
+          </button>
+
+          <button
+            @click="deleteSelectedUsers"
+            class="flex items-center gap-1.5 border border-gray-200 hover:border-red-500 hover:text-red-500 hover:bg-red-50/30 text-gray-700 px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors shadow-sm bg-white"
+          >
+            <svg
+              class="w-3.5 h-3.5 text-[#F52C11]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <div
         class="border-t border-gray-100 px-6 py-4 flex items-center justify-between bg-white shrink-0"
       >
         <div class="flex items-center gap-1.5 text-[12px] text-gray-400">
@@ -757,9 +841,12 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useAuditLog } from "~/composables/useAuditLog";
+import { useToast } from "~/composables/useToast";
 
 const router = useRouter();
 const { logAuditAction } = useAuditLog();
+const toast = useToast();
+const currentUser = ref(null);
 const {
   fetchUsers: getUsers,
   archiveUsers,
@@ -783,6 +870,7 @@ const searchQuery = ref("");
 const archivedSearchQuery = ref("");
 const selectedRole = ref("All roles");
 const selectedIds = ref([]);
+const selectedArchivedIds = ref([]);
 const roleOptions = ["All roles", "Admin", "Sales"];
 
 const showRoleDropdown = ref(false);
@@ -803,6 +891,12 @@ const archivedUsers = ref([]);
 
 // --- LIFECYCLE ---
 onMounted(() => {
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) currentUser.value = JSON.parse(storedUser);
+  } catch (error) {
+    console.error("Error reading logged-in user from localStorage:", error);
+  }
   fetchUsers();
 });
 
@@ -886,6 +980,9 @@ async function fetchUsers() {
     users.value = response.data || [];
   } catch (error) {
     console.error("Error connecting to database:", error);
+    toast.error(
+      "Unable to load users. Please check your connection and try again."
+    );
   } finally {
     isLoading.value = false;
   }
@@ -894,11 +991,13 @@ async function fetchUsers() {
 async function openArchiveModal() {
   showArchiveModal.value = true;
   archivedSearchQuery.value = "";
+  selectedArchivedIds.value = [];
   try {
     const response = await fetchArchivedUsers();
     archivedUsers.value = response.data || [];
   } catch (error) {
     console.error("Error fetching archived users:", error);
+    toast.error("Unable to load archived users. Please try again.");
   }
 }
 
@@ -921,9 +1020,16 @@ async function archiveSelectedUsers() {
           : `Archived ${selectedIds.value.length} user accounts: ${archivedNames}`,
     });
 
+    toast.success(
+      selectedIds.value.length === 1
+        ? "User archived successfully."
+        : `${selectedIds.value.length} users archived successfully.`
+    );
+
     selectedIds.value = [];
   } catch (error) {
     console.error("Error archiving users:", error);
+    toast.error("Unable to archive the selected user(s). Please try again.");
   }
 }
 
@@ -937,6 +1043,9 @@ async function unarchiveUser(id) {
       "user";
 
     await restoreUser(id);
+    selectedArchivedIds.value = selectedArchivedIds.value.filter(
+      (selectedId) => selectedId !== id
+    );
     await fetchUsers();
     await openArchiveModal();
 
@@ -944,8 +1053,11 @@ async function unarchiveUser(id) {
       module: "User Management",
       description: `Restored user account: ${restoredName}`,
     });
+
+    toast.success(`${restoredName} was restored successfully.`);
   } catch (error) {
     console.error("Error restoring user:", error);
+    toast.error("Unable to restore this user. Please try again.");
   }
 }
 
@@ -967,13 +1079,97 @@ async function deleteArchivedUser(id) {
 
     await deleteUser(id);
     archivedUsers.value = archivedUsers.value.filter((u) => u.id !== id);
+    selectedArchivedIds.value = selectedArchivedIds.value.filter(
+      (selectedId) => selectedId !== id
+    );
 
     logAuditAction({
       module: "User Management",
       description: `Permanently deleted user account: ${deletedName}`,
     });
+
+    toast.success(`${deletedName} was permanently deleted.`);
   } catch (error) {
     console.error("Error deleting user from database:", error);
+    toast.error("Unable to delete this user. Please try again.");
+  }
+}
+
+async function restoreSelectedUsers() {
+  if (selectedArchivedIds.value.length === 0) return;
+  try {
+    const restoredNames = archivedUsers.value
+      .filter((u) => selectedArchivedIds.value.includes(u.id))
+      .map((u) => u.fullName || u.full_name || u.name || u.email)
+      .join(", ");
+    const idsToRestore = [...selectedArchivedIds.value];
+
+    await Promise.all(idsToRestore.map((id) => restoreUser(id)));
+
+    archivedUsers.value = archivedUsers.value.filter(
+      (u) => !idsToRestore.includes(u.id)
+    );
+    selectedArchivedIds.value = [];
+    await fetchUsers();
+
+    logAuditAction({
+      module: "User Management",
+      description:
+        idsToRestore.length === 1
+          ? `Restored user account: ${restoredNames}`
+          : `Restored ${idsToRestore.length} user accounts: ${restoredNames}`,
+    });
+
+    toast.success(
+      idsToRestore.length === 1
+        ? "User restored successfully."
+        : `${idsToRestore.length} users restored successfully.`
+    );
+  } catch (error) {
+    console.error("Error restoring users:", error);
+    toast.error("Unable to restore the selected user(s). Please try again.");
+  }
+}
+
+async function deleteSelectedUsers() {
+  if (selectedArchivedIds.value.length === 0) return;
+  if (
+    !window.confirm(
+      `Are you sure you want to permanently delete ${selectedArchivedIds.value.length} user(s)? This action cannot be undone.`
+    )
+  ) {
+    return;
+  }
+  try {
+    const deletedNames = archivedUsers.value
+      .filter((u) => selectedArchivedIds.value.includes(u.id))
+      .map((u) => u.fullName || u.full_name || u.name || u.email)
+      .join(", ");
+    const idsToDelete = [...selectedArchivedIds.value];
+
+    await Promise.all(idsToDelete.map((id) => deleteUser(id)));
+
+    archivedUsers.value = archivedUsers.value.filter(
+      (u) => !idsToDelete.includes(u.id)
+    );
+    selectedArchivedIds.value = [];
+
+    logAuditAction({
+      module: "User Management",
+      description:
+        idsToDelete.length === 1
+          ? `Permanently deleted user account: ${deletedNames}`
+          : `Permanently deleted ${idsToDelete.length} user accounts: ${deletedNames}`,
+    });
+
+    toast.success(
+      idsToDelete.length === 1
+        ? "User permanently deleted."
+        : `${idsToDelete.length} users permanently deleted.`
+    );
+  } catch (error) {
+    console.error("Error deleting users from database:", error);
+    toast.error("Unable to delete the selected user(s). Please try again.");
   }
 }
 
@@ -1000,17 +1196,47 @@ async function submitPasswordReset() {
         description: `Reset password for user: ${resetName}`,
       });
 
+      toast.success(`Password reset successfully for ${resetName}.`);
+
       closeResetPasswordModal();
       fetchUsers();
+    } else {
+      toast.error("Unable to reset password. Please try again.");
     }
   } catch (error) {
     console.error("Error resetting password:", error);
+    toast.error("Unable to reset password. Please try again.");
   }
 }
 
 // --- COMPUTED PROPERTIES ---
+const currentUserId = computed(
+  () =>
+    currentUser.value?.id ||
+    currentUser.value?._id ||
+    currentUser.value?.user_id
+);
+const currentUserEmail = computed(() =>
+  currentUser.value?.email ? currentUser.value.email.toLowerCase() : null
+);
+
+// Users list minus the currently logged-in account — this account should
+// never show up in the System Users table or its counts.
+const visibleUsers = computed(() => {
+  if (!currentUserId.value && !currentUserEmail.value) return users.value;
+  return users.value.filter((u) => {
+    if (currentUserId.value && u.id === currentUserId.value) return false;
+    if (
+      currentUserEmail.value &&
+      (u.email || "").toLowerCase() === currentUserEmail.value
+    )
+      return false;
+    return true;
+  });
+});
+
 const filteredUsers = computed(() => {
-  let result = users.value;
+  let result = visibleUsers.value;
   const q = searchQuery.value.trim().toLowerCase();
 
   if (q) {
@@ -1027,7 +1253,13 @@ const filteredUsers = computed(() => {
       return roleName.toLowerCase() === selectedRole.value.toLowerCase();
     });
   }
-  return result;
+
+  // Newest created users first
+  return [...result].sort((a, b) => {
+    const dateA = new Date(a.created_at || a.dateAdded || 0).getTime();
+    const dateB = new Date(b.created_at || b.dateAdded || 0).getTime();
+    return dateB - dateA;
+  });
 });
 
 const paginatedUsers = computed(() => {
@@ -1041,7 +1273,16 @@ const totalPages = computed(() => {
 });
 
 const filteredArchivedUsers = computed(() => {
-  let result = archivedUsers.value;
+  let result = archivedUsers.value.filter((u) => {
+    if (currentUserId.value && u.id === currentUserId.value) return false;
+    if (
+      currentUserEmail.value &&
+      (u.email || "").toLowerCase() === currentUserEmail.value
+    )
+      return false;
+    return true;
+  });
+
   const q = archivedSearchQuery.value.trim().toLowerCase();
   if (q) {
     result = result.filter(
@@ -1050,18 +1291,28 @@ const filteredArchivedUsers = computed(() => {
         (u.email || "").toLowerCase().includes(q)
     );
   }
-  return result;
+
+  // Most recently archived first
+  return [...result].sort((a, b) => {
+    const dateA = new Date(
+      a.deleted_at || a.archivedAt || a.archived_date || 0
+    ).getTime();
+    const dateB = new Date(
+      b.deleted_at || b.archivedAt || b.archived_date || 0
+    ).getTime();
+    return dateB - dateA;
+  });
 });
 
 const adminCount = computed(
   () =>
-    users.value.filter(
+    visibleUsers.value.filter(
       (u) => (u.role?.role_name || u.role || "").toLowerCase() === "admin"
     ).length
 );
 const salesCount = computed(
   () =>
-    users.value.filter(
+    visibleUsers.value.filter(
       (u) => (u.role?.role_name || u.role || "").toLowerCase() === "sales"
     ).length
 );
@@ -1072,6 +1323,16 @@ const isAllSelected = computed(
   () =>
     paginatedUsers.value.length > 0 &&
     paginatedUsers.value.every((u) => selectedIds.value.includes(u.id))
+);
+
+const selectedArchivedCount = computed(() => selectedArchivedIds.value.length);
+
+const isAllArchivedSelected = computed(
+  () =>
+    filteredArchivedUsers.value.length > 0 &&
+    filteredArchivedUsers.value.every((u) =>
+      selectedArchivedIds.value.includes(u.id)
+    )
 );
 
 const isResetPasswordValid = computed(() => {
@@ -1106,6 +1367,33 @@ function toggleAll() {
   } else {
     const newIds = visibleIds.filter((id) => !selectedIds.value.includes(id));
     selectedIds.value.push(...newIds);
+  }
+}
+
+function isArchivedSelected(id) {
+  return selectedArchivedIds.value.includes(id);
+}
+
+function toggleArchivedSelection(id) {
+  const idx = selectedArchivedIds.value.indexOf(id);
+  if (idx > -1) selectedArchivedIds.value.splice(idx, 1);
+  else selectedArchivedIds.value.push(id);
+}
+
+function toggleAllArchived() {
+  const visibleIds = filteredArchivedUsers.value.map((u) => u.id);
+  const allVisibleSelected = visibleIds.every((id) =>
+    selectedArchivedIds.value.includes(id)
+  );
+  if (allVisibleSelected) {
+    selectedArchivedIds.value = selectedArchivedIds.value.filter(
+      (id) => !visibleIds.includes(id)
+    );
+  } else {
+    const newIds = visibleIds.filter(
+      (id) => !selectedArchivedIds.value.includes(id)
+    );
+    selectedArchivedIds.value.push(...newIds);
   }
 }
 
