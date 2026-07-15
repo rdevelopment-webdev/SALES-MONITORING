@@ -43,9 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/audit_logs', [AuditLogController::class, 'index']);
 });
-Route::apiResource('role_page_permissions', RolePagePermissionController::class);
-Route::apiResource('user_page_permissions', UserPagePermissionController::class);
-Route::apiResource('pages', PageController::class);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('role_page_permissions', RolePagePermissionController::class);
+    Route::apiResource('user_page_permissions', UserPagePermissionController::class);
+    Route::apiResource('pages', PageController::class);
+});
 
 Route::apiResource('salestasks', SalesTaskController::class);
 Route::apiResource('archives', ArchiveController::class);

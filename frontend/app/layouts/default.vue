@@ -737,10 +737,10 @@ function canView(pageName) {
   );
 
   if (!permission) {
-    return roleName === "super-admin" || roleName === "admin";
+    return roleName === "super-admin";
   }
 
-  return permission.can_view !== false;
+  return permission.can_view === true;
 }
 
 async function handleLogout() {

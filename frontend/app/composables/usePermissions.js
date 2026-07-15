@@ -1,10 +1,10 @@
-// Resolves the CURRENTLY LOGGED-IN user's effective canView / canEdit / canAdd
-// permissions for a given page.
+// Resolves the CURRENTLY LOGGED-IN user's canView / canEdit / canAdd
+// permissions for a given page, read directly from that user's saved
+// user_page_permissions rows.
 //
-// Effective permission = that user's role defaults (role_page_permissions)
-// with any per-user override (user_page_permissions) layered on top — the
-// same logic already used on /users/edit and /users/create when configuring
-// OTHER users' access (see applyEffectivePermissions in edit.vue).
+// There is no role-level fallback: a page with no saved row for this user
+// means the user has no access to it (fails closed) — the same model
+// edit.vue and create.vue use when saving permissions for other users.
 //
 // Usage:
 //   const { canView, canEdit, canAdd, ready } = usePermissions("user-management");
@@ -22,6 +22,9 @@ function unwrapData(response) {
 }
 
 function getStoredUser() {
+  // localStorage doesn't exist during SSR.
+  if (!import.meta.client) return null;
+
   try {
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
@@ -31,9 +34,27 @@ function getStoredUser() {
   }
 }
 
+// The user object cached at login doesn't always include a numeric id
+// (it currently only has full_name/email/role/role_id/permissions), but it
+// DOES already embed a can_view flag per page — the same data that drives
+// the sidebar's module list. We can resolve canView from that immediately,
+// with no id and no network round trip required.
+function getEmbeddedCanView(storedUser, pageSlug) {
+  const embeddedPermissions = Array.isArray(storedUser?.permissions)
+    ? storedUser.permissions
+    : [];
+
+  const match = embeddedPermissions.find(
+    (permission) =>
+      normalizeSlug(permission.page_name) === normalizeSlug(pageSlug) ||
+      normalizeSlug(permission.permission_name) === normalizeSlug(pageSlug)
+  );
+
+  return Boolean(match?.can_view);
+}
+
 export function usePermissions(pageSlug) {
   const { apiFetch } = useApi();
-  const { fetchUser } = useUserApi();
 
   const isLoading = ref(true);
   const error = ref(null);
@@ -43,38 +64,68 @@ export function usePermissions(pageSlug) {
   const canEdit = ref(false);
   const canAdd = ref(false);
 
+  // canEdit/canAdd need this user's numeric id to query user_page_permissions.
+  // If it's not cached on the stored user object, fall back to the
+  // authenticated /me endpoint (Bearer token is already attached by apiFetch).
+  async function resolveCurrentUserId(storedUser) {
+    const idFromStorage =
+      storedUser?.id || storedUser?._id || storedUser?.user_id || null;
+    if (idFromStorage) return idFromStorage;
+
+    try {
+      const meResponse = await apiFetch("/me");
+      const me =
+        meResponse?.data?.user ||
+        meResponse?.user ||
+        meResponse?.data ||
+        meResponse;
+      return me?.id || me?._id || me?.user_id || null;
+    } catch (meError) {
+      console.error(
+        "usePermissions: unable to resolve current user id via /me.",
+        meError
+      );
+      return null;
+    }
+  }
+
   async function load() {
+    // Auth state (the stored user, the token used for /me) lives in
+    // localStorage, which only exists in the browser. During SSR there's no
+    // reliable way to resolve any of this, so skip the check server-side —
+    // isLoading stays at its initial `true`, so the page renders "Checking
+    // permissions..." instead of flashing a false "access denied". The
+    // client re-runs this composable's setup from scratch on hydration and
+    // performs the real check then.
+    if (!import.meta.client) return;
+
     isLoading.value = true;
     error.value = null;
 
     try {
       const storedUser = getStoredUser();
-      const userId =
-        storedUser?.id || storedUser?._id || storedUser?.user_id || null;
+
+      // Quick path: resolve canView from the login-time snapshot right away
+      // so the page can render without waiting on a network round trip.
+      canView.value = getEmbeddedCanView(storedUser, pageSlug);
+
+      const userId = await resolveCurrentUserId(storedUser);
 
       if (!userId) {
-        canView.value = false;
+        // No id available anywhere — can't look up edit/add, so those fail
+        // closed, but keep whatever canView we already resolved above.
         canEdit.value = false;
         canAdd.value = false;
         return;
       }
 
-      // Reuse the role already on the stored user if present, otherwise
-      // fetch the full record so we have a role_id to look up.
-      let roleId = storedUser?.role_id || storedUser?.role?.id || null;
-      if (!roleId) {
-        const userResponse = await fetchUser(userId);
-        const fullUser = userResponse?.data || userResponse;
-        roleId = fullUser?.role_id || fullUser?.role?.id || null;
-      }
-
-      const [pagesResponse, rolePermissionsResponse] = await Promise.all([
+      const [pagesResponse, userPermissionsResponse] = await Promise.all([
         apiFetch("/pages"),
-        apiFetch("/role_page_permissions"),
+        apiFetch(`/user_page_permissions?user_id=${userId}`),
       ]);
 
       const pages = unwrapData(pagesResponse);
-      const rolePermissions = unwrapData(rolePermissionsResponse);
+      const userPermissions = unwrapData(userPermissionsResponse);
 
       const page = pages.find(
         (p) => normalizeSlug(p.page_name) === normalizeSlug(pageSlug)
@@ -82,53 +133,22 @@ export function usePermissions(pageSlug) {
 
       if (!page) {
         console.warn(`usePermissions: page "${pageSlug}" was not found.`);
-        canView.value = false;
         canEdit.value = false;
         canAdd.value = false;
         return;
       }
 
-      const roleDefault = rolePermissions.find(
+      const savedPermission = userPermissions.find(
         (permission) =>
-          Number(permission.role_id) === Number(roleId) &&
+          Number(permission.user_id) === Number(userId) &&
           Number(permission.page_id) === Number(page.id)
       );
 
-      let effective = {
-        view: Boolean(roleDefault?.can_view),
-        edit: Boolean(roleDefault?.can_edit),
-        add: Boolean(roleDefault?.can_create),
-      };
-
-      // Per-user overrides win over the role default when present. If this
-      // endpoint fails we just fall back to the role defaults above, same
-      // as the graceful-degradation behavior already used in edit.vue.
-      try {
-        const overridesResponse = await apiFetch(
-          `/user_page_permissions?user_id=${userId}`
-        );
-        const overrides = unwrapData(overridesResponse);
-        const override = overrides.find(
-          (permission) => Number(permission.page_id) === Number(page.id)
-        );
-
-        if (override) {
-          effective = {
-            view: override.can_view ?? effective.view,
-            edit: override.can_edit ?? effective.edit,
-            add: override.can_create ?? effective.add,
-          };
-        }
-      } catch (overrideError) {
-        console.error(
-          "usePermissions: unable to load permission overrides, falling back to role defaults.",
-          overrideError
-        );
-      }
-
-      canView.value = effective.view;
-      canEdit.value = effective.edit;
-      canAdd.value = effective.add;
+      // This live lookup is authoritative — it supersedes the cached
+      // login-time snapshot used for the quick path above.
+      canView.value = Boolean(savedPermission?.can_view);
+      canEdit.value = Boolean(savedPermission?.can_edit);
+      canAdd.value = Boolean(savedPermission?.can_create);
     } catch (loadError) {
       console.error(
         "usePermissions: unable to resolve permissions.",

@@ -9,7 +9,10 @@ export const useApi = () => {
     baseURL,
     credentials: "include",
     onRequest({ options }) {
-      const token = localStorage.getItem("token");
+      // localStorage only exists in the browser — this composable can be
+      // invoked during SSR (e.g. via useAsyncData), so guard it rather than
+      // letting the request crash the server render.
+      const token = import.meta.client ? localStorage.getItem("token") : null;
       options.headers = {
         Accept: "application/json",
         "X-Requested-With": "XMLHttpRequest",
