@@ -60,8 +60,8 @@
       </h1>
       <button
         @click="openArchiveModal"
-        class="bg-[#1F2835] hover:bg-black text-white px-2.5 py-[3px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-      >
+        class="relative bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+        >
         <svg
           class="w-3 h-3"
           fill="none"
@@ -76,6 +76,12 @@
           />
         </svg>
         View archive
+        <span
+          v-if="totalArchivedCount > 0"
+          class="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-[#F52C11] text-white text-[9px] font-bold leading-none"
+        >
+          {{ totalArchivedCount > 99 ? '99+' : totalArchivedCount }}
+        </span>
       </button>
     </div>
 
@@ -138,7 +144,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <div class="relative">
+                <div class="relative">
           <button
             @click="showDatePicker = !showDatePicker"
             class="bg-white border border-gray-300 px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
@@ -160,7 +166,7 @@
           </button>
           <div
             v-if="showDatePicker"
-            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 p-3 w-64"
+            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
           >
             <div class="flex items-center justify-between mb-2">
               <button
@@ -208,24 +214,26 @@
                 @click="day.date && selectDate(day.date)"
                 :disabled="!day.date"
                 :class="[
-                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors border',
+                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
                   day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
                   day.isSelected
-                    ? 'bg-[#F52C11] text-white border-[#F52C11]'
+                    ? 'bg-[#F52C11] text-white font-semibold'
                     : day.isToday
-                    ? 'border-[#F52C11] hover:bg-gray-100'
+                    ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
                     : day.date
-                    ? 'border-transparent hover:bg-gray-100'
-                    : 'border-transparent cursor-default',
+                    ? 'hover:bg-gray-100'
+                    : '',
                 ]"
               >
                 {{ day.day }}
               </button>
             </div>
-            <div v-if="selectedDate" class="flex justify-end mt-2">
+
+            <!-- Clear date -->
+            <div class="flex justify-end mt-2 pt-2">
               <button
-                @click="selectDate('')"
-                class="text-[10px] text-gray-400 hover:underline"
+                @click="clearDateFilter"
+                class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
               >
                 Clear date
               </button>
@@ -336,7 +344,7 @@
                 ? 'bg-[#F52C11]/15 text-[#F52C11] font-medium'
                 : 'text-[#1F2835] hover:bg-gray-50',
             ]"
-            class="px-2.5 py-2 text-[12px] cursor-pointer transition-all flex items-center justify-between group border-b border-gray-100"
+            class="px-2.5 py-2 text-[12px] cursor-pointer transition-all flex items-center justify-between group"
           >
             <div
               v-if="editingIndex === index"
@@ -396,33 +404,39 @@
       </aside>
 
       <section
-        class="flex-1 flex flex-col min-w-0 bg-white border border-gray-200 overflow-hidden relative"
+        class="flex-1 flex flex-col min-w-0 bg-white border border-gray-100 overflow-hidden relative"
       >
         <div
           class="flex items-center justify-between px-2 py-1 border-b border-gray-100 shrink-0 bg-gray-50"
         >
           <span class="text-[11px] text-gray-500">
             <span v-if="filteredRecords.length > 0"
-              >Showing {{ paginationStart }}–{{ paginationEnd }}</span
+              >Showing {{ recordsRangeStart }}–{{ recordsRangeEnd }}</span
             >
             <span v-else>Showing 0</span>
-            <span class="mx-1 text-gray-300">|</span>
+            <span class="mx-1 text-gray-200">|</span>
             {{ filteredRecords.length }} total records
           </span>
 
           <div class="flex items-center gap-2">
-            <div class="flex items-center gap-1">
-              <span class="text-[11px] text-gray-500">Rows per page</span>
-              <select
-                v-model.number="pageSize"
-                class="bg-white border border-gray-300 rounded-[4px] text-[11px] px-1.5 py-[1px] focus:outline-none focus:border-[#F52C11]"
-              >
-                <option :value="10">10</option>
-                <option :value="25">25</option>
-                <option :value="50">50</option>
-                <option :value="100">100</option>
-              </select>
-            </div>
+            <span class="text-[11px] text-gray-500">Rows per page</span>
+            <div class="relative">
+  <select
+    v-model.number="recordsRowsPerPage"
+    class="bg-white border border-gray-300 rounded-[4px] text-[11px] px-1.5 py-[1px] pr-5 focus:outline-none focus:border-[#F52C11] appearance-none cursor-pointer"
+  >
+    <option v-for="option in rowsPerPageOptions" :key="option" :value="option">
+      {{ option }}
+    </option>
+  </select>
+  <!-- Custom arrow -->
+  <svg
+    class="w-2.5 h-2.5 text-[#F52C11] absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"
+    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+  </svg>
+</div>
 
             <button
               @click="goToAddRecord"
@@ -457,12 +471,12 @@
             <thead class="bg-[#f2f2f2] sticky top-0 z-20">
               <tr class="border-b border-gray-200">
                 <th
-                  class="w-8 px-2 py-1.5 border-r border-gray-200 text-center text-[10px] text-gray-400"
+                  class="w-8 px-2 py-1.5 text-center text-[10px] text-gray-400"
                 >
-                  #
+                  
                 </th>
                 <th
-                  class="w-6 px-2 py-1.5 border-r border-gray-200 text-center"
+                  class="w-6 px-2 py-1.5 text-center"
                 >
                   <input
                     type="checkbox"
@@ -472,52 +486,52 @@
                   />
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Date
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Business Name
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Contact Person
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Job Position
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Contact No.
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Email
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Service
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Status
                 </th>
                 <th
-                  class="px-3 py-1.5 border-r border-gray-200 font-semibold text-[#F52C11] whitespace-nowrap"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
                 >
                   Remarks
                 </th>
                 <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] sticky right-0 z-30 bg-gray-200 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
+                  class="px-3 py-1.5 font-semibold text-[#F52C11] sticky right-0 z-30 bg-gray-100 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
                 >
                   Actions
                 </th>
@@ -556,11 +570,11 @@
                 class="transition-colors border-b border-gray-100"
               >
                 <td
-                  class="px-2 py-1 border-r border-gray-100 text-center text-[11px] text-gray-400"
+                  class="px-2 py-1 text-center text-[11px] text-gray-400"
                 >
-                  {{ paginationStart + recordIndex }}
+                  {{ recordsRangeStart + recordIndex }}
                 </td>
-                <td class="px-2 py-1 border-r border-gray-100 text-center">
+                <td class="px-2 py-1 text-center">
                   <input
                     type="checkbox"
                     :checked="isSelected(record.id)"
@@ -569,42 +583,42 @@
                   />
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap text-[11px]"
+                  class="px-3 py-1 whitespace-nowrap text-[11px]"
                 >
                   {{ record.date }}
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap font-bold text-slate-800"
+                  class="px-3 py-1 whitespace-nowrap font-bold text-slate-800"
                 >
                   {{ record.businessName }}
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap"
+                  class="px-3 py-1 whitespace-nowrap"
                 >
                   {{ record.contactPerson }}
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap"
+                  class="px-3 py-1 whitespace-nowrap"
                 >
                   {{ record.jobPosition }}
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap text-slate-600"
+                  class="px-3 py-1 whitespace-nowrap text-slate-600"
                 >
                   {{ record.contactNo }}
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap text-gray-600"
+                  class="px-3 py-1 whitespace-nowrap text-gray-600"
                 >
                   {{ record.email }}
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap text-[11px]"
+                  class="px-3 py-1 whitespace-nowrap text-[11px]"
                 >
                   {{ record.service }}
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 whitespace-nowrap"
+                  class="px-3 py-1 whitespace-nowrap"
                 >
                   <div class="flex items-center gap-1.5 min-w-[85px]">
                     <div
@@ -626,7 +640,7 @@
                   </div>
                 </td>
                 <td
-                  class="px-3 py-1 border-r border-gray-100 max-w-[200px] truncate text-gray-600"
+                  class="px-3 py-1 max-w-[200px] truncate text-gray-600"
                   :title="record.remarks"
                 >
                   {{ record.remarks || "-" }}
@@ -684,100 +698,12 @@
           </table>
         </div>
 
-        <div
-          class="px-3 py-1.5 border-t border-gray-200 flex items-center justify-between shrink-0 bg-gray-50 text-[11px]"
-        >
-          <div class="flex items-center gap-1.5">
-            <span class="text-gray-500">Go to page</span>
-            <input
-              v-model="goToPageInput"
-              type="text"
-              inputmode="numeric"
-              :placeholder="String(currentPage)"
-              class="w-12 text-center bg-white border border-gray-300 rounded-[4px] px-1 py-[2px] focus:outline-none focus:border-[#F52C11]"
-              @keyup.enter="handleGoToPage"
-            />
-            <button
-              @click="handleGoToPage"
-              class="px-2 py-[2px] rounded-[4px] bg-gray-200 hover:bg-gray-300 transition-colors font-medium"
-            >
-              Go
-            </button>
-          </div>
-
-          <div class="flex items-center gap-1">
-            <button
-              @click="goToPage(currentPage - 1)"
-              :disabled="currentPage === 1"
-              :class="
-                currentPage === 1
-                  ? 'text-gray-300 cursor-not-allowed'
-                  : 'text-[#1F2835] hover:bg-gray-200'
-              "
-              class="w-6 h-6 rounded-[4px] flex items-center justify-center transition-colors"
-            >
-              <svg
-                class="w-3.5 h-3.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              v-for="page in paginationPages"
-              :key="page.key"
-              @click="typeof page.value === 'number' && goToPage(page.value)"
-              :disabled="page.value === '...'"
-              :class="[
-                page.value === currentPage
-                  ? 'bg-white text-[#1F2835] font-bold'
-                  : page.value === '...'
-                  ? 'cursor-default text-gray-400'
-                  : 'hover:bg-gray-200 text-slate-700',
-              ]"
-              class="min-w-[24px] h-6 px-1 rounded-[4px] flex items-center justify-center text-[11px] transition-colors"
-            >
-              {{ page.value }}
-            </button>
-            <button
-              @click="goToPage(currentPage + 1)"
-              :disabled="currentPage === totalPages"
-              :class="
-                currentPage === totalPages
-                  ? 'text-gray-300 cursor-not-allowed'
-                  : 'text-[#1F2835] hover:bg-gray-200'
-              "
-              class="w-6 h-6 rounded-[4px] flex items-center justify-center transition-colors"
-            >
-              <svg
-                class="w-3.5 h-3.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-
+        <!-- Archive Selected Bar - sits above pagination, matches PIP index sizing -->
         <div
           v-if="selectedIds.length > 0"
-          class="px-3 py-2 border-t border-gray-200 flex items-center justify-between shrink-0 bg-white text-[11px]"
+          class="shrink-0 bg-white border-t border-gray-200 px-3 py-[2px] flex items-center justify-between"
         >
-          <div class="flex items-center gap-1.5 text-gray-500">
+          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
             <svg
               class="w-3.5 h-3.5 text-[#F52C11]"
               fill="none"
@@ -785,21 +711,20 @@
               stroke-width="2"
               viewBox="0 0 24 24"
             >
-              <circle cx="12" cy="12" r="10" />
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M12 8h.01M11 12h1v4h1"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            {{ selectedIds.length }} record(s) selected
+            <span class="font-medium">{{ selectedIds.length }} record(s) selected</span>
           </div>
           <button
             @click="archiveSelectedRecords"
-            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-3 py-1.5 rounded-[4px] text-[11px] font-medium flex items-center gap-1.5 transition-colors"
+            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[2px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
           >
             <svg
-              class="w-3.5 h-3.5"
+              class="w-3 h-3"
               fill="none"
               stroke="currentColor"
               stroke-width="1.5"
@@ -813,6 +738,88 @@
             </svg>
             Archive selected
           </button>
+        </div>
+
+        <!-- Pagination footer - matches PIP index pattern -->
+        <div
+          class="shrink-0 bg-[#f0f0f0] px-3 py-1.5 flex items-center justify-between gap-2 flex-wrap border-t border-gray-200 text-[11px]"
+        >
+          <span class="text-[9px] text-gray-500"
+            >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
+          >
+
+          <div class="flex items-center gap-1">
+            <span class="text-[9px] text-gray-500">Go to</span>
+            <input
+              v-model="recordsPageInput"
+              type="number"
+              min="1"
+              :max="totalRecordsPages"
+              placeholder="---"
+              class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[9px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              @keyup.enter="goToTypedRecordsPage"
+            />
+            <button
+              @click="goToTypedRecordsPage"
+              class="bg-gray-200 border border-gray-300 hover:bg-gray-300 text-[#1F2835] px-1.5 py-[1px] rounded-[3px] text-[9px] font-medium transition-colors"
+            >
+              Go
+            </button>
+          </div>
+
+          <div class="flex items-center gap-0.5">
+            <button
+              @click="goToRecordsPage(recordsCurrentPage - 1)"
+              :disabled="recordsCurrentPage === 1"
+              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              v-for="page in recordsPageNumbers"
+              :key="page"
+              @click="goToRecordsPage(page)"
+              :class="
+                recordsCurrentPage === page
+                  ? 'text-[#1F2835]'
+                  : 'text-gray-400 hover:bg-gray-100'
+              "
+              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-[10px] font-medium transition-colors"
+            >
+              {{ page }}
+            </button>
+            <button
+              @click="goToRecordsPage(recordsCurrentPage + 1)"
+              :disabled="recordsCurrentPage === totalRecordsPages"
+              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </section>
     </main>
@@ -858,12 +865,12 @@
     </div>
 
     <div
-      v-if="showArchiveModal"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-    >
-      <div
-        class="bg-white rounded-[12px] w-[600px] shadow-xl flex flex-col overflow-hidden max-h-[80vh]"
-      >
+  v-if="showArchiveModal"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+>
+  <div
+    class="bg-white rounded-[12px] w-[800px] h-[550px] shadow-xl flex flex-col overflow-hidden"
+  >
         <div
           class="flex items-center justify-between px-5 py-4 border-b border-gray-200"
         >
@@ -922,7 +929,7 @@
                 ? 'border-[#F52C11] text-[#F52C11]'
                 : 'border-transparent text-gray-400 hover:text-gray-600'
             "
-            class="flex items-center gap-1.5 pb-2.5 pt-3 border-b-2 text-[12px] font-medium transition-colors"
+            class="flex items-center gap-1.5 pb-2.5 pt-3 border-b-2 text-[11px] font-medium transition-colors"
           >
             <svg
               class="w-3.5 h-3.5"
@@ -983,7 +990,7 @@
         </div>
 
         <div class="px-5 pt-3 pb-1 shrink-0 flex items-center gap-1.5">
-          <span class="text-[11px] text-gray-400 mr-0.5">Location</span>
+          <span class="text-[11px] text-gray-400 mr-0.5"></span>
           <button
             v-for="loc in ['All', ...locationOptions]"
             :key="loc"
@@ -999,57 +1006,34 @@
           </button>
         </div>
 
-        <div class="px-5 py-2 shrink-0">
-          <div class="relative">
-            <svg
-              class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              v-model="archiveSearchQuery"
-              type="text"
-              :placeholder="
-                archiveTab === 'records'
-                  ? 'Search archived records...'
-                  : 'Search archived industries...'
-              "
-              class="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-[8px] text-[12px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-        </div>
+       <div class="px-5 py-2 shrink-0">
+  <div class="relative">
+    <svg
+      class="w-3 h-3 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
+    </svg>
+    <input
+      v-model="archiveSearchQuery"
+      type="text"
+      :placeholder="
+        archiveTab === 'records'
+          ? 'Search archived records...'
+          : 'Search archived industries...'
+      "
+      class="w-full pl-7 pr-2 py-[4px] bg-white border border-gray-200 rounded-[4px] text-[11px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
+    />
+  </div>
+</div>
 
-        <div
-          v-if="
-            (archiveTab === 'records' && filteredArchivedRecords.length > 0) ||
-            (archiveTab === 'industries' && filteredArchivedIndustries.length > 0)
-          "
-          class="px-5 pb-1 shrink-0 flex items-center gap-1.5"
-        >
-          <input
-            type="checkbox"
-            :checked="
-              archiveTab === 'records'
-                ? isAllArchivedRecordsSelected
-                : isAllArchivedIndustriesSelected
-            "
-            @change="
-              archiveTab === 'records'
-                ? toggleAllArchivedRecords()
-                : toggleAllArchivedIndustries()
-            "
-            class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-          />
-          <span class="text-[11px] text-gray-400">Select all</span>
-        </div>
 
         <div class="flex-1 overflow-y-auto custom-scroll px-5 pb-4 min-h-[200px]">
           <div
@@ -1068,10 +1052,10 @@
                 No matching archived lead records found.
               </div>
               <div
-                v-for="rec in filteredArchivedRecords"
-                :key="rec.id"
-                class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-[10px]"
-              >
+  v-for="rec in filteredArchivedRecords"
+  :key="rec.id"
+  class="flex items-center gap-3 p-1 bg-white border border-gray-200 rounded-[8px] hover:border-gray-300 transition-colors"
+>
                 <div class="flex items-center gap-3 min-w-0">
                   <input
                     type="checkbox"
@@ -1106,46 +1090,6 @@
                       {{ formatArchiveDate(rec.archivedAt) }}
                     </div>
                   </div>
-                </div>
-                <div class="flex items-center gap-1.5 shrink-0 pl-2">
-                  <button
-                    @click="restoreRecord(rec.id)"
-                    class="flex items-center gap-1 px-3 py-1.5 rounded-[6px] border border-gray-200 bg-white text-[#F52C11] text-[11px] font-semibold hover:bg-gray-50 transition-colors"
-                  >
-                    <svg
-                      class="w-3 h-3"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
-                    Restore
-                  </button>
-                  <button
-                    @click="permanentDeleteRecord(rec.id)"
-                    class="w-7 h-7 flex items-center justify-center rounded-[6px] bg-[#F52C11] text-white hover:bg-[#d9250e] transition-colors"
-                    title="Delete permanently"
-                  >
-                    <svg
-                      class="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
                 </div>
               </div>
             </template>
@@ -1200,150 +1144,144 @@
                     </div>
                   </div>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0 pl-2">
-                  <button
-                    @click="restoreIndustry(ind.name)"
-                    class="flex items-center gap-1 px-3 py-1.5 rounded-[6px] border border-gray-200 bg-white text-[#F52C11] text-[11px] font-semibold hover:bg-gray-50 transition-colors"
-                  >
-                    <svg
-                      class="w-3 h-3"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
-                    Restore
-                  </button>
-                  <button
-                    @click="permanentDeleteIndustry(ind.name)"
-                    class="w-7 h-7 flex items-center justify-center rounded-[6px] bg-[#F52C11] text-white hover:bg-[#d9250e] transition-colors"
-                    title="Delete permanently"
-                  >
-                    <svg
-                      class="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
-                </div>
               </div>
             </template>
           </div>
         </div>
 
+        <!--Bulk actions - matches PIP index selected-archive bar pattern-->
         <div
-          v-if="
-            (archiveTab === 'records' && archiveSelectedRecordIds.length > 0) ||
-            (archiveTab === 'industries' && archiveSelectedIndustryNames.length > 0)
-          "
-          class="px-5 py-2.5 border-t border-gray-200 flex items-center justify-between shrink-0 bg-white text-[11px]"
-        >
-          <div class="flex items-center gap-1.5 text-gray-500">
-            <svg
-              class="w-3.5 h-3.5 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 8h.01M11 12h1v4h1"
-              />
-            </svg>
-            {{
-              archiveTab === "records"
-                ? archiveSelectedRecordIds.length
-                : archiveSelectedIndustryNames.length
-            }}
-            item(s) selected
-          </div>
-          <div class="flex items-center gap-1.5">
-            <button
-              @click="
-                archiveTab === 'records'
-                  ? restoreSelectedArchivedRecords()
-                  : restoreSelectedArchivedIndustries()
-              "
-              class="flex items-center gap-1 px-3 py-1.5 rounded-[6px] border border-gray-200 bg-white text-[#F52C11] text-[11px] font-semibold hover:bg-gray-50 transition-colors"
-            >
-              <svg
-                class="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Restore selected
-            </button>
-            <button
-              @click="
-                archiveTab === 'records'
-                  ? deleteSelectedArchivedRecords()
-                  : deleteSelectedArchivedIndustries()
-              "
-              class="px-3 py-1.5 rounded-[6px] bg-[#F52C11] text-white text-[11px] font-semibold hover:bg-[#d9250e] transition-colors"
-            >
-              Delete selected
-            </button>
-          </div>
-        </div>
+  v-if="
+    (archiveTab === 'records' && archiveSelectedRecordIds.length > 0) ||
+    (archiveTab === 'industries' && archiveSelectedIndustryNames.length > 0)
+  "
+  class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
+>
+  <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+    <svg
+      class="w-3.5 h-3.5 text-[#F52C11]"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <span class="font-medium">
+      {{
+        archiveTab === "records"
+          ? archiveSelectedRecordIds.length
+          : archiveSelectedIndustryNames.length
+      }}
+      record(s) selected
+    </span>
+  </div>
+  <div class="flex items-center gap-2">
+    <!-- Select All Button -->
+    <button
+      @click="
+        archiveTab === 'records'
+          ? toggleAllArchivedRecords()
+          : toggleAllArchivedIndustries()
+      "
+      class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] hover:text-[#F52C11] text-[10px] font-medium transition-colors"
+    >
+      <svg
+        class="w-3 h-3 text-[#F52C11]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      Select all
+    </button>
+
+    <button
+      @click="
+        archiveTab === 'records'
+          ? restoreSelectedArchivedRecords()
+          : restoreSelectedArchivedIndustries()
+      "
+      class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors"
+    >
+      <svg
+        class="w-3 h-3 text-green-600"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+        />
+      </svg>
+      Restore
+    </button>
+    <button
+      @click="
+        archiveTab === 'records'
+          ? deleteSelectedArchivedRecords()
+          : deleteSelectedArchivedIndustries()
+      "
+      class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
+    >
+      <svg
+        class="w-3 h-3 text-[#F52C11]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+        />
+      </svg>
+      Delete
+    </button>
+  </div>
+</div>
 
         <div
-          class="px-5 py-3 border-t border-gray-200 flex items-center justify-between shrink-0 bg-white"
-        >
-          <div class="flex items-center gap-1.5 text-gray-400 text-[11px]">
-            <svg
-              class="w-3.5 h-3.5 text-[#F52C11] shrink-0"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 8h.01M11 12h1v4h1"
-              />
-            </svg>
-            <span v-if="archiveTab === 'records'"
-              >Restoring moves the record back to its active list</span
-            >
-            <span v-else
-              >Restoring brings the industry and its leads back to the
-              sidebar</span
-            >
-          </div>
-          <button
-            @click="showArchiveModal = false"
-            class="px-3.5 py-1.5 rounded-[6px] border border-gray-200 bg-white text-[11px] font-medium text-slate-600 hover:bg-gray-50 transition-colors"
-          >
-            Close
-          </button>
-        </div>
+  class="px-5 py-2 border-t border-gray-100 flex items-center justify-between bg-white shrink-0"
+>
+  <div class="flex items-center gap-1.5 text-[9px] text-gray-400">
+    <svg
+      class="w-3 h-3"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <span v-if="archiveTab === 'records'">Restoring moves the record back to its active list</span>
+    <span v-else>Restoring brings the industry and its leads back to the sidebar</span>
+  </div>
+  <button
+    @click="showArchiveModal = false"
+    class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+  >
+    Close
+  </button>
+</div>
       </div>
     </div>
 
@@ -1445,10 +1383,11 @@ const isLoadingIndustries = ref(false);
 const isLoadingRecords = ref(false);
 const isLoadingArchive = ref(false);
 
-// Pagination Elements
-const currentPage = ref(1);
-const pageSize = ref(10);
-const goToPageInput = ref("");
+// Pagination Elements - matches PIP index naming/behavior pattern
+const rowsPerPageOptions = [13, 26, 39, 52, 65];
+const recordsCurrentPage = ref(1);
+const recordsRowsPerPage = ref(13);
+const recordsPageInput = ref("");
 
 // Internal Custom Calendar Core Configurations
 const currentMonth = ref(new Date().getMonth());
@@ -1510,6 +1449,10 @@ function normalizeIndustry(raw) {
   };
 }
 
+function clearDateFilter() {
+  selectedDate.value = "";
+  showDatePicker.value = false;
+}
 // Laravel sometimes wraps responses as { data: ... } (API Resources) and
 // sometimes returns the raw model/array directly, depending on the
 // controller. This normalizes both shapes so callers don't have to care
@@ -2040,43 +1983,61 @@ const filteredRecords = computed(() => {
   return records.value; // Relies on server-side filters applied via apiFetch query arguments
 });
 
-const totalPages = computed(
-  () => Math.ceil(filteredRecords.value.length / pageSize.value) || 1
+// Notification badge shown on the "View archive" button — matches PIP
+// index pattern, combining both archived records and archived industries.
+const totalArchivedCount = computed(
+  () => archivedRecords.value.length + archivedIndustries.value.length
 );
-const paginationStart = computed(() =>
-  filteredRecords.value.length === 0
-    ? 0
-    : (currentPage.value - 1) * pageSize.value + 1
-);
-const paginationEnd = computed(() =>
-  Math.min(currentPage.value * pageSize.value, filteredRecords.value.length)
+
+// Pagination computed props - matches PIP index naming/behavior pattern
+const totalRecordsPages = computed(() =>
+  Math.max(
+    1,
+    Math.ceil(filteredRecords.value.length / recordsRowsPerPage.value)
+  )
 );
 
 const paginatedRecords = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  return filteredRecords.value.slice(start, start + pageSize.value);
+  const start = (recordsCurrentPage.value - 1) * recordsRowsPerPage.value;
+  return filteredRecords.value.slice(start, start + recordsRowsPerPage.value);
 });
 
-const paginationPages = computed(() => {
-  const total = totalPages.value;
-  const current = currentPage.value;
-  const pages = [];
-  const pushPage = (value) =>
-    pages.push({ key: `${value}-${pages.length}`, value });
+const recordsRangeStart = computed(() =>
+  filteredRecords.value.length === 0
+    ? 0
+    : (recordsCurrentPage.value - 1) * recordsRowsPerPage.value + 1
+);
+const recordsRangeEnd = computed(() =>
+  Math.min(
+    recordsCurrentPage.value * recordsRowsPerPage.value,
+    filteredRecords.value.length
+  )
+);
 
-  if (total <= 7) {
-    for (let i = 1; i <= total; i++) pushPage(i);
-    return pages;
-  }
-  pushPage(1);
-  if (current > 3) pushPage("...");
-  const rangeStart = Math.max(2, current - 1);
-  const rangeEnd = Math.min(total - 1, current + 1);
-  for (let i = rangeStart; i <= rangeEnd; i++) pushPage(i);
-  if (current < total - 2) pushPage("...");
-  pushPage(total);
+const recordsPageNumbers = computed(() => {
+  const total = totalRecordsPages.value;
+  const current = recordsCurrentPage.value;
+  const maxButtons = 5;
+  let start = Math.max(1, current - Math.floor(maxButtons / 2));
+  let end = Math.min(total, start + maxButtons - 1);
+  start = Math.max(1, end - maxButtons + 1);
+  const pages = [];
+  for (let p = start; p <= end; p++) pages.push(p);
   return pages;
 });
+
+function goToRecordsPage(page) {
+  recordsCurrentPage.value = Math.min(
+    Math.max(1, page),
+    totalRecordsPages.value
+  );
+}
+
+function goToTypedRecordsPage() {
+  const page = parseInt(recordsPageInput.value, 10);
+  if (!isNaN(page)) goToRecordsPage(page);
+  recordsPageInput.value = "";
+}
 
 const filteredArchivedIndustries = computed(() => {
   const q = archiveSearchQuery.value.trim().toLowerCase();
@@ -2195,16 +2156,6 @@ function toggleAllArchivedIndustries() {
   }
 }
 
-function goToPage(page) {
-  if (page >= 1 && page <= totalPages.value) currentPage.value = page;
-}
-
-function handleGoToPage() {
-  const page = parseInt(goToPageInput.value, 10);
-  if (!isNaN(page)) goToPage(Math.min(Math.max(page, 1), totalPages.value));
-  goToPageInput.value = "";
-}
-
 /* ---------------------------------------------------------------------- */
 /* Workspace View Control Interface UI Transformation Helpers Event Handlers */
 /* ---------------------------------------------------------------------- */
@@ -2232,7 +2183,7 @@ function closeAllDropdowns() {
 async function switchLocation(loc) {
   selectedLocation.value = loc;
   selectedIds.value = [];
-  currentPage.value = 1;
+  recordsCurrentPage.value = 1;
   await fetchRecords();
 }
 
@@ -2438,13 +2389,13 @@ watch(
   ],
   () => {
     selectedIds.value = [];
-    currentPage.value = 1;
+    recordsCurrentPage.value = 1;
     fetchRecords();
   }
 );
 
-watch(pageSize, () => {
-  currentPage.value = 1;
+watch(recordsRowsPerPage, () => {
+  recordsCurrentPage.value = 1;
 });
 
 // Switching tabs inside the archive modal clears the other tab's
