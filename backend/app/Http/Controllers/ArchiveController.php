@@ -50,20 +50,20 @@ class ArchiveController extends Controller
     }
 
     public function update(Request $request, Archive $archive)
-{
-    $validated = $request->validate([
-        'lead_id' => 'sometimes|exists:leads,id',
-        'log_id' => 'sometimes|exists:audit_logs,id',
-        'performance_id' => 'sometimes|exists:performance_plans,id',
-        'task_id' => 'sometimes|exists:sales_tasks,id',
-        'service_name' => 'sometimes|string',
-        'status_name' => 'sometimes|string',
-    ]);
+    {
+        $validated = $request->validate([
+            'lead_id' => 'sometimes|exists:leads,id',
+            'log_id' => 'sometimes|exists:audit_logs,id',
+            'performance_id' => 'sometimes|exists:performance_plans,id',
+            'task_id' => 'sometimes|exists:sales_tasks,id',
+            'service_name' => 'sometimes|string',
+            'status_name' => 'sometimes|string',
+        ]);
 
-    $archive->update($validated);
+        $archive->update($validated);
 
-    return response()->json($archive);
-}
+        return response()->json($archive);
+    }
 
     public function show(Archive $archive)
     {
@@ -74,8 +74,18 @@ class ArchiveController extends Controller
     {
         $model = $this->resolveArchivableModel($type);
 
+        $query = $model::archived();
+
+        // Industries in the archive list also need a leads count badge in
+        // the UI ("12 leads") — withCount adds a `leads_count` attribute
+        // to each result using the Industry::leads() relation, counting
+        // ALL leads under that industry (active + archived).
+        if ($type === 'industry') {
+            $query->withCount('leads');
+        }
+
         return response()->json([
-            'data' => $model::archived()->get(),
+            'data' => $query->get(),
         ]);
     }
 

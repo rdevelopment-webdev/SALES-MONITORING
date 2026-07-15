@@ -676,25 +676,7 @@
                         />
                       </svg>
                     </button>
-                    <button
-                      @click="archiveSingleRecord(record.id)"
-                      class="text-gray-400 hover:text-amber-600"
-                      title="Archive row"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M5 8h14M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                        />
-                      </svg>
-                    </button>
+                    
                   </div>
                 </td>
               </tr>
@@ -1509,7 +1491,10 @@ function normalizeRecord(raw) {
     industryId: raw.industry_id || raw.industryId || null,
     // Archive-only metadata — only present on rows returned by the
     // /leads/archived endpoint, harmless (undefined -> "") elsewhere.
-    archivedAt: raw.archived_at || raw.deleted_at || null,
+    // `archivedDate` is what LeadController::formatLead() actually sends;
+    // archived_at/deleted_at kept as fallbacks for other archive types
+    // that might go through this same normalizer shape.
+    archivedAt: raw.archivedDate || raw.archived_at || raw.deleted_at || null,
   };
 }
 
@@ -2292,6 +2277,7 @@ function toEditModalRecord(rec) {
   return {
     businessName: rec.businessName,
     contactPerson: rec.contactPerson,
+    jobPosition: rec.jobPosition,
     service: rec.service,
     date: rec.date,
     contactNumber: rec.contactNo,

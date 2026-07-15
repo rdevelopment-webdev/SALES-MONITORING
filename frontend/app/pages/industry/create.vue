@@ -913,7 +913,7 @@ const form = ref({
   service: "",
   date: "",
   remarks: "",
-  location: route.query.location || "",
+  location: "",
   progress: 0,
 });
 
