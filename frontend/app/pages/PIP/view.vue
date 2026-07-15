@@ -53,275 +53,170 @@
         </button>
       </div>
 
-      <!-- Modal Body - Two Column Layout -->
+      <!-- Modal Body - Single Column Layout -->
       <div class="px-4 py-3 bg-white">
-        <div class="grid grid-cols-2 gap-x-6 gap-y-3">
-          <!-- Left Column -->
-          <div class="space-y-3">
-            <!-- Date Recorded -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Date Recorded
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.dateRecorded || "—" }}
-              </p>
-            </div>
-
-            <!-- Client Name -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Client Name
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.clientName || "—" }}
-              </p>
-            </div>
-
-            <!-- Prospect Technique -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Prospect Technique
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.prospectTechnique || "—" }}
-              </p>
-            </div>
-
-            <!-- Email -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Email
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium break-all">
-                {{ displayRecord.email || "—" }}
-              </p>
-            </div>
-
-            <!-- Service -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Service
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.service || "—" }}
-              </p>
-            </div>
+        <div class="divide-y divide-gray-100">
+          <!-- Date Recorded -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Date recorded</p>
+            <p class="text-[12px] text-[#1F2835] font-bold">
+              {{ displayRecord.dateRecorded || "—" }}
+            </p>
           </div>
 
-          <!-- Right Column -->
-          <div class="space-y-3">
-            <!-- Onboarding Date -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Onboarding Date
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.onboardingDate || "—" }}
-              </p>
-            </div>
+          <!-- Onboarding Date -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Onboarding date</p>
+            <p class="text-[12px] text-[#1F2835] font-bold">
+              {{ displayRecord.onboardingDate || "—" }}
+            </p>
+          </div>
 
-            <!-- Location -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Location
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.location || "—" }}
-              </p>
-            </div>
+          <!-- Client Name -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Client name</p>
+            <p class="text-[12px] text-[#1F2835] font-bold">
+              {{ displayRecord.clientName || "—" }}
+            </p>
+          </div>
 
-            <!-- Sales Representative -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Sales Representative
-              </p>
-              <div
-                v-if="
-                  displayRecord.salesRepresentative &&
-                  displayRecord.salesRepresentative.length
-                "
-                class="flex flex-wrap items-center gap-1"
-              >
-                <span
-                  v-for="(rep, index) in displayRecord.salesRepresentative"
-                  :key="index"
-                  class="inline-flex items-center px-1.5 py-[2px] rounded-[3px] bg-[#F52C11]/10 text-[#1F2835] text-[9.5px] font-medium"
-                >
-                  {{ rep }}
-                </span>
-              </div>
-              <p v-else class="text-[12px] text-[#1F2835] font-medium">—</p>
-            </div>
+          <!-- Location -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Location</p>
+            <p class="text-[12px] text-[#1F2835] font-bold">
+              {{ displayRecord.location || "—" }}
+            </p>
+          </div>
 
-            <!-- Ways of Communication -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Ways of Communication
-              </p>
-              <p class="text-[12px] text-[#1F2835] font-medium">
-                {{ displayRecord.waysOfCommunication || "—" }}
-              </p>
-            </div>
+          <!-- Prospect Technique -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Prospect technique</p>
+            <p class="text-[12px] text-[#1F2835] font-bold">
+              {{ displayRecord.prospectTechnique || "—" }}
+            </p>
+          </div>
 
-            <!-- Remarks -->
-            <div>
-              <p
-                class="text-[9.5px] font-semibold uppercase tracking-wide text-gray-400 mb-0.5"
-              >
-                Remarks
-              </p>
-              <p
-                class="text-[12px] font-medium"
-                :class="
-                  displayRecord.remarks ? 'text-[#1F2835]' : 'text-gray-400'
-                "
-              >
-                {{ displayRecord.remarks || "No additional notes" }}
-              </p>
-            </div>
+          <!-- Email -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Email</p>
+            <p class="text-[12px] text-[#1F2835] font-bold break-all">
+              {{ displayRecord.email || "—" }}
+            </p>
+          </div>
+
+          <!-- Ways of Communication -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Ways of communication</p>
+            <p class="text-[12px] text-[#1F2835] font-bold">
+              {{ displayRecord.waysOfCommunication || "—" }}
+            </p>
+          </div>
+
+          <!-- Service -->
+          <div class="flex items-center justify-between py-1.5">
+            <p class="text-[11px] text-gray-500">Service</p>
+            <p class="text-[12px] text-[#1F2835] font-bold">
+              {{ displayRecord.service || "—" }}
+            </p>
           </div>
         </div>
 
         <!-- Divider -->
         <div class="border-t border-gray-100 my-3"></div>
 
-        <!-- Bottom Cards Row -->
-        <div class="grid grid-cols-2 gap-x-6">
-          <!-- Contact Person Card -->
-          <div>
-            <div class="flex items-center gap-1.5 mb-2">
-              <div
-                class="w-4 h-4 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
-              >
-                <svg
-                  class="w-2.5 h-2.5 text-black"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <p class="text-[10.5px] font-bold text-[#1F2835] leading-tight">
-                  Contact Person
-                </p>
-                <p class="text-[8.7px] text-gray-400 leading-tight">
-                  Primary point of contact
-                </p>
-              </div>
-            </div>
-            <div class="space-y-2 pl-[22px]">
-              <!-- Contact Person Name -->
-              <div class="flex items-center gap-1.5">
-                <svg
-                  class="w-3 h-3 text-gray-400 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <p class="text-[12px] text-[#1F2835] font-medium">
-                  {{ displayRecord.contactPersonName || "—" }}
-                </p>
-              </div>
-              <!-- Contact Number -->
-              <div class="flex items-center gap-1.5">
-                <svg
-                  class="w-3 h-3 text-gray-400 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <p class="text-[12px] text-[#1F2835] font-medium">
-                  {{ displayRecord.contactPersonPhone || "—" }}
-                </p>
-              </div>
+        <!-- Contact Person Card -->
+        <div class="border border-gray-100 rounded-[6px] p-2.5">
+          <p class="text-[10.5px] font-bold text-[#1F2835] mb-1.5">
+            Contact person
+          </p>
+          <div class="flex items-center gap-1.5">
+            <svg
+              class="w-3.5 h-3.5 text-gray-400 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+            <div>
+              <p class="text-[12px] text-[#1F2835] font-bold leading-tight">
+                {{ displayRecord.contactPersonName || "—" }}
+              </p>
+              <p class="text-[12px] text-[#1F2835] font-bold leading-tight">
+                {{ displayRecord.contactPersonPhone || "—" }}
+              </p>
             </div>
           </div>
+        </div>
 
-          <!-- Status and Progress Card -->
-          <div>
-            <div class="flex items-center gap-1.5 mb-2">
-              <div
-                class="w-4 h-4 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
-              >
-                <svg
-                  class="w-2.5 h-2.5 text-black"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <p class="text-[10.5px] font-bold text-[#1F2835] leading-tight">
-                  Status and progress
-                </p>
-                <p class="text-[8.7px] text-gray-400 leading-tight">
-                  Current lead stage
-                </p>
-              </div>
+        <!-- Remarks Card -->
+        <div class="border border-gray-100 rounded-[6px] p-2.5 mt-2">
+          <p class="text-[10.5px] font-bold text-[#1F2835] mb-1">Remarks</p>
+          <p
+            class="text-[12px] font-bold"
+            :class="displayRecord.remarks ? 'text-[#1F2835]' : 'text-gray-400'"
+          >
+            {{ displayRecord.remarks || "No additional notes" }}
+          </p>
+        </div>
+
+        <!-- Sales Representative -->
+        <div class="border border-gray-100 rounded-[6px] p-2.5 mt-2">
+          <p class="text-[10.5px] font-bold text-[#1F2835] mb-1.5">
+            Sales representative
+          </p>
+          <div
+            v-if="
+              displayRecord.salesRepresentative &&
+              displayRecord.salesRepresentative.length
+            "
+            class="flex flex-wrap items-center gap-1.5"
+          >
+            <span
+              v-for="(rep, index) in displayRecord.salesRepresentative"
+              :key="index"
+              class="inline-flex items-center px-2 py-[3px] rounded-full bg-[#F52C11]/10 text-[#F52C11] text-[10px] font-semibold"
+            >
+              {{ rep }}
+            </span>
+          </div>
+          <p v-else class="text-[12px] text-gray-400 font-medium">—</p>
+        </div>
+
+        <!-- Status and Progress -->
+        <div class="border border-gray-100 rounded-[6px] p-2.5 mt-2">
+          <div class="flex items-start justify-between mb-1.5">
+            <div>
+              <p class="text-[10.5px] font-bold text-[#1F2835] leading-tight">
+                Status
+              </p>
+              <p class="text-[9px] text-gray-400 leading-tight">
+                Progress bar updates automatically
+              </p>
             </div>
-            <div class="pl-[22px]">
-              <div class="flex items-start justify-between mb-1">
-                <p class="text-[12px] text-[#1F2835] font-medium">
-                  {{ displayRecord.leadStatus || "—" }}
-                </p>
-                <span class="text-[12px] font-bold text-[#1F2835]"
-                  >{{ displayRecord.status }}%</span
-                >
-              </div>
-              <!-- Progress Bar -->
-              <div class="w-full h-[6px] bg-gray-100 rounded-full relative">
-                <div
-                  class="absolute top-0 left-0 h-[6px] rounded-full transition-all duration-300"
-                  :style="{
-                    width: displayRecord.status + '%',
-                    backgroundColor: progressColor,
-                  }"
-                ></div>
-              </div>
+            <div
+              class="flex items-center gap-0.5 border border-gray-200 rounded-[4px] px-2 py-1"
+            >
+              <span class="text-[12px] font-bold text-[#1F2835]">{{
+                displayRecord.status
+              }}</span>
+              <span class="text-[12px] font-bold text-[#1F2835]">%</span>
             </div>
+          </div>
+          <!-- Progress Bar -->
+          <div class="w-full h-[6px] bg-gray-100 rounded-full relative">
+            <div
+              class="absolute top-0 left-0 h-[6px] rounded-full transition-all duration-300"
+              :style="{
+                width: displayRecord.status + '%',
+                backgroundColor: progressColor,
+              }"
+            ></div>
           </div>
         </div>
       </div>
