@@ -46,13 +46,13 @@
         PIP
       </h1>
 
-      <div class="flex items-center gap-1.5">
+           <div class="flex items-center gap-1.5">
         <button
           @click="
             showArchiveModal = true;
             fetchArchivedRecords();
           "
-          class="bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+          class="relative bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
         >
           <svg
             class="w-3.5 h-3.5"
@@ -68,6 +68,12 @@
             />
           </svg>
           View archive
+          <span
+            v-if="archivedRecords.length > 0"
+            class="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-[#F52C11] text-white text-[9px] font-bold leading-none"
+          >
+            {{ archivedRecords.length > 99 ? '99+' : archivedRecords.length }}
+          </span>
         </button>
       </div>
     </div>
@@ -101,18 +107,18 @@
 
       <!-- Right: Date, Services -->
       <div class="flex items-center gap-1.5">
-        <!-- Date Picker -->
+               <!-- Date Picker -->
         <div class="relative">
           <button
             @click="showDatePicker = !showDatePicker"
-            class="bg-white border border-gray-300 px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
+            class="bg-white border border-gray-300 px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
           >
-            {{ selectedDate || "Select date" }}
+            <span>{{ selectedDate || "Select Date" }}</span>
             <svg
-              class="w-3 h-3 text-[#F52C11]"
+              class="w-4 h-4 text-[#F52C11] shrink-0"
               fill="none"
               stroke="currentColor"
-              stroke-width="1.5"
+              stroke-width="2"
               viewBox="0 0 24 24"
             >
               <path
@@ -122,32 +128,9 @@
               />
             </svg>
           </button>
-
-          <!-- Clear date filter -->
-          <button
-            v-if="selectedDate"
-            @click="clearDateFilter"
-            title="Clear date filter"
-            class="ml-1 text-gray-400 hover:text-[#F52C11] transition-colors align-middle"
-          >
-            <svg
-              class="w-3.5 h-3.5 inline"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-
           <div
             v-if="showDatePicker"
-            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 p-3 w-64"
+            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
           >
             <div class="flex items-center justify-between mb-2">
               <button
@@ -190,30 +173,28 @@
             </div>
             <div class="grid grid-cols-7 gap-1">
               <button
-                v-for="day in calendarDays"
-                :key="day.date + '-' + day.day"
+                v-for="day in calendarDays.filter(d => d.isCurrentMonth)"
+                :key="day.date"
                 @click="selectDate(day.date)"
                 :class="[
-                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors box-border',
+                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
                   day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
                   day.isSelected
-                    ? 'bg-[#F52C11] text-white'
+                    ? 'bg-[#F52C11] text-white font-semibold'
+                    : day.isToday
+                    ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
                     : 'hover:bg-gray-100',
-                  day.isToday && !day.isSelected
-                    ? 'border border-[#F52C11] font-semibold'
-                    : 'border border-transparent',
                 ]"
               >
                 {{ day.day }}
               </button>
             </div>
-            <div
-              v-if="selectedDate"
-              class="mt-2 flex justify-end"
-            >
+
+            <!-- Clear date -->
+            <div class="flex justify-end mt-2 pt-2">
               <button
                 @click="clearDateFilter"
-                class="text-[10px] text-gray-500 hover:text-[#F52C11] font-medium transition-colors"
+                class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
               >
                 Clear date
               </button>
@@ -277,7 +258,7 @@
       class="flex-1 flex pt-0.5 px-2.5 pb-2.5 gap-1.5 min-h-0 overflow-hidden"
     >
       <section
-        class="flex-1 flex flex-col min-w-2 bg-white border border-gray-200 overflow-hidden relative rounded-[6px]"
+        class="flex-1 flex flex-col min-w-2 bg-white overflow-hidden relative rounded-[6px]"
       >
         <!-- Table Header Info -->
         <div
@@ -353,21 +334,27 @@
         <!-- Table -->
         <div v-else class="flex-1 overflow-auto custom-scroll relative">
           <table class="w-full border-collapse text-left">
-            <thead class="bg-white sticky top-0 z-20">
+            <thead class="bg-gray-50 border-b border-gray-200 sticky top-0 z-20">
+              
               <tr class="border-b border-gray-200">
-                <th class="w-6 px-1.5 py-[3px] text-center">
-                  <input
-                    type="checkbox"
-                    :checked="isAllSelected"
-                    @change="toggleAll"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-                  />
-                </th>
-                <th
-                  class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Date Recorded
-                </th>
+                 <th
+    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11] w-8 text-center"
+  >
+    
+  </th>
+  <th class="w-6 px-1.5 py-[3px] text-center">
+    <input
+      type="checkbox"
+      :checked="isAllSelected"
+      @change="toggleAll"
+      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+    />
+  </th>
+  <th
+    class="px-2 py-[3px]  font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+  >
+    Date Recorded
+  </th>
                 <th
                   class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
                 >
@@ -389,7 +376,7 @@
                   Status
                 </th>
                 <th
-                  class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11] sticky right-0 z-30 bg-white shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
+                  class="px-2 py-[3px]  font-semibold text-[11px] whitespace-nowrap text-[#F52C11] sticky right-0 z-30 bg-gray-50 shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
                 >
                   Actions
                 </th>
@@ -397,29 +384,36 @@
             </thead>
             <tbody>
               <tr
-                v-for="(record, index) in paginatedRecords"
-                :key="record.id"
-                class="transition-colors"
-                :class="{
-                  'bg-[#F52C11]/15': isSelected(record.id),
-                  'bg-white hover:bg-[#F52C11]/10': !isSelected(record.id),
-                  'border-b border-gray-100':
-                    index !== paginatedRecords.length - 1,
-                }"
-              >
-                <td class="px-1.5 py-[3px] text-center">
-                  <input
-                    type="checkbox"
-                    :checked="isSelected(record.id)"
-                    @change="toggleSelection(record.id)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-                  />
-                </td>
-                <td
-                  class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
-                >
-                  {{ record.dateRecorded }}
-                </td>
+                <tr
+  v-for="(record, index) in paginatedRecords"
+  :key="record.id"
+  class="transition-colors"
+  :class="{
+    'bg-[#F52C11]/15': isSelected(record.id),
+    'bg-white hover:bg-[#F52C11]/10': !isSelected(record.id),
+    'border-b border-gray-100':
+      index !== paginatedRecords.length - 1,
+  }"
+>
+  <!-- COUNT NUMBER CELL (moved before checkbox) -->
+  <td
+    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-gray-500 text-center w-8"
+  >
+    {{ (recordsCurrentPage - 1) * recordsRowsPerPage + index + 1 }}
+  </td>
+  <td class="px-1.5 py-[3px] text-center">
+    <input
+      type="checkbox"
+      :checked="isSelected(record.id)"
+      @change="toggleSelection(record.id)"
+      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+    />
+  </td>
+  <td
+    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+  >
+    {{ record.dateRecorded }}
+  </td>
                 <td
                   class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
                 >
@@ -513,7 +507,7 @@
               </tr>
 
               <tr v-if="paginatedRecords.length === 0">
-                <td colspan="7" class="px-4 py-12 text-center text-gray-400">
+  <td colspan="8" class="px-4 py-12 text-center text-gray-400">
                   <div v-if="searchQuery">
                     No records found matching "<span
                       class="font-semibold text-[#1F2835]"
@@ -527,6 +521,49 @@
           </table>
         </div>
 
+        <!-- Archive Selected Bar -->
+        <div
+          v-if="selectedCount > 0"
+          class="shrink-0 bg-white border-t border-gray-200 px-3 py-[2px] flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+            <svg
+              class="w-3.5 h-3.5 text-[#F52C11]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="font-medium"
+              >{{ selectedCount }} record(s) selected</span
+            >
+          </div>
+          <button
+            @click="archiveSelectedRecords"
+            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[2px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+          >
+            <svg
+              class="w-3 h-3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              />
+            </svg>
+            Archive selected
+          </button>
+        </div>
         <!-- Pagination Footer - COPIED FROM LEADS -->
         <div
           class="shrink-0 bg-[#f0f0f0] px-2.5 py-1 flex items-center justify-between gap-2 flex-wrap"
@@ -611,349 +648,319 @@
             </button>
           </div>
         </div>
-
-        <!-- Bottom Selection Bar - ARCHIVE SELECTED -->
-        <div
-          v-if="selectedCount > 0"
-          class="shrink-0 bg-white border-gray-200 px-3 py-[3px] flex items-center justify-between"
-        >
-          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
-            <svg
-              class="w-3.5 h-3.5 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span class="font-medium"
-              >{{ selectedCount }} record(s) selected</span
-            >
-            <span v-if="archiveActionError" class="text-[#F52C11] ml-2">{{
-              archiveActionError
-            }}</span>
-          </div>
-          <button
-            @click="archiveSelectedRecords"
-            class="bg-[#F52C11] hover:bg-[#F52C11] text-white px-2.5 py-[2px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-          >
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-              />
-            </svg>
-            Archive selected
-          </button>
-        </div>
       </section>
     </main>
 
     <!-- View Archive Modal -->
+<div
+  v-if="showArchiveModal"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+>
+  <div
+    class="bg-white rounded-[12px] w-[800px] h-[550px] shadow-xl flex flex-col overflow-hidden"
+  >
+    <!-- Header -->
     <div
-      v-if="showArchiveModal"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      class="flex items-center justify-between px-5 py-2 border-b border-gray-100 bg-white shrink-0"
     >
-      <div
-        class="bg-white rounded-[8px] w-[900px] max-h-[80vh] shadow-xl flex flex-col overflow-hidden"
-      >
+      <div class="flex items-center gap-2">
         <div
-          class="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white shrink-0"
+          class="w-7 h-7 rounded-[6px] bg-[#F52C11]/10 flex items-center justify-center"
         >
-          <div class="flex items-center gap-2">
+          <svg
+            class="w-3.5 h-3.5 text-[#F52C11]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+            />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-[13px] font-bold text-[#1F2835]">
+            Archived items
+          </h3>
+          <p class="text-[9px] text-gray-400">Performance Improvement Plan page</p>
+        </div>
+      </div>
+      <button
+        @click="closeArchiveModal"
+        class="text-gray-400 hover:text-[#1F2835] transition-colors"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="flex-1 overflow-auto custom-scroll p-3">
+      <!-- Archived Tabs -->
+      <div class="flex items-center gap-4 border-b border-gray-200 mb-2">
+        <button
+          class="pb-1.5 border-b-2 border-[#F52C11] text-[11px] font-semibold text-[#F52C11] flex items-center gap-1.5"
+        >
+          <svg
+            class="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+            />
+          </svg>
+          Archived records
+          <span
+            class="bg-[#F52C11]/10 text-[#1F2835] text-[9px] px-1.5 py-[1px] rounded-full font-semibold"
+            >{{ archivedRecords.length }}</span
+          >
+        </button>
+      </div>
+
+      <!-- Search archived -->
+      <div class="relative mb-2">
+        <svg
+          class="w-3.5 h-3.5 text-gray-400 absolute left-2 top-[3px] pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+        <input
+          v-model="archivedSearchQuery"
+          type="text"
+          placeholder="Search archived record..."
+          class="pl-7 pr-2 py-[2px] w-full bg-white border border-gray-300 rounded-[6px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
+        />
+      </div>
+
+      <!-- Loading -->
+      <div v-if="isArchiveLoading" class="text-center py-8">
+        <div class="text-gray-400 text-[12px]">
+          Loading archived items...
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div
+        v-else-if="filteredArchivedRecords.length === 0"
+        class="text-center py-8"
+      >
+        <svg
+          class="w-8 h-8 mx-auto mb-2 text-gray-300"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          />
+        </svg>
+        <p class="text-[12px] text-gray-400">No archived items</p>
+      </div>
+
+      <!-- Card List -->
+      <div v-else class="space-y-2">
+        <div
+          v-for="record in filteredArchivedRecords"
+          :key="record.id"
+          class="flex items-center gap-3 p-1 bg-white rounded-[8px] border border-gray-200 hover:border-gray-300 transition-colors"
+        >
+          <!-- Checkbox -->
+          <div class="flex items-center justify-center">
+            <input
+              type="checkbox"
+              :checked="isArchivedSelected(record.id)"
+              @change="toggleArchivedSelection(record.id)"
+              class="w-3.5 h-3.5 rounded border-gray-200 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
+            />
+          </div>
+
+          <!-- Building Icon in Gray Square -->
+          <div
+            class="w-6 h-6 rounded-[6px] bg-gray-100 flex items-center justify-center flex-shrink-0"
+          >
             <svg
-              class="w-4 h-4 text-amber-500"
+              class="w-3 h-3 text-gray-400"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="1"
               viewBox="0 0 24 24"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                d="M3 21h18M8 21V10l4-3 4 3v11"
               />
             </svg>
-            <div>
-              <h3 class="text-[14px] font-bold text-[#1F2835]">
-                Archived Records
-              </h3>
-              <p class="text-[10px] text-gray-400">
-                {{ archivedRecords.length }} archived record(s)
-              </p>
+          </div>
+
+          <!-- Content -->
+          <div class="flex-1 min-w-0">
+            <div class="text-[12px] font-semibold text-[#1F2835]">
+              {{ record.clientName }}
+            </div>
+            <div class="flex items-center gap-1.5 text-[10px] text-gray-500 mt-0.5">
+              <span>Davao</span>
+              <span>•</span>
+              <span>Archived {{ record.dateArchived }}</span>
+              <span
+                class="inline-flex items-center px-1.5 py-[1px] rounded-[4px] bg-[#E8F4FD] text-[#1F2835] text-[9px] font-medium"
+              >
+                {{ record.service }}
+              </span>
             </div>
           </div>
-          <button
-            @click="closeArchiveModal"
-            class="text-gray-400 hover:text-[#1F2835] transition-colors"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div class="flex-1 overflow-auto custom-scroll p-4">
-          <div
-            v-if="archivedRecords.length === 0"
-            class="text-center py-12 text-gray-400"
-          >
-            <svg
-              class="w-10 h-10 mx-auto mb-2 text-gray-300"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-              />
-            </svg>
-            <p class="text-[12px]">No archived records yet</p>
-          </div>
-
-          <table v-else class="w-full border-collapse text-left">
-            <thead class="bg-white sticky top-0 z-10">
-              <tr class="border-b border-gray-200">
-                <th class="w-6 px-3 py-[6px] text-center">
-                  <input
-                    type="checkbox"
-                    :checked="isArchivedAllSelected"
-                    @change="toggleAllArchived"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-                  />
-                </th>
-                <th
-                  class="px-3 py-[6px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Date Recorded
-                </th>
-                <th
-                  class="px-3 py-[6px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Client Name
-                </th>
-                <th
-                  class="px-3 py-[6px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Service
-                </th>
-                <th
-                  class="px-3 py-[6px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Onboarding Date
-                </th>
-                <th
-                  class="px-3 py-[6px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Status
-                </th>
-                <th
-                  class="px-3 py-[6px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11] text-center"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(record, index) in archivedRecords"
-                :key="record.id"
-                class="transition-colors"
-                :class="{
-                  'bg-[#F52C11]/15': isArchivedSelected(record.id),
-                  'bg-white hover:bg-gray-50': !isArchivedSelected(record.id),
-                  'border-b border-gray-100':
-                    index !== archivedRecords.length - 1,
-                }"
-              >
-                <td class="px-3 py-[6px] text-center">
-                  <input
-                    type="checkbox"
-                    :checked="isArchivedSelected(record.id)"
-                    @change="toggleArchivedSelection(record.id)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-                  />
-                </td>
-                <td
-                  class="px-3 py-[6px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
-                >
-                  {{ record.dateRecorded }}
-                </td>
-                <td
-                  class="px-3 py-[6px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
-                >
-                  {{ record.clientName }}
-                </td>
-                <td
-                  class="px-3 py-[6px] whitespace-nowrap text-[11px] text-gray-600"
-                >
-                  {{ record.service }}
-                </td>
-                <td
-                  class="px-3 py-[6px] whitespace-nowrap text-[11px] text-gray-500"
-                >
-                  {{ record.onboardingDate }}
-                </td>
-                <td class="px-3 py-[6px] whitespace-nowrap">
-                  <div class="flex items-center gap-2">
-                    <div
-                      class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden"
-                    >
-                      <div
-                        class="h-full rounded-full"
-                        :style="{
-                          width: record.status + '%',
-                          backgroundColor: getStatusColor(record.status),
-                        }"
-                      ></div>
-                    </div>
-                    <span
-                      class="text-[10px] font-semibold"
-                      :style="{ color: getStatusColor(record.status) }"
-                      >{{ record.status }}%</span
-                    >
-                  </div>
-                </td>
-                <td class="px-3 py-[6px] whitespace-nowrap text-center">
-                  <div class="flex items-center justify-center gap-2.5">
-                    <button
-                      @click="unarchiveRecord(record.id)"
-                      class="text-gray-400 hover:text-green-600 transition-colors inline-flex items-center gap-1 text-[11px] font-medium"
-                      title="Restore record"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                        />
-                      </svg>
-                      Restore
-                    </button>
-                    <button
-                      @click="deleteArchivedRecord(record.id)"
-                      class="text-gray-400 hover:text-[#F52C11] transition-colors"
-                      title="Delete permanently"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9.5 4h5a1 1 0 011 1v2h-7V5a1 1 0 011-1zM4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Bulk selection bar for archived records -->
-        <div
-          v-if="archivedSelectedCount > 0"
-          class="shrink-0 bg-white border-t border-gray-100 px-4 py-[6px] flex items-center justify-between"
-        >
-          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
-            <span class="font-medium"
-              >{{ archivedSelectedCount }} record(s) selected</span
-            >
-            <span v-if="archiveDeleteError" class="text-[#F52C11] ml-2">{{
-              archiveDeleteError
-            }}</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <button
-              @click="restoreSelectedArchivedRecords"
-              class="bg-white hover:bg-gray-50 border border-gray-300 text-[#1F2835] px-2.5 py-[3px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-            >
-              <svg
-                class="w-3 h-3 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Restore selected
-            </button>
-            <button
-              @click="deleteSelectedArchivedRecords"
-              class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[3px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-            >
-              <svg
-                class="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9.5 4h5a1 1 0 011 1v2h-7V5a1 1 0 011-1zM4 7h16"
-                />
-              </svg>
-              Delete selected
-            </button>
-          </div>
-        </div>
-
-        <div
-          class="px-5 py-3 border-t border-gray-100 flex items-center justify-end bg-white shrink-0"
-        >
-          <button
-            @click="closeArchiveModal"
-            class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            Close
-          </button>
         </div>
       </div>
     </div>
+
+    <!-- Bulk Actions Bar -->
+    <div
+      v-if="archivedSelectedCount > 0"
+      class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
+    >
+      <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+        <svg
+          class="w-3.5 h-3.5 text-[#F52C11]"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span class="font-medium"
+          >{{ archivedSelectedCount }} record(s) selected</span
+        >
+        <span v-if="archiveDeleteError" class="text-[#F52C11] ml-2">{{
+          archiveDeleteError
+        }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Select All Button -->
+        <button
+          @click="toggleAllArchived"
+          class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] hover:text-[#F52C11] text-[10px] font-medium transition-colors"
+        >
+          <svg
+            class="w-3 h-3 text-[#F52C11]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          Select all
+        </button>
+
+        <button
+          @click="restoreSelectedArchivedRecords"
+          class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors"
+        >
+          <svg
+            class="w-3 h-3 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+          Restore
+        </button>
+        <button
+          @click="deleteSelectedArchivedRecords"
+          class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
+        >
+          <svg
+            class="w-3 h-3 text-[#F52C11]"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div
+      class="px-5 py-2 border-t border-gray-100 flex items-center justify-between bg-white shrink-0"
+    >
+      <div class="flex items-center gap-1.5 text-[9px] text-gray-400">
+        <svg
+          class="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        Restoring moves the record back to its active list
+      </div>
+      <button
+        @click="closeArchiveModal"
+        class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
 
     <!-- Edit Record Modal -->
     <EditRecordModal
@@ -1027,6 +1034,80 @@ const saveError = ref(""); // error message shown inside Create/Edit modal on a 
 const archiveActionError = ref(""); // error message shown when archive/unarchive fails
 const archiveDeleteError = ref(""); // error message shown when deleting archived records fails
 
+// ==================== ARCHIVED SEARCH & LOADING ====================
+const archivedSearchQuery = ref("");
+const isArchiveLoading = ref(false);
+
+// ==================== FILTERED ARCHIVED RECORDS ====================
+const filteredArchivedRecords = computed(() => {
+  let result = [...archivedRecords.value];
+
+  const q = archivedSearchQuery.value.trim().toLowerCase();
+  if (q) {
+    result = result.filter(
+      (r) =>
+        r.clientName?.toLowerCase().includes(q) ||
+        r.service?.toLowerCase().includes(q) ||
+        r.dateRecorded?.toLowerCase().includes(q)
+    );
+  }
+
+  return result;
+});
+
+// ==================== ARCHIVED SELECTION STATE ====================
+const archivedSelectedIds = ref([]);
+
+// ==================== ARCHIVED COMPUTED ====================
+const archivedSelectedCount = computed(() => archivedSelectedIds.value.length);
+
+const isArchivedAllSelected = computed(() => {
+  if (filteredArchivedRecords.value.length === 0) return false;
+  return filteredArchivedRecords.value.every((r) =>
+    archivedSelectedIds.value.includes(r.id)
+  );
+});
+
+// ==================== ARCHIVED SELECTION METHODS ====================
+function isArchivedSelected(id) {
+  return archivedSelectedIds.value.includes(id);
+}
+
+function toggleArchivedSelection(id) {
+  const idx = archivedSelectedIds.value.indexOf(id);
+  if (idx > -1) {
+    archivedSelectedIds.value.splice(idx, 1);
+  } else {
+    archivedSelectedIds.value.push(id);
+  }
+}
+
+function toggleAllArchived() {
+  const visibleIds = filteredArchivedRecords.value.map((r) => r.id);
+  
+  const allVisibleSelected = visibleIds.every((id) =>
+    archivedSelectedIds.value.includes(id)
+  );
+
+  if (allVisibleSelected) {
+    archivedSelectedIds.value = archivedSelectedIds.value.filter(
+      (id) => !visibleIds.includes(id)
+    );
+  } else {
+    const newIds = visibleIds.filter(
+      (id) => !archivedSelectedIds.value.includes(id)
+    );
+    archivedSelectedIds.value.push(...newIds);
+  }
+}
+
+// Clear archived selection when modal closes or search changes
+watch(showArchiveModal, (val) => {
+  if (!val) archivedSelectedIds.value = [];
+});
+watch(archivedSearchQuery, () => {
+  archivedSelectedIds.value = [];
+});
 // Backend lookups (populated on mount) + current logged-in user
 // (currentUser is read from localStorage — see loadCurrentUser() below —
 // since that's where login.vue actually stores it after a successful login)
@@ -1060,7 +1141,7 @@ const serviceOptions = ref([
 // Empty arrays — backend will populate these
 const records = ref([]);
 const archivedRecords = ref([]);
-const archivedSelectedIds = ref([]);
+
 
 // ==================== COMPUTED ====================
 const filteredRecords = computed(() => {
@@ -1096,19 +1177,10 @@ const isAllSelected = computed(() => {
   );
 });
 
-const archivedSelectedCount = computed(() => archivedSelectedIds.value.length);
-const isArchivedAllSelected = computed(() => {
-  return (
-    archivedRecords.value.length > 0 &&
-    archivedRecords.value.every((r) =>
-      archivedSelectedIds.value.includes(r.id)
-    )
-  );
-});
 
 // ==================== PAGINATION - COPIED FROM LEADS ====================
-const rowsPerPageOptions = [10, 25, 50, 100];
-const recordsRowsPerPage = ref(10);
+const rowsPerPageOptions = [13, 26, 39, 52, 65];
+const recordsRowsPerPage = ref(13);
 const recordsCurrentPage = ref(1);
 const recordsPageInput = ref("");
 
@@ -1260,7 +1332,6 @@ function selectDate(date) {
 
 function clearDateFilter() {
   selectedDate.value = "";
-  showDatePicker.value = false;
 }
 
 function closeAllDropdowns() {
@@ -1290,11 +1361,8 @@ async function fetchRecords() {
   }
 }
 
-/**
- * FETCH archived records from backend
- * Backend dev: Replace with your API call (GET /api/pip-records/archived)
- */
 async function fetchArchivedRecords() {
+  isArchiveLoading.value = true;
   try {
     const plans = await api.getArchivedPerformancePlans();
     archivedRecords.value = (plans || [])
@@ -1302,11 +1370,18 @@ async function fetchArchivedRecords() {
         ...api.toFrontendRecord(plan, lookups.value),
         dateArchived: plan.dateArchived || plan.archived_at || "",
       }))
-      .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+      .sort((a, b) => {
+        // Sort by dateArchived descending (most recent first)
+        const dateA = new Date(a.dateArchived || 0);
+        const dateB = new Date(b.dateArchived || 0);
+        return dateB - dateA;
+      });
     archivedSelectedIds.value = [];
     archiveDeleteError.value = "";
   } catch (error) {
     console.error("Failed to fetch archived records:", error);
+  } finally {
+    isArchiveLoading.value = false;
   }
 }
 
@@ -1581,32 +1656,6 @@ function toggleAll() {
   } else {
     const newIds = visibleIds.filter((id) => !selectedIds.value.includes(id));
     selectedIds.value.push(...newIds);
-  }
-}
-
-function isArchivedSelected(id) {
-  return archivedSelectedIds.value.includes(id);
-}
-
-function toggleArchivedSelection(id) {
-  const idx = archivedSelectedIds.value.indexOf(id);
-  if (idx > -1) {
-    archivedSelectedIds.value.splice(idx, 1);
-  } else {
-    archivedSelectedIds.value.push(id);
-  }
-}
-
-function toggleAllArchived() {
-  const visibleIds = archivedRecords.value.map((r) => r.id);
-  const allVisibleSelected = visibleIds.every((id) =>
-    archivedSelectedIds.value.includes(id)
-  );
-
-  if (allVisibleSelected) {
-    archivedSelectedIds.value = [];
-  } else {
-    archivedSelectedIds.value = [...visibleIds];
   }
 }
 

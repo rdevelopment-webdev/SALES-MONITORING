@@ -113,25 +113,6 @@
               </div>
             </div>
 
-            <!-- Lead Status (Select Dropdown) -->
-            <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">Lead Status</label>
-              <div class="relative">
-                <select 
-                  v-model="form.leadStatus"
-                  :class="[
-                    'w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer h-[28px]',
-                    form.leadStatus ? 'text-[#1F2835]' : 'text-gray-400'
-                  ]"
-                >
-                  <option value="" class="text-gray-400">Select a lead status</option>
-                  <option v-for="statusOption in statusOptions" :key="statusOption" :value="statusOption" class="text-[#1F2835]">{{ statusOption }}</option>
-                </select>
-                <svg class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </div>
-            </div>
           </div>
 
           <!-- Right Column -->

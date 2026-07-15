@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#e5e5e5] font-['Overpass'] text-[14px] text-[#1F2835]"
+    class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#f0f0f0] font-['Overpass'] text-[14px] text-[#1F2835]"
   >
     <!-- Top Header: Breadcrumb -->
     <div
@@ -205,7 +205,7 @@
       class="flex-1 flex justify-center pt-0.5 px-2.5 pb-2 gap-1.5 min-h-0 overflow-hidden"
     >
       <section
-        class="w-full flex flex-col bg-white border border-gray-200 overflow-hidden relative rounded-[6px]"
+        class="w-full flex flex-col bg-white overflow-hidden relative rounded-[6px]"
       >
         <!-- Table Header Info -->
         <div
@@ -287,13 +287,13 @@
         <div v-else class="flex-1 overflow-auto custom-scroll relative">
           <table class="w-full border-collapse text-left table-fixed">
             <colgroup>
-              <col class="w-[7%]" />
-              <col class="w-[6%]" />
+              <col class="w-[2%]" />
+              <col class="w-[2%]" />
               <col class="w-[15%]" />
               <col class="w-[57%]" />
               <col class="w-[15%]" />
             </colgroup>
-            <thead class="bg-gray-100 sticky top-0 z-20">
+            <thead class="bg-gray-50 sticky top-0 z-20">
               <tr class="border-b border-gray-200">
                 <th class="px-1.5 py-[2px]"></th>
                 <th class="px-1.5 py-[2px]">
@@ -317,7 +317,7 @@
                   Status
                 </th>
                 <th
-                  class="px-4 py-[2px] font-semibold text-[11px] whitespace-nowrap text-[#f52c11] text-center sticky right-0 z-20 bg-gray-100 shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
+                  class="px-4 py-[2px] font-semibold text-[11px] whitespace-nowrap text-[#f52c11] text-center sticky right-0 z-20 bg-gray-50 shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
                 >
                   Actions
                 </th>
@@ -494,7 +494,7 @@
 
         <!-- Pagination Footer -->
         <div
-          class="shrink-0 bg-[#e5e5e5] px-2.5 py-1 flex items-center justify-between gap-2 flex-wrap"
+          class="shrink-0 bg-[#f0f0f0] px-2.5 py-1 flex items-center justify-between gap-2 flex-wrap"
         >
           <span class="text-[9px] text-gray-500"
             >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
