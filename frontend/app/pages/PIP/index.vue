@@ -1166,7 +1166,15 @@ const showDatePicker = ref(false);
 const showServicesDropdown = ref(false);
 
 // Service options - COPIED FROM LEADS
-const serviceOptions = ref([]);
+const serviceOptions = ref([
+  "All Services",
+  "Website Development",
+  "Custom Software",
+  "Mobile Application",
+  "Digital Marketing",
+  "Multimedia",
+  "Hosting & Server",
+]);
 
 // Empty arrays — backend will populate these
 const records = ref([]);
