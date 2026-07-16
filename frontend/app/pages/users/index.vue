@@ -133,7 +133,7 @@
                 class="bg-[#f8fafc] sticky top-0 z-20 border-b border-gray-100"
               >
                 <tr>
-                  <th v-if="canEdit" class="w-12 px-3 py-1.5 text-center">
+                  <th class="w-12 px-3 py-1.5 text-center">
                     <input
                       type="checkbox"
                       :checked="isAllSelected"
@@ -162,7 +162,6 @@
                     Date added
                   </th>
                   <th
-                    v-if="canEdit"
                     class="px-4 py-1.5 font-bold text-[13px] whitespace-nowrap text-[#1F2835] text-center w-28"
                   >
                     Actions
@@ -176,7 +175,7 @@
                   class="transition-colors bg-white hover:bg-[#f8fafc]"
                   :class="{ 'bg-[#F52C11]/5': isSelected(user.id) }"
                 >
-                  <td v-if="canEdit" class="px-3 py-1.5 text-center">
+                  <td class="px-3 py-1.5 text-center">
                     <input
                       type="checkbox"
                       :checked="isSelected(user.id)"
@@ -276,7 +275,7 @@
         class="shrink-0 bg-[#f8fafc] px-8 pb-6 pt-2 flex flex-col gap-2.5 border-t border-gray-200/40 z-20"
       >
         <div
-          v-if="canEdit && selectedCount > 0"
+          v-if="selectedCount > 0"
           class="w-full h-[42px] px-2 bg-[#f8fafc] flex items-center justify-between border-b border-gray-100"
         >
           <div class="flex items-center gap-2 text-[12.5px] text-[#1F2835]">
@@ -581,7 +580,7 @@
           >
             <thead class="bg-gray-50/70 sticky top-0 z-10">
               <tr>
-                <th v-if="canEdit" class="w-[5%] px-3 py-2.5 text-center">
+                <th class="w-[5%] px-3 py-2.5 text-center">
                   <input
                     type="checkbox"
                     :checked="isAllArchivedSelected"
@@ -615,7 +614,6 @@
                   Archived By
                 </th>
                 <th
-                  v-if="canEdit"
                   class="w-[13%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider text-center"
                 >
                   Actions
@@ -629,7 +627,7 @@
                 class="bg-white hover:bg-gray-50/80 transition-colors"
                 :class="{ 'bg-[#F52C11]/5': isArchivedSelected(user.id) }"
               >
-                <td v-if="canEdit" class="px-3 py-3 text-center">
+                <td class="px-3 py-3 text-center">
                   <input
                     type="checkbox"
                     :checked="isArchivedSelected(user.id)"
@@ -696,11 +694,8 @@
                     {{ user.archived_by_email || user.archivedBy?.email || "" }}
                   </div>
                 </td>
-                <td v-if="canEdit" class="px-3 py-3 text-center whitespace-nowrap">
-                  <div
-                    v-if="canEdit"
-                    class="flex items-center justify-center gap-1.5"
-                  >
+                <td class="px-3 py-3 text-center whitespace-nowrap">
+                  <div class="flex items-center justify-center gap-1.5">
                     <button
                       @click="unarchiveUser(user.id)"
                       class="border border-gray-200 rounded-[6px] px-2 py-1 flex items-center gap-1 text-[11px] font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
@@ -751,7 +746,7 @@
         </div>
 
         <div
-          v-if="canEdit && selectedArchivedCount > 0"
+          v-if="selectedArchivedCount > 0"
           class="px-6 py-3 flex items-center justify-between bg-[#f8fafc] border-t border-gray-100 shrink-0"
         >
           <div class="flex items-center gap-2 text-[12.5px] text-[#1F2835]">
@@ -1049,7 +1044,6 @@ async function openArchiveModal() {
 }
 
 async function archiveSelectedUsers() {
-  if (!canEdit.value) return;
   if (selectedIds.value.length === 0) return;
   try {
     const archivedNames = users.value
@@ -1082,7 +1076,6 @@ async function archiveSelectedUsers() {
 }
 
 async function unarchiveUser(id) {
-  if (!canEdit.value) return;
   try {
     const restoredUser = archivedUsers.value.find((u) => u.id === id);
     const restoredName =
@@ -1111,7 +1104,6 @@ async function unarchiveUser(id) {
 }
 
 async function deleteArchivedUser(id) {
-  if (!canEdit.value) return;
   if (
     !window.confirm(
       "Are you sure you want to permanently delete this user? This action cannot be undone."
@@ -1146,7 +1138,6 @@ async function deleteArchivedUser(id) {
 }
 
 async function restoreSelectedUsers() {
-  if (!canEdit.value) return;
   if (selectedArchivedIds.value.length === 0) return;
   try {
     const restoredNames = archivedUsers.value
@@ -1183,7 +1174,6 @@ async function restoreSelectedUsers() {
 }
 
 async function deleteSelectedUsers() {
-  if (!canEdit.value) return;
   if (selectedArchivedIds.value.length === 0) return;
   if (
     !window.confirm(
