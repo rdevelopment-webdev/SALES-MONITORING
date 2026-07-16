@@ -1,7 +1,10 @@
 <template>
+  <template v-if="canView">
   <div
     class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#f0f0f0] font-['Overpass'] text-[14px] text-[#1F2835]"
   >
+    <ToastContainer />
+
     <!-- Top Header: Breadcrumb -->
     <div
       class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
@@ -147,9 +150,9 @@
               <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
               ><span>Th</span><span>Fr</span><span>Sa</span>
             </div>
-                        <div class="grid grid-cols-7 gap-1">
+            <div class="grid grid-cols-7 gap-1">
               <button
-                v-for="day in calendarDays.filter(d => d.isCurrentMonth)"
+                v-for="day in calendarDays.filter((d) => d.isCurrentMonth)"
                 :key="day.date"
                 @click="selectDate(day.date)"
                 :class="[
@@ -179,6 +182,7 @@
         </div>
 
         <button
+          v-if="canAdd"
           @click="handleAddRecord"
           class="bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-2.5 py-[3px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
         >
@@ -288,15 +292,15 @@
           <table class="w-full border-collapse text-left table-fixed">
             <colgroup>
               <col class="w-[2%]" />
-              <col class="w-[2%]" />
+              <col v-if="canEdit" class="w-[2%]" />
               <col class="w-[15%]" />
               <col class="w-[57%]" />
-              <col class="w-[15%]" />
+              <col v-if="canEdit" class="w-[15%]" />
             </colgroup>
             <thead class="bg-gray-50 sticky top-0 z-20">
               <tr class="border-b border-gray-200">
                 <th class="px-1.5 py-[2px]"></th>
-                <th class="px-1.5 py-[2px]">
+                <th v-if="canEdit" class="px-1.5 py-[2px]">
                   <div class="flex items-center justify-center">
                     <input
                       type="checkbox"
@@ -317,6 +321,7 @@
                   Status
                 </th>
                 <th
+                  v-if="canEdit"
                   class="px-4 py-[2px] font-semibold text-[11px] whitespace-nowrap text-[#f52c11] text-center sticky right-0 z-20 bg-gray-50 shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
                 >
                   Actions
@@ -336,11 +341,11 @@
                 }"
               >
                 <td
-  class="px-1.5 py-[2px] text-center text-[11px] font-medium text-gray-500"
->
-  {{ recordsRangeStart + index }}
-</td>
-                <td class="px-1.5 py-[2px]">
+                  class="px-1.5 py-[2px] text-center text-[11px] font-medium text-gray-500"
+                >
+                  {{ recordsRangeStart + index }}
+                </td>
+                <td v-if="canEdit" class="px-1.5 py-[2px]">
                   <div class="flex items-center justify-center h-full">
                     <input
                       type="checkbox"
@@ -351,13 +356,13 @@
                   </div>
                 </td>
                 <td
-  class="pl-1.5 pr-4 py-[2px] whitespace-nowrap text-[11px] font-medium text-left"
-  :class="
-    isSelected(record.id) ? 'text-[#1F2835]' : 'text-[#1F2835]'
-  "
->
-  {{ record.date }}
-</td>
+                  class="pl-1.5 pr-4 py-[2px] whitespace-nowrap text-[11px] font-medium text-left"
+                  :class="
+                    isSelected(record.id) ? 'text-[#1F2835]' : 'text-[#1F2835]'
+                  "
+                >
+                  {{ record.date }}
+                </td>
                 <td class="px-4 py-[2px] whitespace-nowrap text-center">
                   <div class="flex items-center justify-center gap-2">
                     <div
@@ -372,15 +377,16 @@
                       ></div>
                     </div>
                     <span
-  class="text-[10px] font-semibold"
-  :style="{
-    color: getStatusColor(record.status),
-  }"
-  >{{ record.status }}%</span
+                      class="text-[10px] font-semibold"
+                      :style="{
+                        color: getStatusColor(record.status),
+                      }"
+                      >{{ record.status }}%</span
                     >
                   </div>
                 </td>
                 <td
+                  v-if="canEdit"
                   class="px-4 py-[2px] whitespace-nowrap text-center sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] transition-colors"
                   :class="
                     isSelected(record.id)
@@ -390,10 +396,11 @@
                 >
                   <div class="flex items-center justify-center gap-1.5">
                     <button
-  @click="openEditModal(record)"
-  class="text-gray-400 hover:text-[#F52C11] transition-colors"
-  title="Edit"
->
+                      v-if="canEdit"
+                      @click="openEditModal(record)"
+                      class="text-gray-400 hover:text-[#F52C11] transition-colors"
+                      title="Edit"
+                    >
                       <svg
                         class="w-3.5 h-3.5"
                         fill="none"
@@ -413,14 +420,19 @@
               </tr>
 
               <tr v-if="paginatedRecords.length === 0">
-                <td colspan="5" class="px-4 py-12 text-center text-gray-400">
+                <td
+                  :colspan="canEdit ? 5 : 3"
+                  class="px-4 py-12 text-center text-gray-400"
+                >
                   <div v-if="searchQuery || selectedDate">
                     No records found<span v-if="searchQuery">
                       matching "<span class="font-semibold text-[#1F2835]">{{
                         searchQuery
-                      }}</span>"</span
+                      }}</span
+                      >"</span
                     ><span v-if="selectedDate">
-                      for <span class="font-semibold text-[#1F2835]">{{
+                      for
+                      <span class="font-semibold text-[#1F2835]">{{
                         selectedDate
                       }}</span></span
                     >
@@ -450,7 +462,7 @@
 
         <!-- Archive Selected Bar -->
         <div
-          v-if="selectedCount > 0"
+          v-if="canEdit && selectedCount > 0"
           class="shrink-0 bg-white border-t border-gray-200 px-3 py-[2px] flex items-center justify-between"
         >
           <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
@@ -576,7 +588,7 @@
       </section>
     </main>
 
-        <!-- Archived Items Modal -->
+    <!-- Archived Items Modal -->
     <div
       v-if="showArchiveModal"
       class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
@@ -716,7 +728,7 @@
               :key="record.id"
               class="flex items-start gap-2 p-2 bg-gray-50 rounded-[6px] border border-gray-200 hover:border-gray-300 transition-colors"
             >
-              <div class="flex items-center justify-center pt-0.5">
+              <div v-if="canEdit" class="flex items-center justify-center pt-0.5">
                 <input
                   type="checkbox"
                   :checked="isArchivedSelected(record.id)"
@@ -755,14 +767,13 @@
                   >
                 </div>
               </div>
-
             </div>
           </div>
         </div>
 
-               <!-- Bulk Actions Bar -->
+        <!-- Bulk Actions Bar -->
         <div
-          v-if="archivedSelectedCount > 0"
+          v-if="canEdit && archivedSelectedCount > 0"
           class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
         >
           <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
@@ -904,6 +915,19 @@
     class="fixed inset-0 z-40"
     @click="showDatePicker = false"
   ></div>
+  </template>
+
+  <template v-else>
+  <div
+    class="flex items-center justify-center h-screen bg-[#f0f0f0] font-['Overpass'] text-[13px] text-gray-400"
+  >
+    {{
+      permissionsLoading
+        ? "Checking permissions..."
+        : "You don't have permission to view this page."
+    }}
+  </div>
+  </template>
 </template>
 
 <script setup>
@@ -911,10 +935,22 @@ import { ref, computed, watch, onMounted } from "vue";
 import CreateTaskModal from "./create.vue";
 import EditTaskModal from "./edit.vue";
 import { useAuditLog } from "~/composables/useAuditLog";
+import { useToast } from "~/composables/useToast";
+import { usePermissions } from "~/composables/usePermissions";
 
 // ==================== API SETUP ====================
 const { apiFetch } = useApi();
 const { logAuditAction } = useAuditLog();
+const toast = useToast();
+const router = useRouter();
+
+const {
+  ready: permissionsReady,
+  isLoading: permissionsLoading,
+  canView,
+  canEdit,
+  canAdd,
+} = usePermissions("sales-task");
 
 // Archivable::discoverArchivableModels() keys types by Str::snake(ClassName),
 // so the SalesTask model resolves to "sales_task".
@@ -978,6 +1014,7 @@ function isArchivedSelected(id) {
 }
 
 function toggleArchivedSelection(id) {
+  if (!canEdit.value) return;
   const idx = archivedSelectedIds.value.indexOf(id);
   if (idx > -1) {
     archivedSelectedIds.value.splice(idx, 1);
@@ -987,8 +1024,9 @@ function toggleArchivedSelection(id) {
 }
 
 function toggleAllArchived() {
+  if (!canEdit.value) return;
   const visibleIds = filteredArchivedRecords.value.map((r) => r.id);
-  
+
   // If all visible are already selected, deselect all
   const allVisibleSelected = visibleIds.every((id) =>
     archivedSelectedIds.value.includes(id)
@@ -1010,6 +1048,7 @@ function toggleAllArchived() {
 
 // ==================== BULK ACTIONS ====================
 async function bulkUnarchiveSelected() {
+  if (!canEdit.value) return;
   if (archivedSelectedIds.value.length === 0) return;
   isBulkRestoring.value = true;
 
@@ -1026,6 +1065,7 @@ async function bulkUnarchiveSelected() {
 }
 
 async function bulkDeleteSelected() {
+  if (!canEdit.value) return;
   if (archivedSelectedIds.value.length === 0) return;
 
   const confirmed = window.confirm(
@@ -1377,6 +1417,7 @@ async function fetchRecords() {
   } catch (err) {
     error.value = err.message || "Failed to load records";
     console.error("Fetch records error:", err);
+    toast.error("Unable to load sales tasks. Please try again.");
   } finally {
     isLoading.value = false;
   }
@@ -1401,6 +1442,7 @@ async function fetchArchivedRecords() {
     sortArchivedByLatest();
   } catch (err) {
     console.error("Fetch archived error:", err);
+    toast.error("Unable to load archived tasks. Please try again.");
   } finally {
     isArchiveLoading.value = false;
   }
@@ -1410,6 +1452,8 @@ async function fetchArchivedRecords() {
  * CREATE a new record
  */
 async function createRecord(recordData) {
+  if (!canAdd.value) return;
+
   const response = await apiFetch("/salestasks", {
     method: "POST",
     body: {
@@ -1435,6 +1479,8 @@ async function createRecord(recordData) {
  * UPDATE an existing record
  */
 async function updateRecord(id, recordData) {
+  if (!canEdit.value) return;
+
   const response = await apiFetch(`/salestasks/${id}`, {
     method: "PUT",
     body: {
@@ -1464,6 +1510,8 @@ async function updateRecord(id, recordData) {
  * (POST /archive/{type}/{id}), so we fire one request per selected id.
  */
 async function archiveRecordsBatchApi(ids) {
+  if (!canEdit.value) return;
+
   archiveActionError.value = null;
   try {
     await Promise.all(
@@ -1508,11 +1556,18 @@ async function archiveRecordsBatchApi(ids) {
           : `Archived ${ids.length} sales tasks: ${archivedDates}`,
     });
 
+    toast.success(
+      ids.length === 1
+        ? "Task archived successfully."
+        : `${ids.length} tasks archived successfully.`
+    );
+
     selectedIds.value = [];
   } catch (err) {
     archiveActionError.value =
       "Failed to archive selected record(s). Please try again.";
     console.error("Archive error:", err);
+    toast.error("Unable to archive the selected task(s). Please try again.");
   }
 }
 
@@ -1520,6 +1575,8 @@ async function archiveRecordsBatchApi(ids) {
  * UNARCHIVE a record (POST /unarchive/{type}/{id})
  */
 async function unarchiveRecordApi(id) {
+  if (!canEdit.value) return;
+
   isRestoring.value[id] = true;
 
   try {
@@ -1535,9 +1592,12 @@ async function unarchiveRecordApi(id) {
         module: "Sales Task",
         description: `Restored sales task: ${record.date}`,
       });
+
+      toast.success(`Task for ${record.date} was restored successfully.`);
     }
   } catch (err) {
     console.error("Unarchive error:", err);
+    toast.error("Unable to restore this task. Please try again.");
   } finally {
     isRestoring.value[id] = false;
   }
@@ -1548,6 +1608,8 @@ async function unarchiveRecordApi(id) {
  * Unlike unarchive, this does not bring the record back — it's gone for good.
  */
 async function deleteRecordApi(id) {
+  if (!canEdit.value) return;
+
   isDeleting.value[id] = true;
 
   try {
@@ -1562,9 +1624,14 @@ async function deleteRecordApi(id) {
         record?.date || "record"
       }`,
     });
+
+    toast.success(
+      `Task for ${record?.date || "record"} was permanently deleted.`
+    );
   } catch (err) {
     archiveActionError.value = "Failed to delete record. Please try again.";
     console.error("Delete error:", err);
+    toast.error("Unable to delete this task. Please try again.");
   } finally {
     isDeleting.value[id] = false;
   }
@@ -1596,6 +1663,7 @@ function isSelected(id) {
 }
 
 function toggleSelection(id) {
+  if (!canEdit.value) return;
   const idx = selectedIds.value.indexOf(id);
   if (idx > -1) {
     selectedIds.value.splice(idx, 1);
@@ -1605,6 +1673,7 @@ function toggleSelection(id) {
 }
 
 function toggleAll() {
+  if (!canEdit.value) return;
   const visibleIds = paginatedRecords.value.map((r) => r.id);
   const allVisibleSelected = visibleIds.every((id) =>
     selectedIds.value.includes(id)
@@ -1627,6 +1696,7 @@ function openArchiveModal() {
 }
 
 function openEditModal(record) {
+  if (!canEdit.value) return;
   editingRecord.value = record;
   showEditModal.value = true;
 }
@@ -1638,6 +1708,7 @@ function closeEditModal() {
 }
 
 function handleAddRecord() {
+  if (!canAdd.value) return;
   showCreateModal.value = true;
 }
 
@@ -1657,9 +1728,12 @@ function extractErrorMessage(err, fallback) {
 }
 
 async function handleCreateSave(payload) {
+  if (!canAdd.value) return;
+
   if (!isLoggedIn()) {
     createError.value =
       "You're not logged in (no auth token found). Please sign in and try again.";
+    toast.error("You're not logged in. Please sign in and try again.");
     return;
   }
 
@@ -1669,41 +1743,50 @@ async function handleCreateSave(payload) {
     await createRecord(payload);
     // Only close once the task is actually saved.
     showCreateModal.value = false;
+    toast.success(`Task for ${payload.date} was created successfully.`);
   } catch (err) {
-    createError.value = extractErrorMessage(
+    const message = extractErrorMessage(
       err,
       "Failed to save task. Please try again."
     );
+    createError.value = message;
     console.error("Failed to create record:", err);
+    toast.error(message);
   } finally {
     createSaving.value = false;
   }
 }
 
 async function handleEditSave(payload) {
+  if (!canEdit.value) return;
   if (!editingRecord.value) return;
   editSaving.value = true;
   editError.value = "";
   try {
     await updateRecord(editingRecord.value.id, payload);
     closeEditModal();
+    toast.success(`Task for ${payload.date} was updated successfully.`);
   } catch (err) {
-    editError.value = extractErrorMessage(
+    const message = extractErrorMessage(
       err,
       "Failed to update task. Please try again."
     );
+    editError.value = message;
     console.error("Failed to update record:", err);
+    toast.error(message);
   } finally {
     editSaving.value = false;
   }
 }
 
 function archiveSelectedRecords() {
+  if (!canEdit.value) return;
   if (selectedIds.value.length === 0) return;
   archiveRecordsBatchApi([...selectedIds.value]);
 }
 
 function unarchiveRecord(id) {
+  if (!canEdit.value) return;
   unarchiveRecordApi(id).then(() => {
     const idx = archivedSelectedIds.value.indexOf(id);
     if (idx > -1) archivedSelectedIds.value.splice(idx, 1);
@@ -1711,6 +1794,7 @@ function unarchiveRecord(id) {
 }
 
 function deleteArchivedRecord(id) {
+  if (!canEdit.value) return;
   const confirmed = window.confirm(
     "This will permanently delete this task. This cannot be undone. Continue?"
   );
@@ -1723,7 +1807,15 @@ function deleteArchivedRecord(id) {
 }
 
 // ==================== LIFECYCLE ====================
-onMounted(() => {
+onMounted(async () => {
+  await permissionsReady;
+
+  if (!canView.value) {
+    toast.error("You don't have permission to view this page.");
+    router.push("/");
+    return;
+  }
+
   fetchRecords();
   // Fetch archived records on load too (not just when the modal opens) so
   // the notification badge on "View Archive" is accurate right away.

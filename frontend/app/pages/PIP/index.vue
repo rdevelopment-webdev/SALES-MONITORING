@@ -1,61 +1,15 @@
 <template>
-  <div
-    class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#f0f0f0] font-['Overpass'] text-[14px] text-[#1F2835]"
-  >
-    <!-- Top Header: Breadcrumb -->
+  <template v-if="canView">
     <div
-      class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
+      class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#f0f0f0] font-['Overpass'] text-[14px] text-[#1F2835]"
     >
-      <div class="flex items-center text-[11px] text-gray-500 gap-1">
-        <svg
-          class="w-3.5 h-3.5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
-        <span class="cursor-pointer transition-colors">Leads Tracker</span>
-        <svg
-          class="w-3 h-3 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-        <span class="text-[#f52c11] font-medium"
-          >PIP</span
-        >
-      </div>
-    </div>
-
-    <!-- Title + Search + View Archive -->
-    <div class="px-4 py-2 flex items-center justify-between gap-4 shrink-0">
-      <h1 class="font-bold text-[16px] tracking-tight whitespace-nowrap">
-        PIP
-      </h1>
-
-           <div class="flex items-center gap-1.5">
-        <button
-          @click="
-            showArchiveModal = true;
-            fetchArchivedRecords();
-          "
-          class="relative bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-        >
+      <!-- Top Header: Breadcrumb -->
+      <div
+        class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
+      >
+        <div class="flex items-center text-[11px] text-gray-500 gap-1">
           <svg
-            class="w-3.5 h-3.5"
+            class="w-3.5 h-3.5 text-gray-400"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -64,27 +18,12 @@
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
             />
           </svg>
-          View archive
-          <span
-            v-if="archivedRecords.length > 0"
-            class="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-[#F52C11] text-white text-[9px] font-bold leading-none"
-          >
-            {{ archivedRecords.length > 99 ? '99+' : archivedRecords.length }}
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Filters Row (Date + Services) - COPIED FROM LEADS -->
-    <div class="px-4 py-1 flex items-center justify-between gap-2 shrink-0">
-      <!-- Left: Search moved here per image -->
-      <div class="flex items-center gap-1.5">
-        <div class="relative flex items-center">
+          <span class="cursor-pointer transition-colors">Leads Tracker</span>
           <svg
-            class="w-3.5 h-3.5 text-gray-400 absolute left-2 top-[4px] pointer-events-none"
+            class="w-3 h-3 text-gray-400"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
@@ -93,29 +32,29 @@
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              d="M9 5l7 7-7 7"
             />
           </svg>
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search..."
-            class="pl-7 pr-2 py-[2px] w-48 bg-white border border-gray-300 rounded-[4px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
-          />
+          <span class="text-[#f52c11] font-medium">PIP</span>
         </div>
       </div>
 
-      <!-- Right: Date, Services -->
-      <div class="flex items-center gap-1.5">
-               <!-- Date Picker -->
-        <div class="relative">
+      <!-- Title + Search + View Archive -->
+      <div class="px-4 py-2 flex items-center justify-between gap-4 shrink-0">
+        <h1 class="font-bold text-[16px] tracking-tight whitespace-nowrap">
+          PIP
+        </h1>
+
+        <div class="flex items-center gap-1.5">
           <button
-            @click="showDatePicker = !showDatePicker"
-            class="bg-white border border-gray-300 px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
+            @click="
+              showArchiveModal = true;
+              fetchArchivedRecords();
+            "
+            class="relative bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
           >
-            <span>{{ selectedDate || "Select Date" }}</span>
             <svg
-              class="w-4 h-4 text-[#F52C11] shrink-0"
+              class="w-3.5 h-3.5"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
@@ -124,173 +63,550 @@
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
               />
             </svg>
-          </button>
-          <div
-            v-if="showDatePicker"
-            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
-          >
-            <div class="flex items-center justify-between mb-2">
-              <button
-                @click="prevMonth"
-                class="text-gray-400 hover:text-[#1F2835]"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <span class="text-[12px] font-semibold">{{
-                currentMonthYear
-              }}</span>
-              <button
-                @click="nextMonth"
-                class="text-gray-400 hover:text-[#1F2835]"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-            <div
-              class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 mb-1"
+            View archive
+            <span
+              v-if="archivedRecords.length > 0"
+              class="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-[#F52C11] text-white text-[9px] font-bold leading-none"
             >
-              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
-              ><span>Th</span><span>Fr</span><span>Sa</span>
-            </div>
-            <div class="grid grid-cols-7 gap-1">
-              <button
-                v-for="day in calendarDays.filter(d => d.isCurrentMonth)"
-                :key="day.date"
-                @click="selectDate(day.date)"
-                :class="[
-                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
-                  day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
-                  day.isSelected
-                    ? 'bg-[#F52C11] text-white font-semibold'
-                    : day.isToday
-                    ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
-                    : 'hover:bg-gray-100',
-                ]"
-              >
-                {{ day.day }}
-              </button>
-            </div>
+              {{ archivedRecords.length > 99 ? "99+" : archivedRecords.length }}
+            </span>
+          </button>
+        </div>
+      </div>
 
-            <!-- Clear date -->
-            <div class="flex justify-end mt-2 pt-2">
-              <button
-                @click="clearDateFilter"
-                class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
+      <!-- Filters Row (Date + Services) - COPIED FROM LEADS -->
+      <div class="px-4 py-1 flex items-center justify-between gap-2 shrink-0">
+        <!-- Left: Search moved here per image -->
+        <div class="flex items-center gap-1.5">
+          <div class="relative flex items-center">
+            <svg
+              class="w-3.5 h-3.5 text-gray-400 absolute left-2 top-[4px] pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search..."
+              class="pl-7 pr-2 py-[2px] w-48 bg-white border border-gray-300 rounded-[4px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
+            />
+          </div>
+        </div>
+
+        <!-- Right: Date, Services -->
+        <div class="flex items-center gap-1.5">
+          <!-- Date Picker -->
+          <div class="relative">
+            <button
+              @click="showDatePicker = !showDatePicker"
+              class="bg-white border border-gray-300 px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
+            >
+              <span>{{ selectedDate || "Select Date" }}</span>
+              <svg
+                class="w-4 h-4 text-[#F52C11] shrink-0"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
               >
-                Clear date
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
+            <div
+              v-if="showDatePicker"
+              class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <button
+                  @click="prevMonth"
+                  class="text-gray-400 hover:text-[#1F2835]"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <span class="text-[12px] font-semibold">{{
+                  currentMonthYear
+                }}</span>
+                <button
+                  @click="nextMonth"
+                  class="text-gray-400 hover:text-[#1F2835]"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+              <div
+                class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 mb-1"
+              >
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
+                ><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div class="grid grid-cols-7 gap-1">
+                <button
+                  v-for="day in calendarDays.filter((d) => d.isCurrentMonth)"
+                  :key="day.date"
+                  @click="selectDate(day.date)"
+                  :class="[
+                    'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
+                    day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
+                    day.isSelected
+                      ? 'bg-[#F52C11] text-white font-semibold'
+                      : day.isToday
+                      ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
+                      : 'hover:bg-gray-100',
+                  ]"
+                >
+                  {{ day.day }}
+                </button>
+              </div>
+
+              <!-- Clear date -->
+              <div class="flex justify-end mt-2 pt-2">
+                <button
+                  @click="clearDateFilter"
+                  class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
+                >
+                  Clear date
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Services Dropdown -->
+          <div class="relative">
+            <button
+              @click="showServicesDropdown = !showServicesDropdown"
+              :class="
+                selectedService !== 'All Services'
+                  ? 'border-[#F52C11] text-[#F52C11]'
+                  : 'border-gray-300 text-[#1F2835]'
+              "
+              class="bg-white border px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1 hover:border-gray-400 transition-colors"
+            >
+              {{ selectedService }}
+              <svg
+                class="w-2.5 h-2.5 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            <div
+              v-if="showServicesDropdown"
+              class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[160px]"
+            >
+              <button
+                v-for="service in serviceOptions"
+                :key="service"
+                @click="
+                  selectedService = service;
+                  showServicesDropdown = false;
+                "
+                :class="
+                  selectedService === service
+                    ? 'bg-[#F52C11]/10 text-[#F52C11] font-medium'
+                    : 'text-[#1F2835] hover:bg-gray-50'
+                "
+                class="w-full text-left px-3 py-1.5 text-[11px] transition-colors"
+              >
+                {{ service }}
               </button>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Services Dropdown -->
-        <div class="relative">
-          <button
-            @click="showServicesDropdown = !showServicesDropdown"
-            :class="
-              selectedService !== 'All Services'
-                ? 'border-[#F52C11] text-[#F52C11]'
-                : 'border-gray-300 text-[#1F2835]'
-            "
-            class="bg-white border px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1 hover:border-gray-400 transition-colors"
-          >
-            {{ selectedService }}
-            <svg
-              class="w-2.5 h-2.5 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
+      <!-- Main Content: Table Section -->
+      <main
+        class="flex-1 flex pt-0.5 px-2.5 pb-2.5 gap-1.5 min-h-0 overflow-hidden"
+      >
+        <section
+          class="flex-1 flex flex-col min-w-2 bg-white overflow-hidden relative rounded-[6px]"
+        >
+          <!-- Table Header Info -->
           <div
-            v-if="showServicesDropdown"
-            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[160px]"
+            class="flex items-center justify-between px-2 py-[3px] border-b border-gray-100 shrink-0"
           >
+            <div class="flex items-center gap-3">
+              <span class="text-[11px] text-gray-500 font-medium"
+                >Showing {{ recordsRangeStart }}-{{ recordsRangeEnd }}</span
+              >
+              <span class="text-[11px] text-gray-400"
+                >{{ filteredRecords.length }} total records</span
+              >
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-gray-500">Rows per page</span>
+                <div class="relative">
+                  <select
+                    v-model.number="recordsRowsPerPage"
+                    class="bg-white border border-gray-300 rounded-[4px] pl-2 pr-6 py-[3px] text-[10px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] appearance-none cursor-pointer"
+                  >
+                    <option
+                      v-for="option in rowsPerPageOptions"
+                      :key="option"
+                      :value="option"
+                    >
+                      {{ option }}
+                    </option>
+                  </select>
+                  <svg
+                    class="w-2.5 h-2.5 text-[#F52C11] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+                <button
+                  v-if="canAdd"
+                  @click="openAddRecordModal"
+                  class="bg-white hover:bg-gray-50 border border-gray-300 text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1.5 transition-colors"
+                >
+                  <svg
+                    class="w-3 h-3 text-[#F52C11]"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Add record
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="isLoading" class="flex-1 flex items-center justify-center">
+            <div class="text-gray-400 text-[12px]">Loading records...</div>
+          </div>
+
+          <!-- Table -->
+          <div v-else class="flex-1 overflow-auto custom-scroll relative">
+            <table class="w-full border-collapse text-left">
+              <thead
+                class="bg-gray-50 border-b border-gray-200 sticky top-0 z-20"
+              >
+                <tr class="border-b border-gray-200">
+                  <th
+                    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11] w-8 text-center"
+                  ></th>
+                  <th v-if="canEdit" class="w-6 px-1.5 py-[3px] text-center">
+                    <input
+                      type="checkbox"
+                      :checked="isAllSelected"
+                      @change="toggleAll"
+                      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                    />
+                  </th>
+                  <th
+                    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  >
+                    Date Recorded
+                  </th>
+                  <th
+                    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  >
+                    Client Name
+                  </th>
+                  <th
+                    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  >
+                    Service
+                  </th>
+                  <th
+                    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  >
+                    Onboarding Date
+                  </th>
+                  <th
+                    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11] sticky right-0 z-30 bg-gray-50 shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  <tr
+                  v-for="(record, index) in paginatedRecords"
+                  :key="record.id"
+                  class="transition-colors"
+                  :class="{
+                    'bg-[#F52C11]/15': isSelected(record.id),
+                    'bg-white hover:bg-[#F52C11]/10': !isSelected(record.id),
+                    'border-b border-gray-100':
+                      index !== paginatedRecords.length - 1,
+                  }"
+                >
+                  <!-- COUNT NUMBER CELL (moved before checkbox) -->
+                  <td
+                    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-gray-500 text-center w-8"
+                  >
+                    {{
+                      (recordsCurrentPage - 1) * recordsRowsPerPage + index + 1
+                    }}
+                  </td>
+                  <td v-if="canEdit" class="px-1.5 py-[3px] text-center">
+                    <input
+                      type="checkbox"
+                      :checked="isSelected(record.id)"
+                      @change="toggleSelection(record.id)"
+                      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                    />
+                  </td>
+                  <td
+                    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                  >
+                    {{ record.dateRecorded }}
+                  </td>
+                  <td
+                    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                  >
+                    {{ record.clientName }}
+                  </td>
+                  <td
+                    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                  >
+                    {{ record.service }}
+                  </td>
+                  <td
+                    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
+                  >
+                    {{ record.onboardingDate }}
+                  </td>
+                  <td class="px-2 py-[3px] whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="h-full rounded-full"
+                          :style="{
+                            width: record.status + '%',
+                            backgroundColor: getStatusColor(record.status),
+                          }"
+                        ></div>
+                      </div>
+                      <span
+                        class="text-[10px] font-semibold"
+                        :style="{ color: getStatusColor(record.status) }"
+                        >{{ record.status }}%</span
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="px-2 py-[3px] whitespace-nowrap sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] transition-colors"
+                    :class="
+                      isSelected(record.id)
+                        ? 'bg-[#F52C11]/0'
+                        : 'bg-white hover:bg-[#F52C11]/0'
+                    "
+                  >
+                    <div class="flex items-center gap-1.5">
+                      <button
+                        @click="openViewModal(record)"
+                        class="text-gray-400 hover:text-[#F52C11] transition-colors"
+                        title="View"
+                      >
+                        <svg
+                          class="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </button>
+
+                      <button
+                        v-if="canEdit"
+                        @click="openEditModal(record)"
+                        class="text-gray-400 hover:text-[#F52C11] transition-colors"
+                        title="Edit"
+                      >
+                        <svg
+                          class="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr v-if="paginatedRecords.length === 0">
+                  <td
+                    :colspan="canEdit ? 8 : 7"
+                    class="px-4 py-12 text-center text-gray-400"
+                  >
+                    <div v-if="searchQuery">
+                      No records found matching "<span
+                        class="font-semibold text-[#1F2835]"
+                        >{{ searchQuery }}</span
+                      >"
+                    </div>
+                    <div v-else>No records available</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Archive Selected Bar -->
+          <div
+            v-if="canEdit && selectedCount > 0"
+            class="shrink-0 bg-white border-t border-gray-200 px-3 py-[2px] flex items-center justify-between"
+          >
+            <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+              <svg
+                class="w-3.5 h-3.5 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span class="font-medium"
+                >{{ selectedCount }} record(s) selected</span
+              >
+            </div>
             <button
-              v-for="service in serviceOptions"
-              :key="service"
-              @click="
-                selectedService = service;
-                showServicesDropdown = false;
-              "
-              :class="
-                selectedService === service
-                  ? 'bg-[#F52C11]/10 text-[#F52C11] font-medium'
-                  : 'text-[#1F2835] hover:bg-gray-50'
-              "
-              class="w-full text-left px-3 py-1.5 text-[11px] transition-colors"
+              @click="archiveSelectedRecords"
+              class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[2px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
             >
-              {{ service }}
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                />
+              </svg>
+              Archive selected
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content: Table Section -->
-    <main
-      class="flex-1 flex pt-0.5 px-2.5 pb-2.5 gap-1.5 min-h-0 overflow-hidden"
-    >
-      <section
-        class="flex-1 flex flex-col min-w-2 bg-white overflow-hidden relative rounded-[6px]"
-      >
-        <!-- Table Header Info -->
-        <div
-          class="flex items-center justify-between px-2 py-[3px] border-b border-gray-100 shrink-0"
-        >
-          <div class="flex items-center gap-3">
-            <span class="text-[11px] text-gray-500 font-medium"
-              >Showing {{ recordsRangeStart }}-{{ recordsRangeEnd }}</span
+          <!-- Pagination Footer - COPIED FROM LEADS -->
+          <div
+            class="shrink-0 bg-[#f0f0f0] px-2.5 py-1 flex items-center justify-between gap-2 flex-wrap"
+          >
+            <!-- Page X of Y -->
+            <span class="text-[9px] text-gray-500"
+              >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
             >
-            <span class="text-[11px] text-gray-400"
-              >{{ filteredRecords.length }} total records</span
-            >
-          </div>
 
-          <div class="flex items-center gap-2">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[10px] text-gray-500">Rows per page</span>
-              <div class="relative">
-                <select
-                  v-model.number="recordsRowsPerPage"
-                  class="bg-white border border-gray-300 rounded-[4px] pl-2 pr-6 py-[3px] text-[10px] text-[#1F2835] focus:outline-none focus:border-[#F52C11] appearance-none cursor-pointer"
-                >
-                  <option
-                    v-for="option in rowsPerPageOptions"
-                    :key="option"
-                    :value="option"
-                  >
-                    {{ option }}
-                  </option>
-                </select>
+            <!-- Go to page -->
+            <div class="flex items-center gap-1">
+              <span class="text-[9px] text-gray-500">Go to</span>
+              <input
+                v-model="recordsPageInput"
+                type="number"
+                min="1"
+                :max="totalRecordsPages"
+                placeholder="---"
+                class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[9px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                @keyup.enter="goToTypedRecordsPage"
+              />
+              <button
+                @click="goToTypedRecordsPage"
+                class="bg-gray-200 border border-gray-300 hover:bg-gray-300 text-[#1F2835] px-1.5 py-[1px] rounded-[3px] text-[9px] font-medium transition-colors"
+              >
+                Go
+              </button>
+            </div>
+
+            <!-- Page numbers -->
+            <div class="flex items-center gap-0.5">
+              <button
+                @click="goToRecordsPage(recordsCurrentPage - 1)"
+                :disabled="recordsCurrentPage === 1"
+                class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
+              >
                 <svg
-                  class="w-2.5 h-2.5 text-[#F52C11] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
+                  class="w-3 h-3"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2"
@@ -299,13 +615,274 @@
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M19 9l-7 7-7-7"
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <button
+                v-for="page in recordsPageNumbers"
+                :key="page"
+                @click="goToRecordsPage(page)"
+                :class="
+                  recordsCurrentPage === page
+                    ? 'text-[#1F2835]'
+                    : 'text-gray-400 hover:bg-gray-100'
+                "
+                class="w-5 h-5 flex items-center justify-center rounded-[3px] text-[10px] font-medium transition-colors"
+              >
+                {{ page }}
+              </button>
+              <button
+                @click="goToRecordsPage(recordsCurrentPage + 1)"
+                :disabled="recordsCurrentPage === totalRecordsPages"
+                class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- View Archive Modal -->
+      <div
+        v-if="showArchiveModal"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div
+          class="bg-white rounded-[12px] w-[800px] h-[550px] shadow-xl flex flex-col overflow-hidden"
+        >
+          <!-- Header -->
+          <div
+            class="flex items-center justify-between px-5 py-2 border-b border-gray-100 bg-white shrink-0"
+          >
+            <div class="flex items-center gap-2">
+              <div
+                class="w-7 h-7 rounded-[6px] bg-[#F52C11]/10 flex items-center justify-center"
+              >
+                <svg
+                  class="w-3.5 h-3.5 text-[#F52C11]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
                   />
                 </svg>
               </div>
+              <div>
+                <h3 class="text-[13px] font-bold text-[#1F2835]">
+                  Archived items
+                </h3>
+                <p class="text-[9px] text-gray-400">
+                  Performance Improvement Plan page
+                </p>
+              </div>
+            </div>
+            <button
+              @click="closeArchiveModal"
+              class="text-gray-400 hover:text-[#1F2835] transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Body -->
+          <div class="flex-1 overflow-auto custom-scroll p-3">
+            <!-- Archived Tabs -->
+            <div class="flex items-center gap-4 border-b border-gray-200 mb-2">
               <button
-                @click="openAddRecordModal"
-                class="bg-white hover:bg-gray-50 border border-gray-300 text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1.5 transition-colors"
+                class="pb-1.5 border-b-2 border-[#F52C11] text-[11px] font-semibold text-[#F52C11] flex items-center gap-1.5"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                  />
+                </svg>
+                Archived records
+                <span
+                  class="bg-[#F52C11]/10 text-[#1F2835] text-[9px] px-1.5 py-[1px] rounded-full font-semibold"
+                  >{{ archivedRecords.length }}</span
+                >
+              </button>
+            </div>
+
+            <!-- Search archived -->
+            <div class="relative mb-2">
+              <svg
+                class="w-3.5 h-3.5 text-gray-400 absolute left-2 top-[3px] pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                v-model="archivedSearchQuery"
+                type="text"
+                placeholder="Search archived record..."
+                class="pl-7 pr-2 py-[2px] w-full bg-white border border-gray-300 rounded-[6px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
+              />
+            </div>
+
+            <!-- Loading -->
+            <div v-if="isArchiveLoading" class="text-center py-8">
+              <div class="text-gray-400 text-[12px]">
+                Loading archived items...
+              </div>
+            </div>
+
+            <!-- Empty -->
+            <div
+              v-else-if="filteredArchivedRecords.length === 0"
+              class="text-center py-8"
+            >
+              <svg
+                class="w-8 h-8 mx-auto mb-2 text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                />
+              </svg>
+              <p class="text-[12px] text-gray-400">No archived items</p>
+            </div>
+
+            <!-- Card List -->
+            <div v-else class="space-y-2">
+              <div
+                v-for="record in filteredArchivedRecords"
+                :key="record.id"
+                class="flex items-center gap-3 p-1 bg-white rounded-[8px] border border-gray-200 hover:border-gray-300 transition-colors"
+              >
+                <!-- Checkbox -->
+                <div v-if="canEdit" class="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    :checked="isArchivedSelected(record.id)"
+                    @change="toggleArchivedSelection(record.id)"
+                    class="w-3.5 h-3.5 rounded border-gray-200 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
+                  />
+                </div>
+
+                <!-- Building Icon in Gray Square -->
+                <div
+                  class="w-6 h-6 rounded-[6px] bg-gray-100 flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-3 h-3 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 21h18M8 21V10l4-3 4 3v11"
+                    />
+                  </svg>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                  <div class="text-[12px] font-semibold text-[#1F2835]">
+                    {{ record.clientName }}
+                  </div>
+                  <div
+                    class="flex items-center gap-1.5 text-[10px] text-gray-500 mt-0.5"
+                  >
+                    <span>Davao</span>
+                    <span>•</span>
+                    <span>Archived {{ record.dateArchived }}</span>
+                    <span
+                      class="inline-flex items-center px-1.5 py-[1px] rounded-[4px] bg-[#E8F4FD] text-[#1F2835] text-[9px] font-medium"
+                    >
+                      {{ record.service }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bulk Actions Bar -->
+          <div
+            v-if="canEdit && archivedSelectedCount > 0"
+            class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
+          >
+            <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+              <svg
+                class="w-3.5 h-3.5 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span class="font-medium"
+                >{{ archivedSelectedCount }} record(s) selected</span
+              >
+              <span v-if="archiveDeleteError" class="text-[#F52C11] ml-2">{{
+                archiveDeleteError
+              }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <!-- Select All Button -->
+              <button
+                @click="toggleAllArchived"
+                class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] hover:text-[#F52C11] text-[10px] font-medium transition-colors"
               >
                 <svg
                   class="w-3 h-3 text-[#F52C11]"
@@ -317,679 +894,124 @@
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M12 4v16m8-8H4"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Add record
+                Select all
+              </button>
+
+              <button
+                @click="restoreSelectedArchivedRecords"
+                class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors"
+              >
+                <svg
+                  class="w-3 h-3 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Restore
+              </button>
+              <button
+                @click="deleteSelectedArchivedRecords"
+                class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
+              >
+                <svg
+                  class="w-3 h-3 text-[#F52C11]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Delete
               </button>
             </div>
           </div>
-        </div>
 
-        <!-- Loading State -->
-        <div v-if="isLoading" class="flex-1 flex items-center justify-center">
-          <div class="text-gray-400 text-[12px]">Loading records...</div>
-        </div>
-
-        <!-- Table -->
-        <div v-else class="flex-1 overflow-auto custom-scroll relative">
-          <table class="w-full border-collapse text-left">
-            <thead class="bg-gray-50 border-b border-gray-200 sticky top-0 z-20">
-              
-              <tr class="border-b border-gray-200">
-                 <th
-    class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11] w-8 text-center"
-  >
-    
-  </th>
-  <th class="w-6 px-1.5 py-[3px] text-center">
-    <input
-      type="checkbox"
-      :checked="isAllSelected"
-      @change="toggleAll"
-      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-    />
-  </th>
-  <th
-    class="px-2 py-[3px]  font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-  >
-    Date Recorded
-  </th>
-                <th
-                  class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Client Name
-                </th>
-                <th
-                  class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Service
-                </th>
-                <th
-                  class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Onboarding Date
-                </th>
-                <th
-                  class="px-2 py-[3px] font-semibold text-[11px] whitespace-nowrap text-[#F52C11]"
-                >
-                  Status
-                </th>
-                <th
-                  class="px-2 py-[3px]  font-semibold text-[11px] whitespace-nowrap text-[#F52C11] sticky right-0 z-30 bg-gray-50 shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                <tr
-  v-for="(record, index) in paginatedRecords"
-  :key="record.id"
-  class="transition-colors"
-  :class="{
-    'bg-[#F52C11]/15': isSelected(record.id),
-    'bg-white hover:bg-[#F52C11]/10': !isSelected(record.id),
-    'border-b border-gray-100':
-      index !== paginatedRecords.length - 1,
-  }"
->
-  <!-- COUNT NUMBER CELL (moved before checkbox) -->
-  <td
-    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-gray-500 text-center w-8"
-  >
-    {{ (recordsCurrentPage - 1) * recordsRowsPerPage + index + 1 }}
-  </td>
-  <td class="px-1.5 py-[3px] text-center">
-    <input
-      type="checkbox"
-      :checked="isSelected(record.id)"
-      @change="toggleSelection(record.id)"
-      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-    />
-  </td>
-  <td
-    class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
-  >
-    {{ record.dateRecorded }}
-  </td>
-                <td
-                  class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
-                >
-                  {{ record.clientName }}
-                </td>
-                <td
-                  class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
-                >
-                  {{ record.service }}
-                </td>
-                <td
-                  class="px-2 py-[3px] whitespace-nowrap text-[11px] font-medium text-[#1F2835]"
-                >
-                  {{ record.onboardingDate }}
-                </td>
-                <td class="px-2 py-[3px] whitespace-nowrap">
-                  <div class="flex items-center gap-2">
-                    <div
-                      class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden"
-                    >
-                      <div
-                        class="h-full rounded-full"
-                        :style="{
-                          width: record.status + '%',
-                          backgroundColor: getStatusColor(record.status),
-                        }"
-                      ></div>
-                    </div>
-                    <span
-                      class="text-[10px] font-semibold"
-                      :style="{ color: getStatusColor(record.status) }"
-                      >{{ record.status }}%</span
-                    >
-                  </div>
-                </td>
-                <td
-                  class="px-2 py-[3px] whitespace-nowrap sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] transition-colors"
-                  :class="
-                    isSelected(record.id)
-                      ? 'bg-[#F52C11]/0'
-                      : 'bg-white hover:bg-[#F52C11]/0'
-                  "
-                >
-                  <div class="flex items-center gap-1.5">
-                    <button
-                      @click="openViewModal(record)"
-                      class="text-gray-400 hover:text-[#F52C11] transition-colors"
-                      title="View"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    </button>
-
-                    <button
-                      @click="openEditModal(record)"
-                      class="text-gray-400 hover:text-[#F52C11] transition-colors"
-                      title="Edit"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-
-              <tr v-if="paginatedRecords.length === 0">
-  <td colspan="8" class="px-4 py-12 text-center text-gray-400">
-                  <div v-if="searchQuery">
-                    No records found matching "<span
-                      class="font-semibold text-[#1F2835]"
-                      >{{ searchQuery }}</span
-                    >"
-                  </div>
-                  <div v-else>No records available</div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Archive Selected Bar -->
-        <div
-          v-if="selectedCount > 0"
-          class="shrink-0 bg-white border-t border-gray-200 px-3 py-[2px] flex items-center justify-between"
-        >
-          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
-            <svg
-              class="w-3.5 h-3.5 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span class="font-medium"
-              >{{ selectedCount }} record(s) selected</span
-            >
-          </div>
-          <button
-            @click="archiveSelectedRecords"
-            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[2px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-          >
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-              />
-            </svg>
-            Archive selected
-          </button>
-        </div>
-        <!-- Pagination Footer - COPIED FROM LEADS -->
-        <div
-          class="shrink-0 bg-[#f0f0f0] px-2.5 py-1 flex items-center justify-between gap-2 flex-wrap"
-        >
-          <!-- Page X of Y -->
-          <span class="text-[9px] text-gray-500"
-            >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
-          >
-
-          <!-- Go to page -->
-          <div class="flex items-center gap-1">
-            <span class="text-[9px] text-gray-500">Go to</span>
-            <input
-              v-model="recordsPageInput"
-              type="number"
-              min="1"
-              :max="totalRecordsPages"
-              placeholder="---"
-              class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[9px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              @keyup.enter="goToTypedRecordsPage"
-            />
-            <button
-              @click="goToTypedRecordsPage"
-              class="bg-gray-200 border border-gray-300 hover:bg-gray-300 text-[#1F2835] px-1.5 py-[1px] rounded-[3px] text-[9px] font-medium transition-colors"
-            >
-              Go
-            </button>
-          </div>
-
-          <!-- Page numbers -->
-          <div class="flex items-center gap-0.5">
-            <button
-              @click="goToRecordsPage(recordsCurrentPage - 1)"
-              :disabled="recordsCurrentPage === 1"
-              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
-            >
-              <svg
-                class="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              v-for="page in recordsPageNumbers"
-              :key="page"
-              @click="goToRecordsPage(page)"
-              :class="
-                recordsCurrentPage === page
-                  ? 'text-[#1F2835]'
-                  : 'text-gray-400 hover:bg-gray-100'
-              "
-              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-[10px] font-medium transition-colors"
-            >
-              {{ page }}
-            </button>
-            <button
-              @click="goToRecordsPage(recordsCurrentPage + 1)"
-              :disabled="recordsCurrentPage === totalRecordsPages"
-              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
-            >
-              <svg
-                class="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- View Archive Modal -->
-<div
-  v-if="showArchiveModal"
-  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
->
-  <div
-    class="bg-white rounded-[12px] w-[800px] h-[550px] shadow-xl flex flex-col overflow-hidden"
-  >
-    <!-- Header -->
-    <div
-      class="flex items-center justify-between px-5 py-2 border-b border-gray-100 bg-white shrink-0"
-    >
-      <div class="flex items-center gap-2">
-        <div
-          class="w-7 h-7 rounded-[6px] bg-[#F52C11]/10 flex items-center justify-center"
-        >
-          <svg
-            class="w-3.5 h-3.5 text-[#F52C11]"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-            />
-          </svg>
-        </div>
-        <div>
-          <h3 class="text-[13px] font-bold text-[#1F2835]">
-            Archived items
-          </h3>
-          <p class="text-[9px] text-gray-400">Performance Improvement Plan page</p>
-        </div>
-      </div>
-      <button
-        @click="closeArchiveModal"
-        class="text-gray-400 hover:text-[#1F2835] transition-colors"
-      >
-        <svg
-          class="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Body -->
-    <div class="flex-1 overflow-auto custom-scroll p-3">
-      <!-- Archived Tabs -->
-      <div class="flex items-center gap-4 border-b border-gray-200 mb-2">
-        <button
-          class="pb-1.5 border-b-2 border-[#F52C11] text-[11px] font-semibold text-[#F52C11] flex items-center gap-1.5"
-        >
-          <svg
-            class="w-3 h-3"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-            />
-          </svg>
-          Archived records
-          <span
-            class="bg-[#F52C11]/10 text-[#1F2835] text-[9px] px-1.5 py-[1px] rounded-full font-semibold"
-            >{{ archivedRecords.length }}</span
-          >
-        </button>
-      </div>
-
-      <!-- Search archived -->
-      <div class="relative mb-2">
-        <svg
-          class="w-3.5 h-3.5 text-gray-400 absolute left-2 top-[3px] pointer-events-none"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-        <input
-          v-model="archivedSearchQuery"
-          type="text"
-          placeholder="Search archived record..."
-          class="pl-7 pr-2 py-[2px] w-full bg-white border border-gray-300 rounded-[6px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
-        />
-      </div>
-
-      <!-- Loading -->
-      <div v-if="isArchiveLoading" class="text-center py-8">
-        <div class="text-gray-400 text-[12px]">
-          Loading archived items...
-        </div>
-      </div>
-
-      <!-- Empty -->
-      <div
-        v-else-if="filteredArchivedRecords.length === 0"
-        class="text-center py-8"
-      >
-        <svg
-          class="w-8 h-8 mx-auto mb-2 text-gray-300"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-          />
-        </svg>
-        <p class="text-[12px] text-gray-400">No archived items</p>
-      </div>
-
-      <!-- Card List -->
-      <div v-else class="space-y-2">
-        <div
-          v-for="record in filteredArchivedRecords"
-          :key="record.id"
-          class="flex items-center gap-3 p-1 bg-white rounded-[8px] border border-gray-200 hover:border-gray-300 transition-colors"
-        >
-          <!-- Checkbox -->
-          <div class="flex items-center justify-center">
-            <input
-              type="checkbox"
-              :checked="isArchivedSelected(record.id)"
-              @change="toggleArchivedSelection(record.id)"
-              class="w-3.5 h-3.5 rounded border-gray-200 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
-            />
-          </div>
-
-          <!-- Building Icon in Gray Square -->
+          <!-- Footer -->
           <div
-            class="w-6 h-6 rounded-[6px] bg-gray-100 flex items-center justify-center flex-shrink-0"
+            class="px-5 py-2 border-t border-gray-100 flex items-center justify-between bg-white shrink-0"
           >
-            <svg
-              class="w-3 h-3 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 21h18M8 21V10l4-3 4 3v11"
-              />
-            </svg>
-          </div>
-
-          <!-- Content -->
-          <div class="flex-1 min-w-0">
-            <div class="text-[12px] font-semibold text-[#1F2835]">
-              {{ record.clientName }}
-            </div>
-            <div class="flex items-center gap-1.5 text-[10px] text-gray-500 mt-0.5">
-              <span>Davao</span>
-              <span>•</span>
-              <span>Archived {{ record.dateArchived }}</span>
-              <span
-                class="inline-flex items-center px-1.5 py-[1px] rounded-[4px] bg-[#E8F4FD] text-[#1F2835] text-[9px] font-medium"
+            <div class="flex items-center gap-1.5 text-[9px] text-gray-400">
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
               >
-                {{ record.service }}
-              </span>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              Restoring moves the record back to its active list
             </div>
+            <button
+              @click="closeArchiveModal"
+              class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Bulk Actions Bar -->
+      <!-- Edit Record Modal -->
+      <EditRecordModal
+        v-if="showAddEditModal"
+        :record="editingRecord"
+        :prospect-technique-options="lookups.techniques"
+        :sales-rep-options="lookups.salesReps"
+        :communication-options="lookups.communications"
+        :service-options="lookups.services"
+        :status-options="lookups.statuses"
+        :save-error="saveError"
+        @close="closeAddEditModal"
+        @save="handleEditSave"
+      />
+
+      <!-- View Record Modal -->
+      <ViewRecordModal
+        v-if="showViewModal"
+        :record="viewingRecord"
+        @close="closeViewModal"
+      />
+
+      <!-- Click outside to close dropdowns -->
+      <div
+        v-if="showDatePicker || showServicesDropdown"
+        class="fixed inset-0 z-40"
+        @click="closeAllDropdowns"
+      ></div>
+    </div>
+  </template>
+
+  <template v-else>
     <div
-      v-if="archivedSelectedCount > 0"
-      class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
+      class="flex items-center justify-center h-screen bg-[#f0f0f0] font-['Overpass'] text-[13px] text-gray-400"
     >
-      <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
-        <svg
-          class="w-3.5 h-3.5 text-[#F52C11]"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span class="font-medium"
-          >{{ archivedSelectedCount }} record(s) selected</span
-        >
-        <span v-if="archiveDeleteError" class="text-[#F52C11] ml-2">{{
-          archiveDeleteError
-        }}</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <!-- Select All Button -->
-        <button
-          @click="toggleAllArchived"
-          class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] hover:text-[#F52C11] text-[10px] font-medium transition-colors"
-        >
-          <svg
-            class="w-3 h-3 text-[#F52C11]"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          Select all
-        </button>
-
-        <button
-          @click="restoreSelectedArchivedRecords"
-          class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors"
-        >
-          <svg
-            class="w-3 h-3 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-          Restore
-        </button>
-        <button
-          @click="deleteSelectedArchivedRecords"
-          class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
-        >
-          <svg
-            class="w-3 h-3 text-[#F52C11]"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
-          Delete
-        </button>
-      </div>
+      {{
+        permissionsLoading
+          ? "Checking permissions..."
+          : "You don't have permission to view this page."
+      }}
     </div>
-
-    <!-- Footer -->
-    <div
-      class="px-5 py-2 border-t border-gray-100 flex items-center justify-between bg-white shrink-0"
-    >
-      <div class="flex items-center gap-1.5 text-[9px] text-gray-400">
-        <svg
-          class="w-3 h-3"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        Restoring moves the record back to its active list
-      </div>
-      <button
-        @click="closeArchiveModal"
-        class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-      >
-        Close
-      </button>
-    </div>
-  </div>
-</div>
-
-    <!-- Edit Record Modal -->
-    <EditRecordModal
-      v-if="showAddEditModal"
-      :record="editingRecord"
-      :prospect-technique-options="lookups.techniques"
-      :sales-rep-options="lookups.salesReps"
-      :communication-options="lookups.communications"
-      :service-options="lookups.services"
-      :status-options="lookups.statuses"
-      :save-error="saveError"
-      @close="closeAddEditModal"
-      @save="handleEditSave"
-    />
-
-    <!-- View Record Modal -->
-    <ViewRecordModal
-      v-if="showViewModal"
-      :record="viewingRecord"
-      @close="closeViewModal"
-    />
-
-    <!-- Click outside to close dropdowns -->
-    <div
-      v-if="showDatePicker || showServicesDropdown"
-      class="fixed inset-0 z-40"
-      @click="closeAllDropdowns"
-    ></div>
-  </div>
+  </template>
 </template>
 
 <script setup>
@@ -1003,6 +1025,8 @@ import EditRecordModal from "./edit.vue";
 import ViewRecordModal from "./view.vue";
 import * as api from "./api.js";
 import { useAuditLog } from "~/composables/useAuditLog";
+import { useToast } from "~/composables/useToast";
+import { usePermissions } from "~/composables/usePermissions";
 
 // useRuntimeConfig() is auto-imported by Nuxt.
 //
@@ -1014,6 +1038,7 @@ import { useAuditLog } from "~/composables/useAuditLog";
 // useAuth(), we read the token/user from the same localStorage keys
 // login.vue writes to.
 const route = useRoute();
+const router = useRouter();
 const runtimeConfig = useRuntimeConfig();
 api.configureApi({
   baseURL: runtimeConfig.public.apiBase,
@@ -1074,6 +1099,7 @@ function isArchivedSelected(id) {
 }
 
 function toggleArchivedSelection(id) {
+  if (!canEdit.value) return;
   const idx = archivedSelectedIds.value.indexOf(id);
   if (idx > -1) {
     archivedSelectedIds.value.splice(idx, 1);
@@ -1083,8 +1109,9 @@ function toggleArchivedSelection(id) {
 }
 
 function toggleAllArchived() {
+  if (!canEdit.value) return;
   const visibleIds = filteredArchivedRecords.value.map((r) => r.id);
-  
+
   const allVisibleSelected = visibleIds.every((id) =>
     archivedSelectedIds.value.includes(id)
   );
@@ -1113,6 +1140,14 @@ watch(archivedSearchQuery, () => {
 // since that's where login.vue actually stores it after a successful login)
 const currentUser = ref(null);
 const { logAuditAction } = useAuditLog();
+const toast = useToast();
+const {
+  ready: permissionsReady,
+  isLoading: permissionsLoading,
+  canView,
+  canEdit,
+  canAdd,
+} = usePermissions("performance-improvement-plan");
 const lookups = ref({
   statuses: [],
   techniques: [],
@@ -1128,20 +1163,11 @@ const showDatePicker = ref(false);
 const showServicesDropdown = ref(false);
 
 // Service options - COPIED FROM LEADS
-const serviceOptions = ref([
-  "All Services",
-  "Website Development",
-  "Custom Software",
-  "Mobile Application",
-  "Digital Marketing",
-  "Multimedia",
-  "Hosting & Server",
-]);
+const serviceOptions = ref([]);
 
 // Empty arrays — backend will populate these
 const records = ref([]);
 const archivedRecords = ref([]);
-
 
 // ==================== COMPUTED ====================
 const filteredRecords = computed(() => {
@@ -1176,7 +1202,6 @@ const isAllSelected = computed(() => {
     paginatedRecords.value.every((r) => selectedIds.value.includes(r.id))
   );
 });
-
 
 // ==================== PAGINATION - COPIED FROM LEADS ====================
 const rowsPerPageOptions = [13, 26, 39, 52, 65];
@@ -1249,12 +1274,9 @@ const currentMonth = ref(today.getMonth());
 const currentYear = ref(today.getFullYear());
 
 // Same format used by selectDate()/filteredRecords: MM/DD/YY
-const todayDateStr = `${String(today.getMonth() + 1).padStart(
-  2,
-  "0"
-)}/${String(today.getDate()).padStart(2, "0")}/${String(
-  today.getFullYear()
-).slice(-2)}`;
+const todayDateStr = `${String(today.getMonth() + 1).padStart(2, "0")}/${String(
+  today.getDate()
+).padStart(2, "0")}/${String(today.getFullYear()).slice(-2)}`;
 
 const currentMonthYear = computed(() => {
   const months = [
@@ -1356,6 +1378,7 @@ async function fetchRecords() {
       .sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
   } catch (error) {
     console.error("Failed to fetch records:", error);
+    toast.error("Unable to load PIP records. Please try again.");
   } finally {
     isLoading.value = false;
   }
@@ -1380,6 +1403,7 @@ async function fetchArchivedRecords() {
     archiveDeleteError.value = "";
   } catch (error) {
     console.error("Failed to fetch archived records:", error);
+    toast.error("Unable to load archived PIP records. Please try again.");
   } finally {
     isArchiveLoading.value = false;
   }
@@ -1390,6 +1414,8 @@ async function fetchArchivedRecords() {
  * Backend dev: Replace with your API call (PUT /api/pip-records/:id)
  */
 async function updateRecord(id, recordData) {
+  if (!canEdit.value) return;
+
   const payload = api.toBackendPayload(recordData, currentUser.value?.id);
   const plan = await api.updatePerformancePlan(id, payload);
   const idx = records.value.findIndex((r) => r.id === id);
@@ -1408,6 +1434,8 @@ async function updateRecord(id, recordData) {
  * Backend dev: Replace with your API call (POST /api/pip-records/:id/archive)
  */
 async function archiveRecordApi(id) {
+  if (!canEdit.value) return;
+
   archiveActionError.value = "";
   try {
     await api.archivePerformancePlan(id);
@@ -1429,10 +1457,13 @@ async function archiveRecordApi(id) {
         module: "Performance Improvement Plan",
         description: `Archived PIP record: ${record.clientName}`,
       });
+
+      toast.success(`${record.clientName} was archived successfully.`);
     }
   } catch (error) {
     console.error("Failed to archive record:", error);
     archiveActionError.value = describeApiError(error);
+    toast.error("Unable to archive this record. Please try again.");
   }
 }
 
@@ -1441,6 +1472,8 @@ async function archiveRecordApi(id) {
  * Backend dev: Replace with your API call (POST /api/pip-records/archive-batch)
  */
 async function archiveRecordsBatchApi(ids) {
+  if (!canEdit.value) return;
+
   archiveActionError.value = "";
   try {
     // No batch-archive route exists on the backend, so archive one by one.
@@ -1475,10 +1508,17 @@ async function archiveRecordsBatchApi(ids) {
           : `Archived ${ids.length} PIP records: ${archivedNames}`,
     });
 
+    toast.success(
+      ids.length === 1
+        ? "Record archived successfully."
+        : `${ids.length} records archived successfully.`
+    );
+
     selectedIds.value = [];
   } catch (error) {
     console.error("Failed to archive records:", error);
     archiveActionError.value = describeApiError(error);
+    toast.error("Unable to archive the selected record(s). Please try again.");
   }
 }
 
@@ -1488,6 +1528,8 @@ async function archiveRecordsBatchApi(ids) {
  * Restored records are placed at the top (index 0) of the active list.
  */
 async function unarchiveRecordApi(id) {
+  if (!canEdit.value) return;
+
   try {
     await api.unarchivePerformancePlan(id);
     const idx = archivedRecords.value.findIndex((r) => r.id === id);
@@ -1504,9 +1546,12 @@ async function unarchiveRecordApi(id) {
         module: "Performance Improvement Plan",
         description: `Restored PIP record: ${record.clientName}`,
       });
+
+      toast.success(`${record.clientName} was restored successfully.`);
     }
   } catch (error) {
     console.error("Failed to unarchive record:", error);
+    toast.error("Unable to restore this record. Please try again.");
   }
 }
 
@@ -1517,6 +1562,8 @@ async function unarchiveRecordApi(id) {
  * batch first.
  */
 async function unarchiveRecordsBatchApi(ids) {
+  if (!canEdit.value) return;
+
   archiveActionError.value = "";
   try {
     // No batch-unarchive route exists on the backend, so restore one by one.
@@ -1546,10 +1593,17 @@ async function unarchiveRecordsBatchApi(ids) {
           : `Restored ${ids.length} PIP records: ${restoredNames}`,
     });
 
+    toast.success(
+      ids.length === 1
+        ? "Record restored successfully."
+        : `${ids.length} records restored successfully.`
+    );
+
     archivedSelectedIds.value = [];
   } catch (error) {
     console.error("Failed to restore records:", error);
     archiveActionError.value = describeApiError(error);
+    toast.error("Unable to restore the selected record(s). Please try again.");
   }
 }
 
@@ -1558,6 +1612,8 @@ async function unarchiveRecordsBatchApi(ids) {
  * Backend dev: Replace with your API call (DELETE /api/pip-records/:id)
  */
 async function deleteArchivedRecordApi(id) {
+  if (!canEdit.value) return;
+
   archiveDeleteError.value = "";
   try {
     await api.deletePerformancePlan(id);
@@ -1573,10 +1629,13 @@ async function deleteArchivedRecordApi(id) {
         module: "Performance Improvement Plan",
         description: `Permanently deleted PIP record: ${record.clientName}`,
       });
+
+      toast.success(`${record.clientName} was permanently deleted.`);
     }
   } catch (error) {
     console.error("Failed to delete archived record:", error);
     archiveDeleteError.value = describeApiError(error);
+    toast.error("Unable to delete this record. Please try again.");
   }
 }
 
@@ -1585,6 +1644,8 @@ async function deleteArchivedRecordApi(id) {
  * Backend dev: Replace with your API call (POST /api/pip-records/delete-batch)
  */
 async function deleteArchivedRecordsBatchApi(ids) {
+  if (!canEdit.value) return;
+
   archiveDeleteError.value = "";
   try {
     // No batch-delete route exists on the backend, so delete one by one.
@@ -1606,10 +1667,17 @@ async function deleteArchivedRecordsBatchApi(ids) {
           : `Permanently deleted ${ids.length} PIP records: ${deletedNames}`,
     });
 
+    toast.success(
+      ids.length === 1
+        ? "Record permanently deleted."
+        : `${ids.length} records permanently deleted.`
+    );
+
     archivedSelectedIds.value = [];
   } catch (error) {
     console.error("Failed to delete archived records:", error);
     archiveDeleteError.value = describeApiError(error);
+    toast.error("Unable to delete the selected record(s). Please try again.");
   }
 }
 
@@ -1635,6 +1703,7 @@ function isSelected(id) {
 }
 
 function toggleSelection(id) {
+  if (!canEdit.value) return;
   const idx = selectedIds.value.indexOf(id);
   if (idx > -1) {
     selectedIds.value.splice(idx, 1);
@@ -1644,6 +1713,7 @@ function toggleSelection(id) {
 }
 
 function toggleAll() {
+  if (!canEdit.value) return;
   const visibleIds = paginatedRecords.value.map((r) => r.id);
   const allVisibleSelected = visibleIds.every((id) =>
     selectedIds.value.includes(id)
@@ -1670,6 +1740,7 @@ function closeViewModal() {
 }
 
 function openEditModal(record) {
+  if (!canEdit.value) return;
   editingRecord.value = record;
   saveError.value = "";
   showAddEditModal.value = true;
@@ -1681,6 +1752,7 @@ function openEditModal(record) {
 // path (e.g. "/performance-plan" -> "/performance-plan/create") mirrors
 // create.vue's own goToList(), which strips the last path segment to get back.
 function openAddRecordModal() {
+  if (!canAdd.value) return;
   navigateTo(`${route.path.replace(/\/$/, "")}/create`);
 }
 
@@ -1691,14 +1763,18 @@ function closeAddEditModal() {
 }
 
 async function handleEditSave(payload) {
+  if (!canEdit.value) return;
   if (!editingRecord.value) return;
   saveError.value = "";
   try {
     await updateRecord(editingRecord.value.id, payload);
     closeAddEditModal();
+    toast.success(`${payload.clientName} was updated successfully.`);
   } catch (error) {
     console.error("Failed to update record:", error);
-    saveError.value = describeApiError(error);
+    const message = describeApiError(error);
+    saveError.value = message;
+    toast.error(message);
   }
 }
 
@@ -1717,22 +1793,27 @@ function describeApiError(error) {
 }
 
 function archiveSelectedRecords() {
+  if (!canEdit.value) return;
   archiveRecordsBatchApi([...selectedIds.value]);
 }
 
 function unarchiveRecord(id) {
+  if (!canEdit.value) return;
   unarchiveRecordApi(id);
 }
 
 function deleteArchivedRecord(id) {
+  if (!canEdit.value) return;
   deleteArchivedRecordApi(id);
 }
 
 function deleteSelectedArchivedRecords() {
+  if (!canEdit.value) return;
   deleteArchivedRecordsBatchApi([...archivedSelectedIds.value]);
 }
 
 function restoreSelectedArchivedRecords() {
+  if (!canEdit.value) return;
   unarchiveRecordsBatchApi([...archivedSelectedIds.value]);
 }
 
@@ -1759,6 +1840,14 @@ function loadCurrentUser() {
 
 // ==================== LIFECYCLE ====================
 onMounted(async () => {
+  await permissionsReady;
+
+  if (!canView.value) {
+    toast.error("You don't have permission to view this page.");
+    router.push("/");
+    return;
+  }
+
   loadCurrentUser();
   isLoading.value = true;
   try {
