@@ -76,7 +76,7 @@
 
             <div class="px-3 pb-2.5">
               <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <div class="md:col-span-2">
+                <div>
                   <label
                     class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                   >
@@ -129,42 +129,7 @@
                   </p>
                 </div>
 
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Date added
-                  </label>
-                  <div class="relative">
-                    <input
-                      v-model="form.dateAdded"
-                      type="text"
-                      placeholder="-- -- ----"
-                      readonly
-                      class="w-full bg-gray-100 border border-gray-200 rounded-[4px] px-3 py-2 pr-8 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer"
-                      @click="showDatePicker = true"
-                    />
-                    <button
-                      @click="showDatePicker = true"
-                      class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F52C11] transition-colors"
-                      type="button"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
+                <div class="relative"></div>
               </div>
             </div>
           </div>
