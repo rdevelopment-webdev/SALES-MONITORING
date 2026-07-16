@@ -127,18 +127,22 @@
         </div>
       </div>
 
-      <!-- Remarks box -->
-      <div class="px-4 pt-2 pb-1 bg-white">
-        <div class="border border-gray-200 rounded-[7px] px-3 py-2">
-          <p class="text-[12px] text-gray-500 mb-0.5">Remarks</p>
-          <p
-            class="text-[12px] font-bold"
-            :class="displayRecord.remarks ? 'text-[#1F2835]' : 'text-gray-400'"
-          >
-            {{ displayRecord.remarks || "No additional notes" }}
-          </p>
-        </div>
-      </div>
+     <!-- Remarks box -->
+<div class="px-4 pt-2 pb-1 bg-white">
+  <div class="border border-gray-200 rounded-[7px] px-3 py-2">
+    <p class="text-[12px] text-gray-500 mb-0.5">Remarks</p>
+    <div
+      class="max-h-[80px] overflow-y-auto break-words custom-scrollbar pr-1"
+    >
+      <p
+        class="text-[12px] font-bold"
+        :class="displayRecord.remarks ? 'text-[#1F2835]' : 'text-gray-400'"
+      >
+        {{ displayRecord.remarks || "No additional notes" }}
+      </p>
+    </div>
+  </div>
+</div>
 
       <!-- Status -->
       <div class="px-4 pt-2 pb-3.5 bg-white">
@@ -233,4 +237,24 @@ const progressColor = computed(() => {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&display=swap");
+
+/* Thin scrollbar with #F52C11 color */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #f52c11;
+  border-radius: 10px;
+}
+
+/* Firefox support */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #f52c11 transparent;
+}
 </style>

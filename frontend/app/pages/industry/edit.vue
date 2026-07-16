@@ -77,9 +77,9 @@
 
       <!-- Modal Body - Two Column Layout -->
       <div class="px-4 py-2.5 bg-white">
-        <div class="grid grid-cols-2 gap-x-5 gap-y-2">
+        <div class="grid grid-cols-2 gap-x-5 gap-y-2 items-stretch h-full">
           <!-- Left Column -->
-          <div class="space-y-2">
+<div class="space-y-2 flex flex-col flex-1">
             <!-- Business name -->
             <div>
               <label
@@ -144,76 +144,149 @@
               </p>
             </div>
 
-            <!-- Service -->
-            <div>
-              <label
-                class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
-              >
-                Service
-              </label>
-              <div class="relative">
-                <select
-                  v-model="form.service"
-                  class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none focus:border-[#F52C11] transition-colors appearance-none cursor-pointer"
-                  :class="form.service ? 'text-[#1F2835]' : 'text-gray-400'"
-                >
-                  <option value="">--</option>
-                  <option
-                    v-for="service in serviceOptions"
-                    :key="service"
-                    :value="service"
-                  >
-                    {{ service }}
-                  </option>
-                </select>
-                <svg
-                  class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
+           <!-- Service -->
+<div>
+  <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">
+    Service
+  </label>
+  <div class="relative">
+    <button
+      type="button"
+      ref="serviceTriggerRef"
+      @click="toggleServiceDropdown"
+      :class="[
+        'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
+        errors.service
+          ? 'border-[#F52C11]'
+          : showServiceDropdown
+          ? 'border-[#F52C11]'
+          : 'border-gray-200',
+        form.service ? 'text-[#1F2835]' : 'text-gray-400',
+      ]"
+    >
+      <span class="truncate">{{ form.service || "Select a service" }}</span>
+      <svg
+        :class="[
+          'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
+          showServiceDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
+        ]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M19 9l-7 7-7-7"
+        />
+      </svg>
+    </button>
 
-            <!-- Remarks -->
-            <div>
-              <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
-                >Remarks</label
-              >
-              <input
-                v-model="form.remarks"
-                type="text"
-                placeholder="Notes about this lead, follow-up actions, outcomes..."
-                class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
-                @keyup.enter="save"
-              />
-            </div>
+    <teleport to="body">
+      <div
+        v-if="showServiceDropdown"
+        ref="servicePanelRef"
+        :style="servicePanelStyle"
+        class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
+      >
+        <div class="max-h-48 overflow-y-auto scrollbar-red">
+          <div
+            v-for="service in serviceOptions"
+            :key="service"
+            :class="[
+              'group flex items-center px-3 py-1.5 cursor-pointer transition-colors',
+              form.service === service ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 text-[#1F2835]'
+            ]"
+            @click="selectService(service)"
+          >
+            <span class="text-[11px]">{{ service }}</span>
+          </div>
+        </div>
+      </div>
+    </teleport>
+  </div>
+</div>
+
+<!-- Remarks -->
+<div class="flex-1 flex flex-col min-h-0">
+  <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">
+    Remarks
+  </label>
+  <textarea
+    v-model="form.remarks"
+    placeholder="Notes about this lead, follow-up actions, outcomes..."
+    class="w-full flex-1 bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors resize-none min-h-0"
+    @keyup.enter="save"
+  ></textarea>
+</div>
           </div>
 
           <!-- Right Column -->
-          <div class="space-y-2">
+<div class="space-y-2 flex flex-col flex-1">
             <!-- Location -->
-            <div>
-              <label
-                class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
-              >
-                Location
-              </label>
-              <input
-                v-model="form.location"
-                type="text"
-                placeholder="Type a location"
-                class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
-                @keyup.enter="save"
-              />
-            </div>
+<div>
+  <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">
+    Location
+  </label>
+  <div class="relative">
+    <button
+      type="button"
+      ref="locationTriggerRef"
+      @click="toggleLocationDropdown"
+      :class="[
+        'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
+        errors.location
+          ? 'border-[#F52C11]'
+          : showLocationDropdown
+          ? 'border-[#F52C11]'
+          : 'border-gray-200',
+        form.location ? 'text-[#1F2835]' : 'text-gray-400',
+      ]"
+    >
+      <span class="truncate">{{ form.location || "Select a location" }}</span>
+      <svg
+        :class="[
+          'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
+          showLocationDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
+        ]"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M19 9l-7 7-7-7"
+        />
+      </svg>
+    </button>
+
+    <teleport to="body">
+      <div
+        v-if="showLocationDropdown"
+        ref="locationPanelRef"
+        :style="locationPanelStyle"
+        class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
+      >
+        <div class="max-h-48 overflow-y-auto scrollbar-red">
+          <div
+            v-for="loc in locationOptions"
+            :key="loc"
+            :class="[
+              'px-3 py-1.5 cursor-pointer transition-colors text-[11px]',
+              form.location === loc ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 text-[#1F2835]'
+            ]"
+            @click="selectLocation(loc)"
+          >
+            {{ loc }}
+          </div>
+        </div>
+      </div>
+    </teleport>
+  </div>
+</div>
 
             <!-- Job position -->
             <div>
@@ -290,88 +363,88 @@
               </div>
             </div>
 
-            <!-- Status -->
-            <div>
-              <div class="flex items-start justify-between mb-0.5">
-                <div class="leading-tight">
-                  <label class="text-[10.5px] font-bold text-[#1F2835]"
-                    >Status</label
-                  >
-                  <p class="text-[8.7px] text-gray-400">
-                    Progress bar updates automatically
-                  </p>
-                </div>
-                <!-- Number + stepper share ONE rectangle -->
-                <div class="flex items-center gap-1">
-                  <div
-                    class="flex items-center border border-gray-200 rounded-[4px] overflow-hidden"
-                  >
-                    <input
-                      v-model.number="form.progress"
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="10"
-                      class="w-10 text-right text-[11px] font-semibold text-[#1F2835] bg-transparent border-none focus:outline-none p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      @input="clampProgress"
-                      @blur="clampProgress"
-                      @keyup.enter="save"
-                    />
-                    <div class="flex flex-col">
-                      <button
-                        type="button"
-                        @click="incrementProgress"
-                        class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
-                      >
-                        <svg
-                          class="w-2 h-2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="3"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M5 15l7-7 7 7"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        @click="decrementProgress"
-                        class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
-                      >
-                        <svg
-                          class="w-2 h-2"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="3"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  <span class="text-[11px] text-gray-400">%</span>
-                </div>
-              </div>
-              <!-- Progress Bar -->
-              <div class="w-full h-2 bg-gray-200 rounded-full relative">
-                <div
-                  class="absolute top-1/2 left-0 -translate-y-1/2 h-1 rounded-full transition-all duration-300"
-                  :style="{
-                    width: form.progress + '%',
-                    backgroundColor: progressColor,
-                  }"
-                ></div>
-              </div>
-            </div>
+<!-- Status -->
+<div class="flex-1 flex flex-col min-h-0 justify-center">
+  <div class="flex items-start justify-between mb-0.5">
+    <div class="leading-tight">
+      <label class="text-[10.5px] font-bold text-[#1F2835]">
+        Status
+      </label>
+      <p class="text-[8.7px] text-gray-400">
+        Progress bar updates automatically
+      </p>
+    </div>
+    <!-- Number + stepper share ONE rectangle -->
+    <div class="flex items-center gap-1">
+      <div
+        class="flex items-center border border-gray-200 rounded-[4px] overflow-hidden"
+      >
+        <input
+          v-model.number="form.progress"
+          type="number"
+          min="0"
+          max="100"
+          step="10"
+          class="w-10 text-right text-[11px] font-semibold text-[#1F2835] bg-transparent border-none focus:outline-none p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          @input="clampProgress"
+          @blur="clampProgress"
+          @keyup.enter="save"
+        />
+        <div class="flex flex-col">
+          <button
+            type="button"
+            @click="incrementProgress"
+            class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
+          >
+            <svg
+              class="w-2 h-2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M5 15l7-7 7 7"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            @click="decrementProgress"
+            class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
+          >
+            <svg
+              class="w-2 h-2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <span class="text-[11px] text-gray-400">%</span>
+    </div>
+  </div>
+  <!-- Progress Bar -->
+  <div class="w-full h-2 bg-gray-200 rounded-full relative shrink-0">
+    <div
+      class="absolute top-1/2 left-0 -translate-y-1/2 h-1 rounded-full transition-all duration-300"
+      :style="{
+        width: form.progress + '%',
+        backgroundColor: progressColor,
+      }"
+    ></div>
+  </div>
+</div>
           </div>
         </div>
       </div>
@@ -568,6 +641,110 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close", "save"]);
+// ============================================
+// LOCATION DROPDOWN
+// ============================================
+const showLocationDropdown = ref(false);
+const locationTriggerRef = ref(null);
+const locationPanelRef = ref(null);
+const locationPanelStyle = ref({});
+
+const locationOptions = ["Davao", "Manila"];
+
+function updateLocationPanelPosition() {
+  if (!locationTriggerRef.value) return;
+  const rect = locationTriggerRef.value.getBoundingClientRect();
+  locationPanelStyle.value = {
+    top: `${rect.bottom + 4}px`,
+    left: `${rect.left}px`,
+    width: `${rect.width}px`,
+  };
+}
+
+function toggleLocationDropdown() {
+  showLocationDropdown.value = !showLocationDropdown.value;
+  if (showLocationDropdown.value) {
+    nextTick(updateLocationPanelPosition);
+  }
+}
+
+function selectLocation(loc) {
+  form.location = loc;
+  errors.location = false;
+  showLocationDropdown.value = false;
+}
+
+function handleClickOutsideLocationDropdown(event) {
+  const clickedTrigger =
+    locationTriggerRef.value && locationTriggerRef.value.contains(event.target);
+  const clickedPanel =
+    locationPanelRef.value && locationPanelRef.value.contains(event.target);
+  if (!clickedTrigger && !clickedPanel) {
+    showLocationDropdown.value = false;
+  }
+}
+
+// ============================================
+// SERVICE DROPDOWN
+// ============================================
+const showServiceDropdown = ref(false);
+const serviceTriggerRef = ref(null);
+const servicePanelRef = ref(null);
+const servicePanelStyle = ref({});
+
+function updateServicePanelPosition() {
+  if (!serviceTriggerRef.value) return;
+  const rect = serviceTriggerRef.value.getBoundingClientRect();
+  servicePanelStyle.value = {
+    top: `${rect.bottom + 4}px`,
+    left: `${rect.left}px`,
+    width: `${rect.width}px`,
+  };
+}
+
+function toggleServiceDropdown() {
+  showServiceDropdown.value = !showServiceDropdown.value;
+  if (showServiceDropdown.value) {
+    nextTick(updateServicePanelPosition);
+  }
+}
+
+function selectService(service) {
+  form.service = service;
+  errors.service = false;
+  showServiceDropdown.value = false;
+}
+
+function handleClickOutsideServiceDropdown(event) {
+  const clickedTrigger =
+    serviceTriggerRef.value && serviceTriggerRef.value.contains(event.target);
+  const clickedPanel =
+    servicePanelRef.value && servicePanelRef.value.contains(event.target);
+  if (!clickedTrigger && !clickedPanel) {
+    showServiceDropdown.value = false;
+  }
+}
+
+// ============================================
+// CLICK OUTSIDE LISTENERS
+// ============================================
+onMounted(() => {
+  document.addEventListener("click", handleClickOutsideLocationDropdown);
+  document.addEventListener("click", handleClickOutsideServiceDropdown);
+  window.addEventListener("resize", updateLocationPanelPosition);
+  window.addEventListener("resize", updateServicePanelPosition);
+  window.addEventListener("scroll", updateLocationPanelPosition, true);
+  window.addEventListener("scroll", updateServicePanelPosition, true);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutsideLocationDropdown);
+  document.removeEventListener("click", handleClickOutsideServiceDropdown);
+  window.removeEventListener("resize", updateLocationPanelPosition);
+  window.removeEventListener("resize", updateServicePanelPosition);
+  window.removeEventListener("scroll", updateLocationPanelPosition, true);
+  window.removeEventListener("scroll", updateServicePanelPosition, true);
+});
 
 const saveError = ref("");
 const displayError = computed(() => props.errorMessage || saveError.value);
@@ -888,5 +1065,18 @@ input[type="number"] {
   -webkit-appearance: none;
   -moz-appearance: textfield;
   appearance: textfield;
+}
+.scrollbar-red::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-red::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-red::-webkit-scrollbar-thumb {
+  background: #F52C11;
+  border-radius: 3px;
+}
+.scrollbar-red::-webkit-scrollbar-thumb:hover {
+  background: #d9250e;
 }
 </style>

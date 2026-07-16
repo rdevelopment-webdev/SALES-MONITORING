@@ -275,35 +275,16 @@
                         class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
                       >
                         <div class="max-h-48 overflow-y-auto scrollbar-red">
-                          <div
+<div
   v-for="service in serviceOptions"
   :key="service"
   :class="[
-    'group flex items-center justify-between px-3 py-1.5 cursor-pointer transition-colors',
-    form.service === service ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-gray-50 text-[#1F2835]'
+    'group flex items-center px-3 py-1.5 cursor-pointer transition-colors',
+    form.service === service ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 hover:text-[#1F2835]'
   ]"
   @click="selectService(service)"
 >
   <span class="text-[11px]">{{ service }}</span>
-  <button
-    type="button"
-    @click.stop="deleteService(service)"
-    class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-[#F52C11] transition-opacity shrink-0 ml-2"
-  >
-    <svg
-      class="w-3 h-3"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-9 0h12"
-      />
-    </svg>
-  </button>
 </div>
                         </div>
                         <!-- Inline add new service (like PIP) -->
@@ -462,41 +443,62 @@
               </div>
 
               <div class="px-3 pb-2.5 pt-1">
-                <div class="relative">
-  <select
-    v-model="form.location"
+<div class="relative">
+  <button
+    type="button"
+    ref="locationTriggerRef"
+    @click="toggleLocationDropdown"
     :class="[
-      'w-full border rounded-[4px] px-2.5 py-[5px] text-[11px] focus:outline-none transition-colors appearance-none cursor-pointer',
+      'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
       errors.location
         ? 'border-[#F52C11]'
-        : 'border-gray-200 focus:border-[#F52C11]',
-      form.location
-        ? 'text-[#1F2835] bg-white'
-        : 'text-gray-400 bg-gray-100',
+        : showLocationDropdown
+        ? 'border-[#F52C11]'
+        : 'border-gray-200',
+      form.location ? 'text-[#1F2835]' : 'text-gray-400',
     ]"
   >
-    <option value="" disabled>Select a location</option>
-    <option
-      v-for="loc in locationOptions"
-      :key="loc"
-      :value="loc"
+    <span class="truncate">{{ form.location || "Select a location" }}</span>
+    <svg
+      :class="[
+        'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
+        showLocationDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
+      ]"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
     >
-      {{ loc }}
-    </option>
-  </select>
-  <svg
-    class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    viewBox="0 0 24 24"
-  >
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M19 9l-7 7-7-7"
-    />
-  </svg>
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19 9l-7 7-7-7"
+      />
+    </svg>
+  </button>
+
+  <teleport to="body">
+    <div
+      v-if="showLocationDropdown"
+      ref="locationPanelRef"
+      :style="locationPanelStyle"
+      class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
+    >
+      <div class="max-h-48 overflow-y-auto scrollbar-red">
+        <div
+          v-for="loc in locationOptions"
+          :key="loc"
+          :class="[
+            'px-3 py-1.5 cursor-pointer transition-colors text-[11px]',
+            form.location === loc ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 text-[#1F2835]'
+          ]"
+          @click="selectLocation(loc)"
+        >
+          {{ loc }}
+        </div>
+      </div>
+    </div>
+  </teleport>
 </div>
                 <p
                   v-if="errors.location"
@@ -1262,11 +1264,7 @@ const calendarDates = computed(() => {
 // Contact person / Contact number are optional but still validated
 // for shape if the user chooses to fill them in.
 const isFormValid = computed(() => {
-  return (
-    form.value.location &&
-    isValidContactNumber(form.value.contactNumber) &&
-    isValidEmail(form.value.email)
-  );
+  return !!form.value.location;
 });
 
 function prevMonth() {
@@ -1305,17 +1303,22 @@ function confirmDate() {
 }
 
 function validateForm() {
-  errors.value.businessName = false;
-  errors.value.service = false;
-  errors.value.date = false;
-  errors.value.contactPerson = false;
-  errors.value.contactNumber = !isValidContactNumber(form.value.contactNumber);
-  errors.value.email = !isValidEmail(form.value.email);
+  // Reset all errors first
+  errors.value = {
+    businessName: false,
+    contactPerson: false,
+    service: false,
+    date: false,
+    email: false,
+    contactNumber: false,
+    location: false,
+  };
+
+  // Only location is required
   errors.value.location = !form.value.location;
 
-  return !Object.values(errors.value).some((error) => error);
+  return !errors.value.location;
 }
-
 function resetErrors() {
   errors.value = {
     businessName: false,

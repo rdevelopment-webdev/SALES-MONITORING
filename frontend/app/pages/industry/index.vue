@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div class="px-4 py-2 flex items-center justify-between shrink-0">
+    <div class="px-4 py-0.5 flex items-center justify-between shrink-0">
       <h1 class="font-bold text-[16px] tracking-tight">
         Industry – Leads listing
       </h1>
@@ -86,7 +86,7 @@
     </div>
 
     <div
-      class="px-4 py-1.5 flex items-center justify-between gap-2 shrink-0 bg-white border-b border-gray-200"
+      class="px-4 py-0.5 flex items-center justify-between gap-2 shrink-0 bg-[#f0f0f0]"
     >
       <div class="flex items-center gap-1.5">
         <button
@@ -344,7 +344,7 @@
                 ? 'bg-[#F52C11]/15 text-[#F52C11] font-medium'
                 : 'text-[#1F2835] hover:bg-gray-50',
             ]"
-            class="px-2.5 py-2 text-[12px] cursor-pointer transition-all flex items-center justify-between group"
+            class="px-2.5 py-1.5 text-[12px] cursor-pointer transition-all flex items-center justify-between group"
           >
             <div
               v-if="editingIndex === index"
@@ -386,17 +386,43 @@
                 class="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[100px]"
               >
                 <button
-                  @click.stop="startInlineRename(industry, index)"
-                  class="w-full text-left px-3 py-1.5 text-[11px] text-[#1F2835] hover:bg-gray-50 transition-colors flex items-center gap-1.5"
-                >
-                  Rename
-                </button>
-                <button
-                  @click.stop="archiveIndustry(industry)"
-                  class="w-full text-left px-3 py-1.5 text-[11px] text-red-500 hover:bg-red-50 transition-colors flex items-center gap-1.5"
-                >
-                  Archive
-                </button>
+  @click.stop="startInlineRename(industry, index)"
+  class="w-full text-left px-3 py-1.5 text-[11px] text-[#1F2835] hover:bg-gray-50 transition-colors flex items-center gap-1.5"
+>
+  <svg
+    class="w-3 h-3 text-gray-400"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+    />
+  </svg>
+  Rename
+</button>
+<button
+  @click.stop="archiveIndustry(industry)"
+  class="w-full text-left px-3 py-1.5 text-[11px] text-red-500 hover:bg-red-50 transition-colors flex items-center gap-1.5"
+>
+  <svg
+    class="w-3 h-3 text-red-400"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+    />
+  </svg>
+  Archive
+</button>
               </div>
             </div>
           </div>
@@ -479,11 +505,11 @@
                   class="w-6 px-2 py-1.5 text-center"
                 >
                   <input
-                    type="checkbox"
-                    :checked="isAllSelected"
-                    @change="toggleAll"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-                  />
+  type="checkbox"
+  :checked="isAllSelected"
+  @change="toggleAll"
+  class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer"
+/>
                 </th>
                 <th
                   class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
@@ -576,11 +602,11 @@
                 </td>
                 <td class="px-2 py-1 text-center">
                   <input
-                    type="checkbox"
-                    :checked="isSelected(record.id)"
-                    @change="toggleSelection(record.id)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
-                  />
+  type="checkbox"
+  :checked="isSelected(record.id)"
+  @change="toggleSelection(record.id)"
+  class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer"
+/>
                 </td>
                 <td
                   class="px-3 py-1 whitespace-nowrap text-[11px]"
@@ -620,10 +646,10 @@
                 <td
                   class="px-3 py-1 whitespace-nowrap"
                 >
-                  <div class="flex items-center gap-1.5 min-w-[85px]">
-                    <div
-                      class="flex-1 h-[4px] bg-gray-200 rounded-full overflow-hidden"
-                    >
+                  <div class="flex items-center gap-1.5 min-w-[120px]">
+  <div
+    class="flex-1 h-[5px] bg-gray-200 rounded-full overflow-hidden"
+  >
                       <div
                         class="h-full rounded-full transition-all duration-500"
                         :style="{
@@ -633,10 +659,10 @@
                       ></div>
                     </div>
                     <span
-                      :style="{ color: getStatusColor(record.statusPercent) }"
-                      class="text-[10px] font-bold shrink-0 w-8 text-right"
-                      >{{ record.statusPercent }}%</span
-                    >
+  :style="{ color: getStatusColor(record.statusPercent) }"
+  class="text-[10px] font-bold shrink-0 w-6 text-right"
+  >{{ record.statusPercent }}%</span
+>
                   </div>
                 </td>
                 <td
@@ -1058,11 +1084,11 @@
 >
                 <div class="flex items-center gap-3 min-w-0">
                   <input
-                    type="checkbox"
-                    :checked="isArchiveRecordSelected(rec.id)"
-                    @change="toggleArchiveRecordSelection(rec.id)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer shrink-0"
-                  />
+  type="checkbox"
+  :checked="isArchiveRecordSelected(rec.id)"
+  @change="toggleArchiveRecordSelection(rec.id)"
+  class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer shrink-0"
+/>
                   <div
                     class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
                   >
@@ -1108,11 +1134,11 @@
               >
                 <div class="flex items-center gap-3 min-w-0">
                   <input
-                    type="checkbox"
-                    :checked="isArchiveIndustrySelected(ind.name)"
-                    @change="toggleArchiveIndustrySelection(ind.name)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer shrink-0"
-                  />
+  type="checkbox"
+  :checked="isArchiveIndustrySelected(ind.name)"
+  @change="toggleArchiveIndustrySelection(ind.name)"
+  class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer shrink-0"
+/>
                   <div
                     class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
                   >
