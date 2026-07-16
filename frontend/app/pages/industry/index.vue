@@ -149,7 +149,7 @@
             @click="showDatePicker = !showDatePicker"
             class="bg-white border border-gray-300 px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
           >
-            {{ selectedDate || "Select Date" }}
+            {{ formattedSelectedDate || "Select Date" }}
             <svg
               class="w-3 h-3 text-[#F52C11]"
               fill="none"
@@ -336,16 +336,16 @@
         </div>
         <div v-else class="flex-1 overflow-y-auto custom-scroll relative">
           <div
-            v-for="(industry, index) in sortedIndustries"
-            :key="industry"
-            @click="selectedIndustry = industry"
-            :class="[
-              selectedIndustry === industry
-                ? 'bg-[#F52C11]/15 text-[#F52C11] font-medium'
-                : 'text-[#1F2835] hover:bg-gray-50',
-            ]"
-            class="px-2.5 py-1.5 text-[12px] cursor-pointer transition-all flex items-center justify-between group"
-          >
+  v-for="(industry, index) in sortedIndustries"
+  :key="industry"
+  @click="selectedIndustry = industry"
+  :class="[
+    selectedIndustry === industry
+      ? 'bg-[#F52C11]/15 text-[#F52C11] font-medium'
+      : 'text-[#1F2835] hover:bg-[#F52C11]/10',
+  ]"
+  class="px-2.5 py-1.5 text-[12px] cursor-pointer transition-all flex items-center justify-between group"
+>
             <div
               v-if="editingIndex === index"
               class="flex-1 flex items-center gap-1"
@@ -591,7 +591,7 @@
                 :class="[
                   isSelected(record.id)
                     ? 'bg-[#F52C11]/10'
-                    : 'bg-white hover:bg-gray-50',
+                    : 'bg-white hover:bg-[#f52c11]/5',
                 ]"
                 class="transition-colors border-b border-gray-100"
               >
@@ -671,14 +671,14 @@
                 >
                   {{ record.remarks || "-" }}
                 </td>
-                <td
-                  class="px-3 py-1 sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
-                  :class="
-                    isSelected(record.id)
-                      ? 'bg-[#F52C11]/10'
-                      : 'bg-gray-100 group-hover:bg-gray-200'
-                  "
-                >
+               <td
+  class="px-3 py-1 sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
+  :class="
+    isSelected(record.id)
+      ? 'bg-[#FCE4E2]'
+      : 'bg-white'
+  "
+>
                   <div class="flex items-center justify-center gap-2">
                     <button
                       @click="viewRecord(record)"
@@ -770,19 +770,19 @@
         <div
           class="shrink-0 bg-[#f0f0f0] px-3 py-1.5 flex items-center justify-between gap-2 flex-wrap border-t border-gray-200 text-[11px]"
         >
-          <span class="text-[9px] text-gray-500"
+          <span class="text-[11px] text-gray-500"
             >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
           >
 
           <div class="flex items-center gap-1">
-            <span class="text-[9px] text-gray-500">Go to</span>
+            <span class="text-[11px] text-gray-500">Go to</span>
             <input
               v-model="recordsPageInput"
               type="number"
               min="1"
               :max="totalRecordsPages"
               placeholder="---"
-              class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[9px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[11px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               @keyup.enter="goToTypedRecordsPage"
             />
             <button
@@ -2285,6 +2285,16 @@ const currentMonthYear = computed(() => {
     "December",
   ];
   return `${months[currentMonth.value]} ${currentYear.value}`;
+});
+
+// Formats the internally-stored YYYY-MM-DD selectedDate as MM/DD/YYYY for
+// display in the filter button. The underlying selectedDate ref stays
+// untouched (still YYYY-MM-DD) since fetchRecords() sends it straight to
+// the /leads endpoint's `date` query param.
+const formattedSelectedDate = computed(() => {
+  if (!selectedDate.value) return "";
+  const [year, month, day] = selectedDate.value.split("-");
+  return `${month}/${day}/${year}`;
 });
 
 const calendarDays = computed(() => {

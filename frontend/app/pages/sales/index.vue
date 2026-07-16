@@ -508,19 +508,19 @@
         <div
           class="shrink-0 bg-[#f0f0f0] px-2.5 py-1 flex items-center justify-between gap-2 flex-wrap"
         >
-          <span class="text-[9px] text-gray-500"
+          <span class="text-[11px] text-gray-500"
             >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
           >
 
           <div class="flex items-center gap-1">
-            <span class="text-[9px] text-gray-500">Go to</span>
+            <span class="text-[11px] text-gray-500">Go to</span>
             <input
               v-model="recordsPageInput"
               type="number"
               min="1"
               :max="totalRecordsPages"
               placeholder="---"
-              class="w-10 bg-white border border-gray-300 rounded-[6px] px-1.5 py-[1px] text-[9px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              class="w-10 bg-white border border-gray-300 rounded-[6px] px-1.5 py-[1px] text-[11px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               @keyup.enter="goToTypedRecordsPage"
             />
             <button
@@ -822,7 +822,7 @@
               class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors disabled:opacity-50"
             >
               <svg
-                class="w-3 h-3 text-[#F52C11]"
+                class="w-3 h-3 text-green-500"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"

@@ -40,7 +40,7 @@
       </div>
 
       <!-- Title + Search + View Archive -->
-      <div class="px-4 py-2 flex items-center justify-between gap-4 shrink-0">
+      <div class="px-4 py-0.5 flex items-center justify-between gap-4 shrink-0">
         <h1 class="font-bold text-[16px] tracking-tight whitespace-nowrap">
           PIP
         </h1>
@@ -574,20 +574,20 @@
             class="shrink-0 bg-[#f0f0f0] px-2.5 py-1 flex items-center justify-between gap-2 flex-wrap"
           >
             <!-- Page X of Y -->
-            <span class="text-[9px] text-gray-500"
+            <span class="text-[11px] text-gray-500"
               >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
             >
 
             <!-- Go to page -->
             <div class="flex items-center gap-1">
-              <span class="text-[9px] text-gray-500">Go to</span>
+              <span class="text-[11px] text-gray-500">Go to</span>
               <input
                 v-model="recordsPageInput"
                 type="number"
                 min="1"
                 :max="totalRecordsPages"
                 placeholder="---"
-                class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[9px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[11px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 @keyup.enter="goToTypedRecordsPage"
               />
               <button
@@ -807,28 +807,31 @@
                     type="checkbox"
                     :checked="isArchivedSelected(record.id)"
                     @change="toggleArchivedSelection(record.id)"
-                    class="w-3.5 h-3.5 rounded border-gray-200 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
+                    class="w-3 h-3 rounded border-gray-200 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
                   />
                 </div>
 
-                <!-- Building Icon in Gray Square -->
-                <div
-                  class="w-6 h-6 rounded-[6px] bg-gray-100 flex items-center justify-center flex-shrink-0"
-                >
-                  <svg
-                    class="w-3 h-3 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3 21h18M8 21V10l4-3 4 3v11"
-                    />
-                  </svg>
-                </div>
+<!-- Two-Building / Skyline Icon in Gray Square -->
+<div
+  class="w-10 h-10 rounded-[12px] bg-gray-100 flex items-center justify-center flex-shrink-0"
+>
+  <svg
+    class="w-4 h-4 text-gray-500"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    viewBox="0 0 24 24"
+  >
+    <!-- Left building (taller) -->
+    <path d="M7 21V9l4-2v14" />
+    <!-- Right building (shorter) -->
+    <path d="M11 21V13l4-2v10" />
+    <!-- Base line -->
+    <path d="M5 21h14" />
+  </svg>
+</div>
 
                 <!-- Content -->
                 <div class="flex-1 min-w-0">
@@ -1169,6 +1172,38 @@ const serviceOptions = ref([]);
 const records = ref([]);
 const archivedRecords = ref([]);
 
+// Normalizes any reasonable date string ("2026-07-16", "7/16/2026",
+// "July 16, 2026", "07/16/26", etc.) into the same MM/DD/YY shape
+// selectDate() produces, so the filter comparison actually matches.
+function toComparableDate(dateStr) {
+  if (!dateStr) return "";
+
+  // Already MM/DD/YY or M/D/YYYY etc.
+  const mdy = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/.exec(dateStr);
+  if (mdy) {
+    let [, m, d, y] = mdy;
+    if (y.length === 4) y = y.slice(-2);
+    return `${m.padStart(2, "0")}/${d.padStart(2, "0")}/${y}`;
+  }
+
+  // ISO: YYYY-MM-DD
+  const iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr);
+  if (iso) {
+    const [, y, m, d] = iso;
+    return `${m}/${d}/${y.slice(-2)}`;
+  }
+
+  // Fallback: let Date try to parse it
+  const parsed = new Date(dateStr);
+  if (!isNaN(parsed)) {
+    return `${String(parsed.getMonth() + 1).padStart(2, "0")}/${String(
+      parsed.getDate()
+    ).padStart(2, "0")}/${String(parsed.getFullYear()).slice(-2)}`;
+  }
+
+  return dateStr;
+}
+
 // ==================== COMPUTED ====================
 const filteredRecords = computed(() => {
   let result = records.value;
@@ -1183,9 +1218,13 @@ const filteredRecords = computed(() => {
   }
 
   // Date filter
-  if (selectedDate.value) {
-    result = result.filter((r) => r.dateRecorded === selectedDate.value);
-  }
+if (selectedDate.value) {
+  result = result.filter(
+    (r) => toComparableDate(r.dateRecorded) === selectedDate.value
+  );
+}
+
+  
 
   // Service filter
   if (selectedService.value !== "All Services") {

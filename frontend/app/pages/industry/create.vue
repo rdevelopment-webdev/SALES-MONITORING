@@ -1297,7 +1297,10 @@ function selectDate(date) {
 
 function confirmDate() {
   if (selectedDate.value) {
-    form.value.date = selectedDate.value.toISOString().split("T")[0];
+    const year = selectedDate.value.getFullYear();
+    const month = String(selectedDate.value.getMonth() + 1).padStart(2, "0");
+    const day = String(selectedDate.value.getDate()).padStart(2, "0");
+    form.value.date = `${month}/${day}/${year}`;
   }
   showDatePicker.value = false;
 }
