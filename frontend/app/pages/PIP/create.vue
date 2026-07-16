@@ -216,7 +216,7 @@
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                 >
-                  Location
+                  Location<span class="text-[#F52C11]">*</span>
                 </label>
                 <button
                   ref="locationButtonRef"
