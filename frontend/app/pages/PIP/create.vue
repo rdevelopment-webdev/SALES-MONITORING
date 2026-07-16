@@ -272,7 +272,7 @@
                         'px-3 py-2 text-[11px] cursor-pointer flex items-center justify-between transition-colors',
                         form.location === option.id
                           ? 'text-[#F52C11] font-medium bg-[#F52C11]/5'
-                          : 'text-[#1F2835] hover:text-[#F52C11] hover:bg-[#F52C11]/5',
+                          : 'text-[#1F2835] hover:bg-[#F52C11]/5',
                       ]"
                     >
                       <span>{{ option.name }}</span>
@@ -281,7 +281,7 @@
                 </Teleport>
               </div>
 
-              <!-- Prospect Technique -->
+                            <!-- Prospect Technique -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -332,23 +332,35 @@
                     v-if="showTechniqueDropdown"
                     ref="techniquePanelRef"
                     :style="techniqueDropdownStyle"
-                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg py-1 max-h-52 overflow-y-auto scrollbar-red"
+                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
                   >
-                    <!-- Add Prospect Technique -->
-                    <div
-                      class="border-b border-gray-100 mb-1 pb-1 px-2"
-                      @click.stop
-                    >
+                    <div class="max-h-48 overflow-y-auto scrollbar-red">
+                      <div
+                        v-for="option in prospectTechniqueOptions"
+                        :key="option.id"
+                        @click="selectTechnique(option.id)"
+                        :class="[
+                          'px-3 py-2 text-[11px] cursor-pointer flex items-center justify-between transition-colors',
+                          form.prospectTechnique === option.id
+                            ? 'text-[#F52C11] font-medium bg-[#F52C11]/5'
+                            : 'text-[#1F2835] hover:bg-[#F52C11]/5',
+                        ]"
+                      >
+                        <span>{{ option.name }}</span>
+                      </div>
+                    </div>
+                    <!-- Inline add new technique -->
+                    <div class="border-t border-gray-100 px-2 py-1" @click.stop>
                       <div
                         v-if="!showAddTechniqueInput"
                         @click="openAddTechnique"
                         class="flex items-center gap-1.5 px-1 py-1.5 text-[11px] text-[#F52C11] font-medium cursor-pointer hover:bg-[#F52C11]/5 rounded-[4px] transition-colors"
                       >
                         <svg
-                          class="w-3 h-3"
+                          class="w-2.5 h-2.5 text-[#F52C11]"
                           fill="none"
                           stroke="currentColor"
-                          stroke-width="2"
+                          stroke-width="2.5"
                           viewBox="0 0 24 24"
                         >
                           <path
@@ -357,7 +369,9 @@
                             d="M12 4v16m8-8H4"
                           />
                         </svg>
-                        Add prospect technique
+                        <span class="text-[11px] font-medium text-[#F52C11]"
+                          >Add prospect technique</span
+                        >
                       </div>
                       <div v-else class="flex items-center gap-1 py-1">
                         <input
@@ -365,40 +379,24 @@
                           v-model="newTechniqueName"
                           type="text"
                           placeholder="New technique name"
-                          :disabled="isAddingTechnique"
-                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11] disabled:opacity-50"
+                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11]"
                           @keyup.enter="addNewTechnique"
                           @keyup.esc="cancelAddTechnique"
                         />
                         <button
                           type="button"
                           @click="addNewTechnique"
-                          :disabled="isAddingTechnique"
-                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5 disabled:opacity-50"
+                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5"
                         >
-                          {{ isAddingTechnique ? "Adding…" : "Add" }}
+                          Add
                         </button>
                       </div>
-                    </div>
-
-                    <div
-                      v-for="option in prospectTechniqueOptions"
-                      :key="option.id"
-                      @click="selectTechnique(option.id)"
-                      :class="[
-                        'px-3 py-2 text-[11px] cursor-pointer flex items-center justify-between transition-colors',
-                        form.prospectTechnique === option.id
-                          ? 'text-[#F52C11] font-medium bg-[#F52C11]/5'
-                          : 'text-[#1F2835] hover:text-[#F52C11] hover:bg-[#F52C11]/5',
-                      ]"
-                    >
-                      <span>{{ option.name }}</span>
                     </div>
                   </div>
                 </Teleport>
               </div>
 
-              <!-- Sales Representative -->
+                            <!-- Sales Representative -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -485,23 +483,53 @@
                     v-if="showSalesRepDropdown"
                     ref="salesRepPanelRef"
                     :style="salesRepDropdownStyle"
-                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg py-1 max-h-52 overflow-y-auto scrollbar-red"
+                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
                   >
-                    <!-- Add Sales Representative -->
-                    <div
-                      class="border-b border-gray-100 mb-1 pb-1 px-2"
-                      @click.stop
-                    >
+                    <div class="max-h-48 overflow-y-auto scrollbar-red">
+                      <div
+                        v-for="option in salesRepOptions"
+                        :key="option.id"
+                        @click="toggleSalesRep(option.id)"
+                        class="px-3 py-2 text-[11px] text-[#1F2835] hover:bg-[#F52C11]/5 cursor-pointer flex items-center gap-2 transition-colors"
+                      >
+                        <div
+                          :class="[
+                            'w-3.5 h-3.5 rounded-[3px] border flex items-center justify-center shrink-0 transition-colors',
+                            form.salesRepresentative.includes(option.id)
+                              ? 'bg-[#F52C11] border-[#F52C11]'
+                              : 'border-gray-300 bg-white',
+                          ]"
+                        >
+                          <svg
+                            v-if="form.salesRepresentative.includes(option.id)"
+                            class="w-2.5 h-2.5 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="3"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </div>
+                        <span>{{ option.name }}</span>
+                      </div>
+                    </div>
+                    <!-- Inline add new sales rep -->
+                    <div class="border-t border-gray-100 px-2 py-1" @click.stop>
                       <div
                         v-if="!showAddSalesRepInput"
                         @click="openAddSalesRep"
                         class="flex items-center gap-1.5 px-1 py-1.5 text-[11px] text-[#F52C11] font-medium cursor-pointer hover:bg-[#F52C11]/5 rounded-[4px] transition-colors"
                       >
                         <svg
-                          class="w-3 h-3"
+                          class="w-2.5 h-2.5 text-[#F52C11]"
                           fill="none"
                           stroke="currentColor"
-                          stroke-width="2"
+                          stroke-width="2.5"
                           viewBox="0 0 24 24"
                         >
                           <path
@@ -510,7 +538,9 @@
                             d="M12 4v16m8-8H4"
                           />
                         </svg>
-                        Add sales representative
+                        <span class="text-[11px] font-medium text-[#F52C11]"
+                          >Add sales representative</span
+                        >
                       </div>
                       <div v-else class="flex items-center gap-1 py-1">
                         <input
@@ -518,57 +548,22 @@
                           v-model="newSalesRepName"
                           type="text"
                           placeholder="New representative name"
-                          :disabled="isAddingSalesRep"
-                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11] disabled:opacity-50"
+                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11]"
                           @keyup.enter="addNewSalesRep"
                           @keyup.esc="cancelAddSalesRep"
                         />
                         <button
                           type="button"
                           @click="addNewSalesRep"
-                          :disabled="isAddingSalesRep"
-                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5 disabled:opacity-50"
+                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5"
                         >
-                          {{ isAddingSalesRep ? "Adding…" : "Add" }}
+                          Add
                         </button>
                       </div>
-                    </div>
-
-                    <div
-                      v-for="option in salesRepOptions"
-                      :key="option.id"
-                      @click="toggleSalesRep(option.id)"
-                      class="px-3 py-2 text-[11px] text-[#1F2835] hover:bg-gray-50 cursor-pointer flex items-center gap-2 transition-colors"
-                    >
-                      <div
-                        :class="[
-                          'w-3.5 h-3.5 rounded-[3px] border flex items-center justify-center shrink-0 transition-colors',
-                          form.salesRepresentative.includes(option.id)
-                            ? 'bg-[#F52C11] border-[#F52C11]'
-                            : 'border-gray-300 bg-white',
-                        ]"
-                      >
-                        <svg
-                          v-if="form.salesRepresentative.includes(option.id)"
-                          class="w-2.5 h-2.5 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="3"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      </div>
-                      <span>{{ option.name }}</span>
                     </div>
                   </div>
                 </Teleport>
               </div>
-
               <!-- Email -->
               <div>
                 <label
@@ -594,7 +589,7 @@
                 </p>
               </div>
 
-              <!-- Ways of Communication -->
+                            <!-- Ways of Communication -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -647,23 +642,35 @@
                     v-if="showCommunicationDropdown"
                     ref="communicationPanelRef"
                     :style="communicationDropdownStyle"
-                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg py-1 max-h-52 overflow-y-auto scrollbar-red"
+                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
                   >
-                    <!-- Add Way of Communication -->
-                    <div
-                      class="border-b border-gray-100 mb-1 pb-1 px-2"
-                      @click.stop
-                    >
+                    <div class="max-h-48 overflow-y-auto scrollbar-red">
+                      <div
+                        v-for="option in communicationOptions"
+                        :key="option.id"
+                        @click="selectCommunication(option.id)"
+                        :class="[
+                          'px-3 py-2 text-[11px] cursor-pointer flex items-center justify-between transition-colors',
+                          form.waysOfCommunication === option.id
+                            ? 'text-[#F52C11] font-medium bg-[#F52C11]/5'
+                            : 'text-[#1F2835] hover:bg-[#F52C11]/5',
+                        ]"
+                      >
+                        <span>{{ option.name }}</span>
+                      </div>
+                    </div>
+                    <!-- Inline add new communication -->
+                    <div class="border-t border-gray-100 px-2 py-1" @click.stop>
                       <div
                         v-if="!showAddCommunicationInput"
                         @click="openAddCommunication"
                         class="flex items-center gap-1.5 px-1 py-1.5 text-[11px] text-[#F52C11] font-medium cursor-pointer hover:bg-[#F52C11]/5 rounded-[4px] transition-colors"
                       >
                         <svg
-                          class="w-3 h-3"
+                          class="w-2.5 h-2.5 text-[#F52C11]"
                           fill="none"
                           stroke="currentColor"
-                          stroke-width="2"
+                          stroke-width="2.5"
                           viewBox="0 0 24 24"
                         >
                           <path
@@ -672,7 +679,9 @@
                             d="M12 4v16m8-8H4"
                           />
                         </svg>
-                        Add way of communication
+                        <span class="text-[11px] font-medium text-[#F52C11]"
+                          >Add way of communication</span
+                        >
                       </div>
                       <div v-else class="flex items-center gap-1 py-1">
                         <input
@@ -680,40 +689,23 @@
                           v-model="newCommunicationName"
                           type="text"
                           placeholder="New communication method"
-                          :disabled="isAddingCommunication"
-                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11] disabled:opacity-50"
+                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11]"
                           @keyup.enter="addNewCommunication"
                           @keyup.esc="cancelAddCommunication"
                         />
                         <button
                           type="button"
                           @click="addNewCommunication"
-                          :disabled="isAddingCommunication"
-                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5 disabled:opacity-50"
+                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5"
                         >
-                          {{ isAddingCommunication ? "Adding…" : "Add" }}
+                          Add
                         </button>
                       </div>
-                    </div>
-
-                    <div
-                      v-for="option in communicationOptions"
-                      :key="option.id"
-                      @click="selectCommunication(option.id)"
-                      :class="[
-                        'px-3 py-2 text-[11px] cursor-pointer flex items-center justify-between transition-colors',
-                        form.waysOfCommunication === option.id
-                          ? 'text-[#F52C11] font-medium bg-[#F52C11]/5'
-                          : 'text-[#1F2835] hover:text-[#F52C11] hover:bg-[#F52C11]/5',
-                      ]"
-                    >
-                      <span>{{ option.name }}</span>
                     </div>
                   </div>
                 </Teleport>
               </div>
-
-              <!-- Service -->
+                            <!-- Service -->
               <div>
                 <label
                   class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
@@ -764,23 +756,35 @@
                     v-if="showServiceDropdown"
                     ref="servicePanelRef"
                     :style="serviceDropdownStyle"
-                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg py-1 max-h-52 overflow-y-auto scrollbar-red"
+                    class="fixed z-50 bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
                   >
-                    <!-- Add Service -->
-                    <div
-                      class="border-b border-gray-100 mb-1 pb-1 px-2"
-                      @click.stop
-                    >
+                    <div class="max-h-48 overflow-y-auto scrollbar-red">
+                      <div
+                        v-for="option in serviceOptions"
+                        :key="option.id"
+                        @click="selectService(option.id)"
+                        :class="[
+                          'px-3 py-2 text-[11px] cursor-pointer flex items-center justify-between transition-colors',
+                          form.service === option.id
+                            ? 'text-[#F52C11] font-medium bg-[#F52C11]/5'
+                            : 'text-[#1F2835] hover:bg-[#F52C11]/5',
+                        ]"
+                      >
+                        <span>{{ option.name }}</span>
+                      </div>
+                    </div>
+                    <!-- Inline add new service -->
+                    <div class="border-t border-gray-100 px-2 py-1" @click.stop>
                       <div
                         v-if="!showAddServiceInput"
                         @click="openAddService"
                         class="flex items-center gap-1.5 px-1 py-1.5 text-[11px] text-[#F52C11] font-medium cursor-pointer hover:bg-[#F52C11]/5 rounded-[4px] transition-colors"
                       >
                         <svg
-                          class="w-3 h-3"
+                          class="w-2.5 h-2.5 text-[#F52C11]"
                           fill="none"
                           stroke="currentColor"
-                          stroke-width="2"
+                          stroke-width="2.5"
                           viewBox="0 0 24 24"
                         >
                           <path
@@ -789,7 +793,9 @@
                             d="M12 4v16m8-8H4"
                           />
                         </svg>
-                        Add service
+                        <span class="text-[11px] font-medium text-[#F52C11]"
+                          >Add service</span
+                        >
                       </div>
                       <div v-else class="flex items-center gap-1 py-1">
                         <input
@@ -797,39 +803,22 @@
                           v-model="newServiceName"
                           type="text"
                           placeholder="New service name"
-                          :disabled="isAddingService"
-                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11] disabled:opacity-50"
+                          class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11]"
                           @keyup.enter="addNewService"
                           @keyup.esc="cancelAddService"
                         />
                         <button
                           type="button"
                           @click="addNewService"
-                          :disabled="isAddingService"
-                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5 disabled:opacity-50"
+                          class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5"
                         >
-                          {{ isAddingService ? "Adding…" : "Add" }}
+                          Add
                         </button>
                       </div>
-                    </div>
-
-                    <div
-                      v-for="option in serviceOptions"
-                      :key="option.id"
-                      @click="selectService(option.id)"
-                      :class="[
-                        'px-3 py-2 text-[11px] cursor-pointer flex items-center justify-between transition-colors',
-                        form.service === option.id
-                          ? 'text-[#F52C11] font-medium bg-[#F52C11]/5'
-                          : 'text-[#1F2835] hover:text-[#F52C11] hover:bg-[#F52C11]/5',
-                      ]"
-                    >
-                      <span>{{ option.name }}</span>
                     </div>
                   </div>
                 </Teleport>
               </div>
-
               <!-- Remarks -->
               <div>
                 <label
@@ -1547,7 +1536,6 @@ function salesRepName(repId) {
 const showAddServiceInput = ref(false);
 const newServiceName = ref("");
 const newServiceInputRef = ref(null);
-const isAddingService = ref(false);
 
 function openAddService() {
   showAddServiceInput.value = true;
@@ -1559,25 +1547,19 @@ function cancelAddService() {
   newServiceName.value = "";
 }
 
-async function addNewService() {
+function addNewService() {
   const name = newServiceName.value.trim();
   if (!name) {
     cancelAddService();
     return;
   }
-  isAddingService.value = true;
-  try {
-    const created = await api.createService(name);
-    serviceOptions.value.push(created);
-    form.value.service = created.id;
-    cancelAddService();
-    showServiceDropdown.value = false;
-  } catch (error) {
-    console.error("Failed to create service:", error);
-    toast.error(describeApiError(error));
-  } finally {
-    isAddingService.value = false;
-  }
+  const maxId = serviceOptions.value.reduce((max, s) => Math.max(max, s.id || 0), 0);
+  const newId = maxId + 1;
+  const created = { id: newId, name };
+  serviceOptions.value.push(created);
+  form.value.service = newId;
+  cancelAddService();
+  showServiceDropdown.value = false;
 }
 
 // ============================================
@@ -1586,7 +1568,6 @@ async function addNewService() {
 const showAddSalesRepInput = ref(false);
 const newSalesRepName = ref("");
 const newSalesRepInputRef = ref(null);
-const isAddingSalesRep = ref(false);
 
 function openAddSalesRep() {
   showAddSalesRepInput.value = true;
@@ -1598,24 +1579,18 @@ function cancelAddSalesRep() {
   newSalesRepName.value = "";
 }
 
-async function addNewSalesRep() {
+function addNewSalesRep() {
   const name = newSalesRepName.value.trim();
   if (!name) {
     cancelAddSalesRep();
     return;
   }
-  isAddingSalesRep.value = true;
-  try {
-    const created = await api.createSalesRepresentative(name);
-    salesRepOptions.value.push(created);
-    form.value.salesRepresentative.push(created.id);
-    cancelAddSalesRep();
-  } catch (error) {
-    console.error("Failed to create sales representative:", error);
-    toast.error(describeApiError(error));
-  } finally {
-    isAddingSalesRep.value = false;
-  }
+  const maxId = salesRepOptions.value.reduce((max, s) => Math.max(max, s.id || 0), 0);
+  const newId = maxId + 1;
+  const created = { id: newId, name };
+  salesRepOptions.value.push(created);
+  form.value.salesRepresentative.push(newId);
+  cancelAddSalesRep();
 }
 
 // ============================================
@@ -1624,7 +1599,6 @@ async function addNewSalesRep() {
 const showAddTechniqueInput = ref(false);
 const newTechniqueName = ref("");
 const newTechniqueInputRef = ref(null);
-const isAddingTechnique = ref(false);
 
 function openAddTechnique() {
   showAddTechniqueInput.value = true;
@@ -1636,25 +1610,19 @@ function cancelAddTechnique() {
   newTechniqueName.value = "";
 }
 
-async function addNewTechnique() {
+function addNewTechnique() {
   const name = newTechniqueName.value.trim();
   if (!name) {
     cancelAddTechnique();
     return;
   }
-  isAddingTechnique.value = true;
-  try {
-    const created = await api.createProspectTechnique(name);
-    prospectTechniqueOptions.value.push(created);
-    form.value.prospectTechnique = created.id;
-    cancelAddTechnique();
-    showTechniqueDropdown.value = false;
-  } catch (error) {
-    console.error("Failed to create prospect technique:", error);
-    toast.error(describeApiError(error));
-  } finally {
-    isAddingTechnique.value = false;
-  }
+  const maxId = prospectTechniqueOptions.value.reduce((max, t) => Math.max(max, t.id || 0), 0);
+  const newId = maxId + 1;
+  const created = { id: newId, name };
+  prospectTechniqueOptions.value.push(created);
+  form.value.prospectTechnique = newId;
+  cancelAddTechnique();
+  showTechniqueDropdown.value = false;
 }
 
 // ============================================
@@ -1663,7 +1631,6 @@ async function addNewTechnique() {
 const showAddCommunicationInput = ref(false);
 const newCommunicationName = ref("");
 const newCommunicationInputRef = ref(null);
-const isAddingCommunication = ref(false);
 
 function openAddCommunication() {
   showAddCommunicationInput.value = true;
@@ -1675,25 +1642,19 @@ function cancelAddCommunication() {
   newCommunicationName.value = "";
 }
 
-async function addNewCommunication() {
+function addNewCommunication() {
   const name = newCommunicationName.value.trim();
   if (!name) {
     cancelAddCommunication();
     return;
   }
-  isAddingCommunication.value = true;
-  try {
-    const created = await api.createWayOfCommunication(name);
-    communicationOptions.value.push(created);
-    form.value.waysOfCommunication = created.id;
-    cancelAddCommunication();
-    showCommunicationDropdown.value = false;
-  } catch (error) {
-    console.error("Failed to create way of communication:", error);
-    toast.error(describeApiError(error));
-  } finally {
-    isAddingCommunication.value = false;
-  }
+  const maxId = communicationOptions.value.reduce((max, c) => Math.max(max, c.id || 0), 0);
+  const newId = maxId + 1;
+  const created = { id: newId, name };
+  communicationOptions.value.push(created);
+  form.value.waysOfCommunication = newId;
+  cancelAddCommunication();
+  showCommunicationDropdown.value = false;
 }
 
 function handleDropdownsOutsideClick(e) {
