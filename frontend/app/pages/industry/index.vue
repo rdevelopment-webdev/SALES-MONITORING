@@ -1685,9 +1685,32 @@ async function addIndustry() {
     });
     toast.success(`Industry "${targetName}" added.`);
   } catch (err) {
-    addIndustryError.value =
-      err.message || "Failed to commit record mutation changes.";
-    toast.error(addIndustryError.value);
+    // Laravel validation errors (422) come back with a specific shape —
+    // try to pull the actual field message out first (e.g. "The industry
+    // name has already been taken."), otherwise fall back to a friendly
+    // generic message rather than dumping the raw HTTP error string.
+    const status = err?.response?.status || err?.status || err?.statusCode;
+    const serverErrors =
+      err?.data?.errors ||
+      err?.response?._data?.errors ||
+      err?.response?.data?.errors;
+    const serverMessage =
+      err?.data?.message ||
+      err?.response?._data?.message ||
+      err?.response?.data?.message;
+
+    if (status === 422) {
+      addIndustryError.value =
+        serverErrors?.industry_name?.[0] ||
+        serverMessage ||
+        `"${targetName}" is already in use. Please choose a different name.`;
+      // Inline message in the modal is enough here — skip the toast so
+      // the error doesn't show twice.
+    } else {
+      addIndustryError.value =
+        serverMessage || "Failed to add industry. Please try again.";
+      toast.error(addIndustryError.value);
+    }
   } finally {
     isSubmittingIndustry.value = false;
   }
