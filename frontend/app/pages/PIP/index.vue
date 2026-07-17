@@ -383,7 +383,6 @@
               </thead>
               <tbody>
                 <tr
-                  <tr
                   v-for="(record, index) in paginatedRecords"
                   :key="record.id"
                   class="transition-colors"
@@ -811,27 +810,27 @@
                   />
                 </div>
 
-<!-- Two-Building / Skyline Icon in Gray Square -->
-<div
-  class="w-10 h-10 rounded-[12px] bg-gray-100 flex items-center justify-center flex-shrink-0"
->
-  <svg
-    class="w-4 h-4 text-gray-500"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    viewBox="0 0 24 24"
-  >
-    <!-- Left building (taller) -->
-    <path d="M7 21V9l4-2v14" />
-    <!-- Right building (shorter) -->
-    <path d="M11 21V13l4-2v10" />
-    <!-- Base line -->
-    <path d="M5 21h14" />
-  </svg>
-</div>
+                <!-- Two-Building / Skyline Icon in Gray Square -->
+                <div
+                  class="w-10 h-10 rounded-[12px] bg-gray-100 flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <!-- Left building (taller) -->
+                    <path d="M7 21V9l4-2v14" />
+                    <!-- Right building (shorter) -->
+                    <path d="M11 21V13l4-2v10" />
+                    <!-- Base line -->
+                    <path d="M5 21h14" />
+                  </svg>
+                </div>
 
                 <!-- Content -->
                 <div class="flex-1 min-w-0">
@@ -923,7 +922,7 @@
                 Restore
               </button>
               <button
-                @click="deleteSelectedArchivedRecords"
+                @click="openHardDeleteConfirm"
                 class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
               >
                 <svg
@@ -969,6 +968,73 @@
               class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               Close
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hard Delete Confirmation Modal -->
+      <div
+        v-if="showHardDeleteConfirm"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]"
+      >
+        <div
+          class="bg-white rounded-[12px] w-[380px] shadow-xl flex flex-col overflow-hidden"
+        >
+          <!-- Body -->
+          <div class="p-5 flex flex-col items-center text-center">
+            <div
+              class="w-10 h-10 rounded-full bg-[#F52C11]/10 flex items-center justify-center mb-3"
+            >
+              <svg
+                class="w-5 h-5 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-[13px] font-bold text-[#1F2835]">
+              Permanently delete
+              {{
+                archivedSelectedCount === 1
+                  ? "this record"
+                  : `${archivedSelectedCount} records`
+              }}?
+            </h3>
+            <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+              This action cannot be undone. The selected record(s) will be
+              removed permanently and cannot be restored.
+            </p>
+            <p
+              v-if="hardDeletePreviewNames"
+              class="text-[10px] text-gray-400 mt-2 px-2"
+            >
+              {{ hardDeletePreviewNames }}
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div
+            class="px-4 py-3 border-t border-gray-100 flex items-center justify-end gap-2 bg-gray-50"
+          >
+            <button
+              @click="cancelHardDelete"
+              class="px-3 py-[5px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              @click="confirmHardDelete"
+              class="px-3 py-[5px] rounded-[6px] text-[11px] font-semibold text-white bg-[#F52C11] hover:bg-[#d9250e] transition-colors"
+            >
+              Yes, delete permanently
             </button>
           </div>
         </div>
@@ -1061,6 +1127,7 @@ const editingRecord = ref(null);
 const saveError = ref(""); // error message shown inside Create/Edit modal on a failed save
 const archiveActionError = ref(""); // error message shown when archive/unarchive fails
 const archiveDeleteError = ref(""); // error message shown when deleting archived records fails
+const showHardDeleteConfirm = ref(false); // controls the "permanently delete" confirmation modal
 
 // ==================== ARCHIVED SEARCH & LOADING ====================
 const archivedSearchQuery = ref("");
@@ -1094,6 +1161,19 @@ const isArchivedAllSelected = computed(() => {
   return filteredArchivedRecords.value.every((r) =>
     archivedSelectedIds.value.includes(r.id)
   );
+});
+
+// Short preview of the client names about to be permanently deleted,
+// shown inside the hard delete confirmation modal.
+const hardDeletePreviewNames = computed(() => {
+  const names = archivedRecords.value
+    .filter((r) => archivedSelectedIds.value.includes(r.id))
+    .map((r) => r.clientName)
+    .filter(Boolean);
+
+  if (names.length === 0) return "";
+  if (names.length <= 3) return names.join(", ");
+  return `${names.slice(0, 3).join(", ")} and ${names.length - 3} more`;
 });
 
 // ==================== ARCHIVED SELECTION METHODS ====================
@@ -1133,7 +1213,10 @@ function toggleAllArchived() {
 
 // Clear archived selection when modal closes or search changes
 watch(showArchiveModal, (val) => {
-  if (!val) archivedSelectedIds.value = [];
+  if (!val) {
+    archivedSelectedIds.value = [];
+    showHardDeleteConfirm.value = false;
+  }
 });
 watch(archivedSearchQuery, () => {
   archivedSelectedIds.value = [];
@@ -1226,13 +1309,11 @@ const filteredRecords = computed(() => {
   }
 
   // Date filter
-if (selectedDate.value) {
-  result = result.filter(
-    (r) => toComparableDate(r.dateRecorded) === selectedDate.value
-  );
-}
-
-  
+  if (selectedDate.value) {
+    result = result.filter(
+      (r) => toComparableDate(r.dateRecorded) === selectedDate.value
+    );
+  }
 
   // Service filter
   if (selectedService.value !== "All Services") {
@@ -1392,12 +1473,11 @@ function nextMonth() {
     currentYear.value++;
   } else currentMonth.value++;
 }
-function selectDate(date) { 
-  if (date) { 
+function selectDate(date) {
+  if (date) {
     selectedDate.value = date;
     showDatePicker.value = false;
   }
-  
 }
 
 function clearDateFilter() {
@@ -1860,6 +1940,23 @@ function deleteSelectedArchivedRecords() {
   deleteArchivedRecordsBatchApi([...archivedSelectedIds.value]);
 }
 
+// Opens the "are you sure?" modal instead of deleting immediately.
+// The actual permanent delete only runs after the user confirms.
+function openHardDeleteConfirm() {
+  if (!canEdit.value) return;
+  if (archivedSelectedIds.value.length === 0) return;
+  showHardDeleteConfirm.value = true;
+}
+
+function cancelHardDelete() {
+  showHardDeleteConfirm.value = false;
+}
+
+async function confirmHardDelete() {
+  showHardDeleteConfirm.value = false;
+  await deleteSelectedArchivedRecords();
+}
+
 function restoreSelectedArchivedRecords() {
   if (!canEdit.value) return;
   unarchiveRecordsBatchApi([...archivedSelectedIds.value]);
@@ -1869,6 +1966,7 @@ function closeArchiveModal() {
   showArchiveModal.value = false;
   archivedSelectedIds.value = [];
   archiveDeleteError.value = "";
+  showHardDeleteConfirm.value = false;
 }
 
 // Reads the user object login.vue stored in localStorage after a

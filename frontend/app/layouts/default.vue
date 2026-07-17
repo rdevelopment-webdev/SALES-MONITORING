@@ -149,7 +149,7 @@
                         : 'text-gray-400 hover:bg-white/5 hover:text-white',
                     ]"
                   >
-                    Performance Improvement Plan
+                    PIP
                   </NuxtLink>
                 </li>
               </ul>
