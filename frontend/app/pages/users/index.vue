@@ -65,7 +65,7 @@
 
           <button
             @click="openArchiveModal"
-            class="bg-white border border-gray-200 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-4 py-1.5 rounded-[6px] text-[12px] font-medium flex items-center gap-2 transition-colors shadow-sm"
+            class="relative bg-white border border-gray-200 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-4 py-1.5 rounded-[6px] text-[12px] font-medium flex items-center gap-2 transition-colors shadow-sm"
           >
             <svg
               class="w-4 h-4 text-[#f52c11]"
@@ -83,9 +83,9 @@
             View Archive
             <span
               v-if="archivedUsers.length > 0"
-              class="bg-[#F52C11] text-white text-[10px] px-2 py-[1px] rounded-full font-bold ml-0.5"
+              class="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center bg-[#F52C11] text-white text-[10px] rounded-full font-bold leading-none ring-2 ring-white"
             >
-              {{ archivedUsers.length }}
+              {{ archivedUsers.length > 99 ? "99+" : archivedUsers.length }}
             </span>
           </button>
 
@@ -442,8 +442,8 @@
         <div class="px-6 py-5 bg-white space-y-4">
           <div>
             <label class="block text-[12px] font-medium text-[#1F2835] mb-1.5"
-              >New Password *</label
-            >
+              >New Password <span class="text-[#F52C11]">*</span>
+            </label>
             <input
               v-model="resetPasswordData.newPassword"
               type="password"
@@ -452,7 +452,7 @@
           </div>
           <div>
             <label class="block text-[12px] font-medium text-[#1F2835] mb-1.5"
-              >Confirm New Password *</label
+              >Confirm New Password <span class="text-[#F52C11]">*</span></label
             >
             <input
               v-model="resetPasswordData.confirmPassword"
@@ -613,11 +613,6 @@
                 >
                   Archived By
                 </th>
-                <th
-                  class="w-[13%] px-3 py-2.5 text-[12px] font-bold text-gray-500 tracking-wider text-center"
-                >
-                  Actions
-                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -694,49 +689,6 @@
                     {{ user.archived_by_email || user.archivedBy?.email || "" }}
                   </div>
                 </td>
-                <td class="px-3 py-3 text-center whitespace-nowrap">
-                  <div class="flex items-center justify-center gap-1.5">
-                    <button
-                      @click="unarchiveUser(user.id)"
-                      class="border border-gray-200 rounded-[6px] px-2 py-1 flex items-center gap-1 text-[11px] font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
-                      title="Restore user"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5 text-[#F52C11]"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 6H16"
-                        />
-                      </svg>
-                      Restore
-                    </button>
-                    <button
-                      @click="deleteArchivedUser(user.id)"
-                      class="border border-gray-200 hover:border-red-500 hover:text-red-500 rounded-[6px] px-2 py-1 flex items-center gap-1 text-[11px] font-medium text-gray-700 bg-white hover:bg-red-50/30 transition-colors shadow-sm"
-                      title="Permanently delete user"
-                    >
-                      <svg
-                        class="w-3.5 h-3.5 text-[#F52C11]"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
               </tr>
             </tbody>
           </table>
@@ -775,7 +727,7 @@
               class="flex items-center gap-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors shadow-sm bg-white"
             >
               <svg
-                class="w-3.5 h-3.5 text-[#F52C11]"
+                class="w-3.5 h-3.5 text-[GREEN]"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
@@ -791,7 +743,7 @@
             </button>
 
             <button
-              @click="deleteSelectedUsers"
+              @click="requestDeleteSelectedUsers"
               class="flex items-center gap-1.5 border border-gray-200 hover:border-red-500 hover:text-red-500 hover:bg-red-50/30 text-gray-700 px-3 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors shadow-sm bg-white"
             >
               <svg
@@ -831,6 +783,62 @@
             class="border border-gray-300 rounded-[6px] px-4 py-1.5 text-gray-700 text-[12px] hover:bg-gray-50 transition-colors font-medium"
           >
             Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="showDeleteConfirmModal"
+      class="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] backdrop-blur-[1px]"
+    >
+      <div
+        class="bg-white rounded-[16px] w-[420px] shadow-2xl overflow-hidden font-['Overpass']"
+      >
+        <div class="p-6 flex items-start gap-4">
+          <div
+            class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-[#F52C11] shrink-0"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14.14A2 2 0 004.18 21h15.64a2 2 0 001.87-2.99L13.71 3.86a2 2 0 00-3.42 0z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-bold text-[#1F2835] leading-tight">
+              Delete permanently?
+            </h3>
+            <p class="text-[12.5px] text-gray-500 mt-1.5 leading-relaxed">
+              Are you sure you want to permanently delete
+              {{ deleteConfirmCount }}
+              {{ deleteConfirmCount === 1 ? "user" : "users" }}? This action
+              cannot be undone.
+            </p>
+          </div>
+        </div>
+        <div
+          class="px-6 py-4 bg-[#f8fafc] border-t border-gray-100 flex items-center justify-end gap-2"
+        >
+          <button
+            @click="cancelDeleteConfirm"
+            class="border border-gray-300 rounded-[6px] px-4 py-1.5 text-gray-700 text-[12px] hover:bg-gray-50 transition-colors font-medium bg-white"
+          >
+            Cancel
+          </button>
+          <button
+            @click="confirmDeleteArchived"
+            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-4 py-1.5 rounded-[6px] text-[12px] font-medium transition-colors shadow-sm"
+          >
+            Delete
           </button>
         </div>
       </div>
@@ -907,6 +915,8 @@ const roleOptions = ["All roles", "Admin", "Sales"];
 const showRoleDropdown = ref(false);
 const showArchiveModal = ref(false);
 const showResetPasswordModal = ref(false);
+const showDeleteConfirmModal = ref(false);
+const pendingDeleteId = ref(null);
 
 const resettingUser = ref(null);
 const resetPasswordData = ref({ newPassword: "", confirmPassword: "" });
@@ -1103,14 +1113,12 @@ async function unarchiveUser(id) {
   }
 }
 
+function requestDeleteArchivedUser(id) {
+  pendingDeleteId.value = id;
+  showDeleteConfirmModal.value = true;
+}
+
 async function deleteArchivedUser(id) {
-  if (
-    !window.confirm(
-      "Are you sure you want to permanently delete this user? This action cannot be undone."
-    )
-  ) {
-    return;
-  }
   try {
     const deletedUser = archivedUsers.value.find((u) => u.id === id);
     const deletedName =
@@ -1173,15 +1181,30 @@ async function restoreSelectedUsers() {
   }
 }
 
+function requestDeleteSelectedUsers() {
+  if (selectedArchivedIds.value.length === 0) return;
+  pendingDeleteId.value = null;
+  showDeleteConfirmModal.value = true;
+}
+
+function cancelDeleteConfirm() {
+  showDeleteConfirmModal.value = false;
+  pendingDeleteId.value = null;
+}
+
+async function confirmDeleteArchived() {
+  const id = pendingDeleteId.value;
+  showDeleteConfirmModal.value = false;
+  pendingDeleteId.value = null;
+  if (id) {
+    await deleteArchivedUser(id);
+  } else {
+    await deleteSelectedUsers();
+  }
+}
+
 async function deleteSelectedUsers() {
   if (selectedArchivedIds.value.length === 0) return;
-  if (
-    !window.confirm(
-      `Are you sure you want to permanently delete ${selectedArchivedIds.value.length} user(s)? This action cannot be undone.`
-    )
-  ) {
-    return;
-  }
   try {
     const deletedNames = archivedUsers.value
       .filter((u) => selectedArchivedIds.value.includes(u.id))
@@ -1376,6 +1399,10 @@ const isAllArchivedSelected = computed(
     filteredArchivedUsers.value.every((u) =>
       selectedArchivedIds.value.includes(u.id)
     )
+);
+
+const deleteConfirmCount = computed(() =>
+  pendingDeleteId.value ? 1 : selectedArchivedIds.value.length
 );
 
 const isResetPasswordValid = computed(() => {

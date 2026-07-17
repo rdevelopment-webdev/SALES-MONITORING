@@ -281,35 +281,31 @@
                   >
                     Assign role <span class="text-[#F52C11]">*</span>
                   </label>
-                  <div class="relative">
-                    <select
-                      v-model="form.role"
+                  <div class="relative" ref="roleDropdownRef">
+                    <button
+                      type="button"
                       :disabled="rolesLoading"
+                      @click="isRoleDropdownOpen = !isRoleDropdownOpen"
                       :class="[
-                        'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] focus:outline-none transition-colors appearance-none cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed',
+                        'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-left focus:outline-none transition-colors cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed',
                         errors.role
                           ? 'border-[#F52C11]'
-                          : 'border-gray-200 focus:border-[#F52C11]',
+                          : isRoleDropdownOpen
+                          ? 'border-[#F52C11]'
+                          : 'border-gray-200',
                         form.role ? 'text-[#1F2835]' : 'text-gray-400',
                       ]"
                     >
-                      <option value="" disabled>
-                        {{
-                          rolesLoading
-                            ? "Loading roles..."
-                            : "- Please select -"
-                        }}
-                      </option>
-                      <option
-                        v-for="role in roles"
-                        :key="role.id"
-                        :value="role.role_name"
-                      >
-                        {{ role.role_name }}
-                      </option>
-                    </select>
+                      {{
+                        form.role ||
+                        (rolesLoading
+                          ? "Loading roles..."
+                          : "- Please select -")
+                      }}
+                    </button>
                     <svg
-                      class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
+                      class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none transition-transform"
+                      :class="{ 'rotate-180': isRoleDropdownOpen }"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2"
@@ -321,6 +317,25 @@
                         d="M19 9l-7 7-7-7"
                       />
                     </svg>
+
+                    <ul
+                      v-if="isRoleDropdownOpen"
+                      class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-[4px] shadow-lg max-h-48 overflow-auto py-1"
+                    >
+                      <li
+                        v-for="role in roles"
+                        :key="role.id"
+                        @click="selectRole(role.role_name)"
+                        :class="[
+                          'px-3 py-1.5 text-[12px] cursor-pointer transition-colors hover:bg-[#FEF4F3]',
+                          form.role === role.role_name
+                            ? 'bg-[#FEF4F3] text-[#F52C11] font-medium'
+                            : 'text-[#1F2835]',
+                        ]"
+                      >
+                        {{ role.role_name }}
+                      </li>
+                    </ul>
                   </div>
                   <p
                     v-if="errors.role"
@@ -609,7 +624,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useAuditLog } from "~/composables/useAuditLog";
 import { useToast } from "~/composables/useToast";
 import { usePermissions } from "~/composables/usePermissions";
@@ -957,7 +972,24 @@ async function createUser() {
   }
 }
 
+// --- ROLE DROPDOWN ---
+const isRoleDropdownOpen = ref(false);
+const roleDropdownRef = ref(null);
+
+function selectRole(roleName) {
+  form.value.role = roleName;
+  isRoleDropdownOpen.value = false;
+}
+
+function handleClickOutsideRoleDropdown(event) {
+  if (roleDropdownRef.value && !roleDropdownRef.value.contains(event.target)) {
+    isRoleDropdownOpen.value = false;
+  }
+}
+
 onMounted(async () => {
+  document.addEventListener("click", handleClickOutsideRoleDropdown);
+
   await permissionsReady;
 
   if (!canAdd.value) {
@@ -984,6 +1016,10 @@ onMounted(async () => {
     rolesLoading.value = false;
     pagesLoading.value = false;
   }
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutsideRoleDropdown);
 });
 </script>
 

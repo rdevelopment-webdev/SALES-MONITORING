@@ -81,7 +81,7 @@
                   <label
                     class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                   >
-                    First name <span class="text-[#F52C11]">*</span>
+                    Full Name <span class="text-[#F52C11]">*</span>
                   </label>
                   <input
                     v-model="form.firstName"
@@ -99,31 +99,6 @@
                     class="text-[8px] text-[#F52C11] mt-0.5"
                   >
                     First name is required
-                  </p>
-                </div>
-
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Last name <span class="text-[#F52C11]">*</span>
-                  </label>
-                  <input
-                    v-model="form.lastName"
-                    type="text"
-                    placeholder="Last name"
-                    :class="[
-                      'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] focus:outline-none transition-colors placeholder:text-gray-400',
-                      errors.lastName
-                        ? 'border-[#F52C11]'
-                        : 'border-gray-200 focus:border-[#F52C11]',
-                    ]"
-                  />
-                  <p
-                    v-if="errors.lastName"
-                    class="text-[8px] text-[#F52C11] mt-0.5"
-                  >
-                    Last name is required
                   </p>
                 </div>
 
@@ -323,28 +298,25 @@
                   >
                     Assign role <span class="text-[#F52C11]">*</span>
                   </label>
-                  <div class="relative">
-                    <select
-                      v-model="form.roleId"
+                  <div class="relative" ref="roleDropdownRef">
+                    <button
+                      type="button"
+                      @click="isRoleDropdownOpen = !isRoleDropdownOpen"
                       :class="[
-                        'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] focus:outline-none transition-colors appearance-none cursor-pointer',
+                        'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-left focus:outline-none transition-colors cursor-pointer',
                         errors.roleId
                           ? 'border-[#F52C11]'
-                          : 'border-gray-200 focus:border-[#F52C11]',
+                          : isRoleDropdownOpen
+                          ? 'border-[#F52C11]'
+                          : 'border-gray-200',
                         form.roleId ? 'text-[#1F2835]' : 'text-gray-400',
                       ]"
                     >
-                      <option value="" disabled>Select role</option>
-                      <option
-                        v-for="role in roles"
-                        :key="role.id"
-                        :value="role.id"
-                      >
-                        {{ role.role_name || role.name }}
-                      </option>
-                    </select>
+                      {{ selectedRoleName || "Select role" }}
+                    </button>
                     <svg
-                      class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none"
+                      class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none transition-transform"
+                      :class="{ 'rotate-180': isRoleDropdownOpen }"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2"
@@ -356,6 +328,31 @@
                         d="M19 9l-7 7-7-7"
                       />
                     </svg>
+
+                    <ul
+                      v-if="isRoleDropdownOpen"
+                      class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-[4px] shadow-lg max-h-48 overflow-auto py-1"
+                    >
+                      <li
+                        @click="selectRole('')"
+                        class="px-3 py-1.5 text-[12px] text-gray-400 cursor-pointer hover:bg-[#FEF4F3] transition-colors"
+                      >
+                        Select role
+                      </li>
+                      <li
+                        v-for="role in roles"
+                        :key="role.id"
+                        @click="selectRole(role.id)"
+                        :class="[
+                          'px-3 py-1.5 text-[12px] cursor-pointer transition-colors hover:bg-[#FEF4F3]',
+                          form.roleId === role.id
+                            ? 'bg-[#FEF4F3] text-[#F52C11] font-medium'
+                            : 'text-[#1F2835]',
+                        ]"
+                      >
+                        {{ role.role_name || role.name }}
+                      </li>
+                    </ul>
                   </div>
                   <p
                     v-if="errors.roleId"
@@ -534,7 +531,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useAuditLog } from "~/composables/useAuditLog";
 import { useToast } from "~/composables/useToast";
 import { usePermissions } from "~/composables/usePermissions";
@@ -609,7 +606,29 @@ const isFormValid = computed(() => {
   );
 });
 
+// --- ROLE DROPDOWN ---
+const isRoleDropdownOpen = ref(false);
+const roleDropdownRef = ref(null);
+
+const selectedRoleName = computed(() => {
+  const selected = roles.value.find((role) => role.id === form.value.roleId);
+  return selected ? selected.role_name || selected.name : "";
+});
+
+function selectRole(roleId) {
+  form.value.roleId = roleId;
+  isRoleDropdownOpen.value = false;
+}
+
+function handleClickOutsideRoleDropdown(event) {
+  if (roleDropdownRef.value && !roleDropdownRef.value.contains(event.target)) {
+    isRoleDropdownOpen.value = false;
+  }
+}
+
 onMounted(async () => {
+  document.addEventListener("click", handleClickOutsideRoleDropdown);
+
   await permissionsReady;
 
   if (!canEdit.value) {
@@ -619,6 +638,10 @@ onMounted(async () => {
   }
 
   loadEditData();
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutsideRoleDropdown);
 });
 
 async function loadEditData() {
@@ -700,11 +723,21 @@ function applyUserPermissions() {
   const userId = route.query.id;
 
   permissions.value.forEach((permissionRow) => {
-    const savedPermission = userPagePermissions.value.find(
-      (permission) =>
-        Number(permission.user_id) === Number(userId) &&
+    const savedPermission = userPagePermissions.value.find((permission) => {
+      // The endpoint is already scoped with ?user_id=, so some rows may
+      // omit user_id entirely. Only enforce the check when it's present —
+      // otherwise Number(undefined) (NaN) would never match and every
+      // checkbox would silently stay unchecked.
+      const hasUserId =
+        permission.user_id !== undefined && permission.user_id !== null;
+      const matchesUser =
+        !hasUserId || Number(permission.user_id) === Number(userId);
+
+      return (
+        matchesUser &&
         Number(permission.page_id) === Number(permissionRow.page_id)
-    );
+      );
+    });
 
     permissionRow.view = Boolean(savedPermission?.can_view);
     permissionRow.edit = Boolean(savedPermission?.can_edit);
