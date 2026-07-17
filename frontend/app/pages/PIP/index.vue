@@ -1392,11 +1392,12 @@ function nextMonth() {
     currentYear.value++;
   } else currentMonth.value++;
 }
-function selectDate(date) {
-  if (date) {
+function selectDate(date) { 
+  if (date) { 
     selectedDate.value = date;
     showDatePicker.value = false;
   }
+  
 }
 
 function clearDateFilter() {
