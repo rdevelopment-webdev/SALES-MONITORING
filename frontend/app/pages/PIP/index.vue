@@ -1903,6 +1903,10 @@ onMounted(async () => {
     console.error("Failed to load lookups:", error);
   }
   await fetchRecords();
+
+  // Fetch archived records too, so the badge count on "View archive"
+  // shows immediately instead of only after the modal is opened once.
+  fetchArchivedRecords();
 });
 </script>
 

@@ -1003,7 +1003,12 @@
           </button>
         </div>
 
-        <div class="px-5 pt-3 pb-1 shrink-0 flex items-center gap-1.5">
+        <!-- Location filter — records only. Archived industries carry no
+             location value, so there's nothing to filter there. -->
+        <div
+          v-if="archiveTab === 'records'"
+          class="px-5 pt-3 pb-1 shrink-0 flex items-center gap-1.5"
+        >
           <span class="text-[11px] text-gray-400 mr-0.5"></span>
           <button
             v-for="loc in ['All', ...locationOptions]"
@@ -1473,6 +1478,8 @@ const newIndustryName = ref("");
 const addIndustryError = ref("");
 const archiveSearchQuery = ref("");
 const archiveTab = ref("records");
+// Only applies to the "Archived records" tab — archived industries have
+// no location field to filter by.
 const archiveLocationFilter = ref("All");
 
 // Archive multi-select state (kept separate per tab since records use
@@ -1640,7 +1647,9 @@ async function fetchArchive() {
     const query = {};
     // "All" means don't scope by location at all; otherwise scope the
     // archive listing to whichever location the modal filter is set to
-    // (independent from the main table's location toggle).
+    // (independent from the main table's location toggle). This only
+    // applies when viewing the "Archived records" tab — archived
+    // industries have no location value to filter against.
     if (archiveLocationFilter.value !== "All") {
       query.location = archiveLocationFilter.value;
     }
@@ -2523,7 +2532,11 @@ onMounted(async () => {
   if (route.query.location) selectedLocation.value = route.query.location;
   isLoadingIndustries.value = true;
   await fetchIndustries();
+  // Fetch archived industries AND archived records up front so the
+  // "View archive" badge and per-tab counts are correct on first paint,
+  // instead of only populating once the modal is opened.
   await fetchArchivedIndustries();
+  await fetchArchive();
   try {
     const meResponse = await apiFetch("/me");
     const meUser = meResponse?.data?.user || meResponse?.user;

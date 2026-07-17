@@ -32,6 +32,8 @@ return new class extends Migration
             $table->string('service_name')->nullable()->change();
             $table->string('contact_person')->nullable()->change();
             $table->string('contact_number')->nullable()->change();
+            $table->string('job_position')->nullable()->change();
+            $table->string('email')->nullable()->change();
         });
     }
 
