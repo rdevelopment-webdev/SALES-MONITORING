@@ -175,28 +175,28 @@
         <!-- Date Picker -->
         <div class="relative">
           <button
-            @click="showDatePicker = !showDatePicker"
-            class="bg-white border border-gray-300 px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
-          >
-            <span>{{ selectedDate || "Select Date" }}</span>
-            {{ selectedDate }}
-            <svg
-              class="w-3 h-3 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </button>
-          <div
+  @click="showDatePicker = !showDatePicker"
+  :class="selectedDate ? 'border-[#F52C11] text-[#F52C11]' : 'border-gray-300 text-[#1F2835]'"
+  class="bg-white border px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1.5 hover:border-gray-400 transition-colors"
+>
+  <span>{{ selectedDate || "Select Date" }}</span>
+  <svg
+    class="w-3 h-3 text-[#F52C11]"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+    />
+  </svg>
+</button>
+                    <div
             v-if="showDatePicker"
-            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 p-3 w-64"
+            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
           >
             <div class="flex items-center justify-between mb-2">
               <button
@@ -239,18 +239,32 @@
             </div>
             <div class="grid grid-cols-7 gap-1">
               <button
-                v-for="day in calendarDays"
-                :key="day.date"
-                @click="selectDate(day.date)"
-                :class="[
-                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
-                  day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
-                  day.isSelected
-                    ? 'bg-[#F52C11] text-white'
-                    : 'hover:bg-gray-100',
-                ]"
+  v-for="day in calendarDays"
+  :key="day.date || Math.random()"
+  @click="day.date && selectDate(day.date)"
+  :disabled="!day.date"
+  :class="[
+    'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
+    day.isCurrentMonth ? 'text-[#1F2835]' : 'text-transparent',
+    day.isSelected
+      ? 'bg-[#F52C11] text-white font-semibold'
+      : day.isToday
+      ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
+      : day.date
+      ? 'hover:bg-gray-100'
+      : '',
+  ]"
+>
+  {{ day.isCurrentMonth ? day.day : '' }}
+</button>
+            </div>
+             <!-- Clear date -->
+            <div class="flex justify-end mt-2 pt-2">
+              <button
+                @click="clearDateFilter"
+                class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
               >
-                {{ day.day }}
+                Clear date
               </button>
             </div>
           </div>
@@ -511,6 +525,12 @@
       class="fixed inset-0 z-40"
       @click="closeAllDropdowns"
     ></div>
+        <!-- Click outside to close dropdowns -->
+    <div
+      v-if="showDatePicker || showUsersDropdown || showModulesDropdown"
+      class="fixed inset-0 z-40"
+      @click="closeAllDropdowns"
+    ></div>
   </div>
 </template>
 
@@ -580,7 +600,7 @@ const filteredRecords = computed(() => {
 });
 
 // ==================== PAGINATION ====================
-const rowsPerPageOptions = [10, 13, 25, 50, 100];
+const rowsPerPageOptions = [13, 26, 39, 52, 65];
 const recordsRowsPerPage = ref(13);
 const recordsCurrentPage = ref(1);
 const recordsPageInput = ref("");
@@ -630,6 +650,12 @@ function goToRecordsPage(page) {
   );
 }
 
+function closeAllDropdowns() {
+  showDatePicker.value = false;
+  showUsersDropdown.value = false;
+  showModulesDropdown.value = false;
+}
+
 function goToTypedRecordsPage() {
   const page = parseInt(recordsPageInput.value, 10);
   if (!isNaN(page)) goToRecordsPage(page);
@@ -669,23 +695,23 @@ const currentMonthYear = computed(() => {
 
 const calendarDays = computed(() => {
   const days = [];
-  const firstDay = new Date(currentYear.value, currentMonth.value, 1).getDay();
+  const startDay = new Date(currentYear.value, currentMonth.value, 1).getDay();
   const daysInMonth = new Date(
     currentYear.value,
     currentMonth.value + 1,
     0
   ).getDate();
-  const daysInPrevMonth = new Date(
-    currentYear.value,
-    currentMonth.value,
-    0
-  ).getDate();
 
-  for (let i = firstDay - 1; i >= 0; i--) {
-    days.push({ day: daysInPrevMonth - i, isCurrentMonth: false, date: null });
+  // Today in MM/DD/YY format to match the calendar cells
+  const now = new Date();
+  const todayStr = `${String(now.getMonth() + 1).padStart(2, "0")}/${String(
+    now.getDate()
+  ).padStart(2, "0")}/${String(now.getFullYear()).slice(-2)}`;
+
+  for (let i = 0; i < startDay; i++) {
+    days.push({ day: "", isCurrentMonth: false, date: null });
   }
   for (let i = 1; i <= daysInMonth; i++) {
-    // MM/DD/YY format to match log.date for filtering
     const dateStr = `${String(currentMonth.value + 1).padStart(
       2,
       "0"
@@ -695,11 +721,8 @@ const calendarDays = computed(() => {
       isCurrentMonth: true,
       date: dateStr,
       isSelected: selectedDate.value === dateStr,
+      isToday: dateStr === todayStr,
     });
-  }
-  const remaining = 42 - days.length;
-  for (let i = 1; i <= remaining; i++) {
-    days.push({ day: i, isCurrentMonth: false, date: null });
   }
   return days;
 });
@@ -723,10 +746,9 @@ function selectDate(date) {
   }
 }
 
-function closeAllDropdowns() {
+function clearDateFilter() {
+  selectedDate.value = "";
   showDatePicker.value = false;
-  showUsersDropdown.value = false;
-  showModulesDropdown.value = false;
 }
 
 // ==================== LIVE DATA ====================
