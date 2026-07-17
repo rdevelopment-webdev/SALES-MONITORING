@@ -329,10 +329,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(record, index) in paginatedRecords"
-                :key="record.id"
-                class="transition-colors"
+             <tr
+  v-for="(record, index) in paginatedRecords"
+  :key="record.id"
+  class="transition-colors group"
                 :class="{
                   'bg-[#FCE4E2]': isSelected(record.id), // ← HIGHLIGHTED (red)
                   'bg-white hover:bg-[#F52C11]/10': !isSelected(record.id), // ← NORMAL
@@ -385,13 +385,13 @@
                     >
                   </div>
                 </td>
-                <td
+                                <td
                   v-if="canEdit"
                   class="px-4 py-[2px] whitespace-nowrap text-center sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] transition-colors"
                   :class="
                     isSelected(record.id)
                       ? 'bg-[#FCE4E2]'
-                      : 'bg-white hover:bg-[#F52C11]/10'
+                      : 'bg-white group-hover:bg-[#F52C11]/5'
                   "
                 >
                   <div class="flex items-center justify-center gap-1.5">
@@ -733,7 +733,7 @@
                   type="checkbox"
                   :checked="isArchivedSelected(record.id)"
                   @change="toggleArchivedSelection(record.id)"
-                  class="w-4 h-4 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
+                  class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer accent-[#F52C11]"
                 />
               </div>
 
