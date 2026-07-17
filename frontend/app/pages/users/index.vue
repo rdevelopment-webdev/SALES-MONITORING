@@ -327,8 +327,8 @@
         >
           <div>
             Page
-            <span class="font-bold text-[#1F2835]">{{ currentPage }}</span> of
-            <span class="font-bold text-[#1F2835]">{{ totalPages }}</span>
+            <span class="text-gray-400">{{ currentPage }}</span> of
+            <span class="text-gray-400">{{ totalPages }}</span>
           </div>
 
           <div class="flex items-center gap-2">
