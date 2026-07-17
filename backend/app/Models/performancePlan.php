@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Traits\Archivable;
 
 class PerformancePlan extends Model
 {
-    use HasFactory;
+    use Archivable;
 
     protected $table = 'performanceplans';
 
@@ -21,7 +23,6 @@ class PerformancePlan extends Model
         'status',
         'percentage',
         'area_input',
-        'representative__id',
         'onboarding_date',
         'remarks',
         'contact_name',
@@ -30,65 +31,44 @@ class PerformancePlan extends Model
         'archived_at',
     ];
 
-    // Relationship methods use camelCase to match controller's with() calls
-    public function user()
+    protected $casts = [
+        'date_recorded' => 'date',
+        'onboarding_date' => 'date',
+        'archived_at' => 'datetime',
+        'percentage' => 'decimal:2',
+    ];
+
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
-    public function technique()  // was ProspectTechnique()
+    public function technique(): BelongsTo
     {
         return $this->belongsTo(ProspectTechnique::class, 'technique_id');
     }
 
-    public function service()  // already correct
+    public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class, 'service_id');
     }
 
-    public function salesRepresentative()  // was Sales_Representative()
-    {
-        return $this->belongsTo(SalesRepresentative::class, 'representative__id');
-    }
-
-    public function waysOfCommunication()  // was Way_of_Communication()
+    // Fixed: class is Way_of_Communication (matching the actual filename/
+    // class name in app/Models), not WayOfCommunication.
+    public function waysOfCommunication(): BelongsTo
     {
         return $this->belongsTo(Way_of_Communication::class, 'communication_id');
     }
 
-    /**
-     * Archive this record by stamping archived_at with the current time.
-     * Called from PerformancePlanController's archive route.
-     */
-    public function archive()
+    // Replaces the old single belongsTo('salesRepresentative') relation.
+    // A plan can now have many reps, and a rep can be on many plans.
+    public function salesRepresentatives(): BelongsToMany
     {
-        $this->update(['archived_at' => now()]);
-    }
-
-    /**
-     * Restore this record by clearing archived_at.
-     * Called from PerformancePlanController's unarchive route.
-     */
-    public function unarchive()
-    {
-        $this->update(['archived_at' => null]);
-    }
-
-    /**
-     * True if this record is currently archived.
-     */
-    public function isArchived(): bool
-    {
-        return $this->archived_at !== null;
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->whereNull('archived_at');
-    }
-
-    public function scopeArchived($query)
-    {
-        return $query->whereNotNull('archived_at');
+        return $this->belongsToMany(
+            SalesRepresentative::class,
+            'performance_plan_sales_representative',
+            'performance_plan_id',
+            'representative__id'
+        )->withTimestamps();
     }
 }

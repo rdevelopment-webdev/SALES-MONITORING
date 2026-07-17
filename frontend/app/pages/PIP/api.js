@@ -10,7 +10,7 @@
 //
 // Other assumptions (adjust if your setup differs):
 //  - PerformancePlanController relations (technique, service,
-//    salesRepresentative, waysOfCommunication) each expose a human-readable
+//    salesRepresentatives, waysOfCommunication) each expose a human-readable
 //    label. We don't know the exact column name on each model, so
 //    `pickLabel()` below tries a list of common candidates. If your
 //    lookup tables use a different column, add it to CANDIDATE_KEYS.
@@ -280,10 +280,13 @@ export function toBackendPayload(form, userId) {
     status: form.leadStatus || "Emailed",
     percentage: form.status ?? null,
     area_input: form.location || null,
-    // Backend only supports ONE rep; multi-select UI keeps working, we send the first pick.
-    representative__id: Array.isArray(form.salesRepresentative)
-      ? form.salesRepresentative[0] || null
-      : form.salesRepresentative || null,
+    // Backend now supports multiple reps via a pivot table — send the
+    // full array instead of just the first pick.
+    sales_representative_ids: Array.isArray(form.salesRepresentative)
+      ? form.salesRepresentative
+      : form.salesRepresentative
+      ? [form.salesRepresentative]
+      : [],
     onboarding_date: toBackendDate(form.onboardingDate),
     remarks: form.remarks || null,
     contact_name: form.contactPersonName,
@@ -300,12 +303,20 @@ export function toFrontendRecord(plan, lookups) {
   const serviceName = plan.service
     ? pickLabel(plan.service)
     : findLabel(lookups.services, plan.service_id);
-  const commName = plan.waysOfCommunication
-    ? pickLabel(plan.waysOfCommunication)
+  // Laravel serializes relation keys as snake_case by default, so
+  // waysOfCommunication() comes back as plan.ways_of_communication, not
+  // plan.waysOfCommunication.
+  const commName = plan.ways_of_communication
+    ? pickLabel(plan.ways_of_communication)
     : findLabel(lookups.communications, plan.communication_id);
-  const repName = plan.salesRepresentative
-    ? pickLabel(plan.salesRepresentative)
-    : findLabel(lookups.salesReps, plan.representative__id);
+
+  // Same snake_case rule applies to salesRepresentatives() ->
+  // plan.sales_representatives (array of rep objects via the pivot).
+  const repList = Array.isArray(plan.sales_representatives)
+    ? plan.sales_representatives
+    : [];
+  const repNames = repList.map((r) => pickLabel(r));
+  const repIds = repList.map((r) => r.id);
 
   return {
     id: plan.id,
@@ -315,10 +326,8 @@ export function toFrontendRecord(plan, lookups) {
     location: plan.area_input || "",
     prospectTechnique: techniqueName,
     prospectTechniqueId: plan.technique_id,
-    salesRepresentative: repName ? [repName] : [],
-    salesRepresentativeIds: plan.representative__id
-      ? [plan.representative__id]
-      : [],
+    salesRepresentative: repNames,
+    salesRepresentativeIds: repIds,
     email: plan.email,
     waysOfCommunication: commName,
     waysOfCommunicationId: plan.communication_id,
