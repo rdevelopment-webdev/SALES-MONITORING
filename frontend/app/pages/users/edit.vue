@@ -583,17 +583,52 @@ const userPagePermissions = ref([]);
 const permissions = ref([]);
 const passwordReminder = ref(false);
 
+// Holds the per-page permission state from just before "Full Access" was
+// checked, so unchecking it can restore what the user had instead of
+// wiping every permission to false.
+const permissionsBeforeFullAccess = ref(null);
+
 const isFullAccess = computed({
   get() {
     if (!permissions.value || permissions.value.length === 0) return false;
     return permissions.value.every((m) => m.view && m.edit && m.add);
   },
   set(val) {
-    permissions.value.forEach((m) => {
-      m.view = val;
-      m.edit = val;
-      m.add = val;
-    });
+    if (val) {
+      // Turning Full Access ON: remember current state, then grant everything.
+      permissionsBeforeFullAccess.value = permissions.value.map((m) => ({
+        page_id: m.page_id,
+        view: m.view,
+        edit: m.edit,
+        add: m.add,
+      }));
+
+      permissions.value.forEach((m) => {
+        m.view = true;
+        m.edit = true;
+        m.add = true;
+      });
+    } else if (permissionsBeforeFullAccess.value) {
+      // Turning Full Access OFF: restore the prior per-page permissions
+      // rather than clearing everything.
+      permissions.value.forEach((m) => {
+        const prior = permissionsBeforeFullAccess.value.find(
+          (p) => Number(p.page_id) === Number(m.page_id)
+        );
+        m.view = prior ? prior.view : false;
+        m.edit = prior ? prior.edit : false;
+        m.add = prior ? prior.add : false;
+      });
+      permissionsBeforeFullAccess.value = null;
+    } else {
+      // No snapshot to restore (e.g. Full Access was already true when the
+      // form loaded) — fall back to clearing everything.
+      permissions.value.forEach((m) => {
+        m.view = false;
+        m.edit = false;
+        m.add = false;
+      });
+    }
   },
 });
 

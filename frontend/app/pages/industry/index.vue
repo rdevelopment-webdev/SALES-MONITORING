@@ -1254,8 +1254,8 @@
             <button
               @click="
                 archiveTab === 'records'
-                  ? deleteSelectedArchivedRecords()
-                  : deleteSelectedArchivedIndustries()
+                  ? requestDeleteSelectedArchivedRecords()
+                  : requestDeleteSelectedArchivedIndustries()
               "
               class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
             >
@@ -1307,6 +1307,57 @@
             class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
           >
             Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="showDeleteConfirmModal"
+      class="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]"
+    >
+      <div class="bg-white rounded-[12px] w-[380px] shadow-xl overflow-hidden">
+        <div class="p-5 flex items-start gap-3">
+          <div
+            class="w-9 h-9 rounded-[8px] bg-[#F52C11]/10 flex items-center justify-center shrink-0"
+          >
+            <svg
+              class="w-[18px] h-[18px] text-[#F52C11]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14.14A2 2 0 004.18 21h15.64a2 2 0 001.87-2.99L13.71 3.86a2 2 0 00-3.42 0z"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="font-bold text-[14px] text-slate-800 leading-tight">
+              Delete permanently?
+            </div>
+            <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+              {{ deleteConfirmMessage }}
+            </p>
+          </div>
+        </div>
+        <div
+          class="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
+        >
+          <button
+            @click="cancelDeleteConfirm"
+            class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            @click="confirmDeleteConfirm"
+            class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-white bg-[#F52C11] hover:bg-[#d9250e] transition-colors"
+          >
+            Delete
           </button>
         </div>
       </div>
@@ -1384,6 +1435,11 @@ const showDatePicker = ref(false);
 const showServicesDropdown = ref(false);
 const openIndustryMenuIndex = ref(null);
 const editingIndex = ref(null);
+
+// Delete-confirmation modal (replaces native window.confirm)
+const showDeleteConfirmModal = ref(false);
+const deleteConfirmMessage = ref("");
+const deleteConfirmAction = ref(null);
 
 // Modal Tracking States
 const viewingRecord = ref(null);
@@ -1723,13 +1779,34 @@ async function restoreIndustry(industry) {
   }
 }
 
+function requestDeleteConfirm(message, action) {
+  deleteConfirmMessage.value = message;
+  deleteConfirmAction.value = action;
+  showDeleteConfirmModal.value = true;
+}
+
+function cancelDeleteConfirm() {
+  showDeleteConfirmModal.value = false;
+  deleteConfirmMessage.value = "";
+  deleteConfirmAction.value = null;
+}
+
+async function confirmDeleteConfirm() {
+  const action = deleteConfirmAction.value;
+  showDeleteConfirmModal.value = false;
+  deleteConfirmMessage.value = "";
+  deleteConfirmAction.value = null;
+  if (action) await action();
+}
+
+function requestPermanentDeleteIndustry(industry) {
+  requestDeleteConfirm(
+    `Are you completely certain you want to permanently delete "${industry}"  This cannot be undone.`,
+    () => permanentDeleteIndustry(industry)
+  );
+}
+
 async function permanentDeleteIndustry(industry) {
-  if (
-    !confirm(
-      `Are you completely certain you want to permanently delete "${industry}" and remove it from backend database systems storage? This cannot be undone.`
-    )
-  )
-    return;
   const industryId = industryIdByName.value[industry];
   if (!industryId) return;
   try {
@@ -1898,13 +1975,14 @@ async function restoreRecord(id) {
   }
 }
 
+function requestPermanentDeleteRecord(id) {
+  requestDeleteConfirm(
+    "Are you completely certain you want to permanently delete this lead trace out of backend database systems storage?",
+    () => permanentDeleteRecord(id)
+  );
+}
+
 async function permanentDeleteRecord(id) {
-  if (
-    !confirm(
-      "Are you completely certain you want to permanently delete this lead trace out of backend database systems storage?"
-    )
-  )
-    return;
   try {
     const target = archivedRecords.value.find((r) => r.id === id);
     const targetName =
@@ -1955,15 +2033,18 @@ async function restoreSelectedArchivedRecords() {
   }
 }
 
+function requestDeleteSelectedArchivedRecords() {
+  if (archiveSelectedRecordIds.value.length === 0) return;
+  const count = archiveSelectedRecordIds.value.length;
+  requestDeleteConfirm(
+    `Are you completely certain you want to permanently delete ${count} record(s)? This cannot be undone.`,
+    () => deleteSelectedArchivedRecords()
+  );
+}
+
 async function deleteSelectedArchivedRecords() {
   if (archiveSelectedRecordIds.value.length === 0) return;
   const count = archiveSelectedRecordIds.value.length;
-  if (
-    !confirm(
-      `Are you completely certain you want to permanently delete ${count} record(s) from backend database systems storage? This cannot be undone.`
-    )
-  )
-    return;
   try {
     await Promise.all(
       archiveSelectedRecordIds.value.map((id) =>
@@ -2013,15 +2094,18 @@ async function restoreSelectedArchivedIndustries() {
   }
 }
 
+function requestDeleteSelectedArchivedIndustries() {
+  if (archiveSelectedIndustryNames.value.length === 0) return;
+  const count = archiveSelectedIndustryNames.value.length;
+  requestDeleteConfirm(
+    `Are you completely certain you want to permanently delete ${count} industry(ies)? This cannot be undone.`,
+    () => deleteSelectedArchivedIndustries()
+  );
+}
+
 async function deleteSelectedArchivedIndustries() {
   if (archiveSelectedIndustryNames.value.length === 0) return;
   const count = archiveSelectedIndustryNames.value.length;
-  if (
-    !confirm(
-      `Are you completely certain you want to permanently delete ${count} industry(ies) from backend database systems storage? This cannot be undone.`
-    )
-  )
-    return;
   try {
     await Promise.all(
       archiveSelectedIndustryNames.value.map((name) => {
