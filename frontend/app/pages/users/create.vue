@@ -1,5 +1,5 @@
 <template>
-  <template v-if="canAdd">
+  <template v-if="canEdit">
     <div
       class="flex h-full min-h-0 flex-col overflow-hidden bg-[#e5e5e5] font-['Overpass'] text-[13px] text-[#1F2835]"
     >
@@ -20,8 +20,9 @@
               d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
             />
           </svg>
-          <i class="pi pi-users text-gray-600 text-xl"></i>
-          <span class="cursor-pointer transition-colors hover:text-[#F52C11]"
+          <span
+            @click="router.push('/users')"
+            class="cursor-pointer transition-colors hover:text-[#F52C11]"
             >User Management</span
           >
           <svg
@@ -37,7 +38,7 @@
               d="M9 5l7 7-7 7"
             />
           </svg>
-          <span class="text-[#F52C11] font-medium">Add User</span>
+          <span class="text-[#F52C11] font-medium">Edit User</span>
         </div>
       </div>
 
@@ -80,24 +81,24 @@
                   <label
                     class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                   >
-                    Full name <span class="text-[#F52C11]">*</span>
+                    Full Name <span class="text-[#F52C11]">*</span>
                   </label>
                   <input
-                    v-model="form.fullName"
+                    v-model="form.firstName"
                     type="text"
-                    placeholder="Full name"
+                    placeholder="First name"
                     :class="[
-                      'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                      errors.fullName
+                      'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] focus:outline-none transition-colors placeholder:text-gray-400',
+                      errors.firstName
                         ? 'border-[#F52C11]'
                         : 'border-gray-200 focus:border-[#F52C11]',
                     ]"
                   />
                   <p
-                    v-if="errors.fullName"
+                    v-if="errors.firstName"
                     class="text-[8px] text-[#F52C11] mt-0.5"
                   >
-                    Full name is required
+                    First name is required
                   </p>
                 </div>
 
@@ -112,7 +113,7 @@
                     type="email"
                     placeholder="example@company.com"
                     :class="[
-                      'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                      'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] focus:outline-none transition-colors placeholder:text-gray-400',
                       errors.email
                         ? 'border-[#F52C11]'
                         : 'border-gray-200 focus:border-[#F52C11]',
@@ -129,7 +130,34 @@
                   </p>
                 </div>
 
-                <div class="relative"></div>
+                <div>
+                  <label
+                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                  >
+                    Date added
+                  </label>
+                  <div class="relative">
+                    <input
+                      v-model="form.dateAdded"
+                      type="text"
+                      readonly
+                      class="w-full bg-gray-100 border border-gray-200 rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] focus:outline-none cursor-not-allowed pr-8 placeholder:text-gray-400"
+                    />
+                    <svg
+                      class="w-3.5 h-3.5 text-gray-400 absolute right-2.5 top-[7px] pointer-events-none"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -171,21 +199,21 @@
                   <label
                     class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                   >
-                    Create Password
+                    New Password
                   </label>
                   <input
-                    v-model="form.password"
+                    v-model="form.newPassword"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder="Leave blank to keep current password"
                     :class="[
                       'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                      errors.password
+                      errors.newPassword
                         ? 'border-[#F52C11]'
                         : 'border-gray-200 focus:border-[#F52C11]',
                     ]"
                   />
                   <p
-                    v-if="errors.password"
+                    v-if="errors.newPassword"
                     class="text-[8px] text-[#F52C11] mt-0.5"
                   >
                     Password is required
@@ -202,16 +230,16 @@
                   <label
                     class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
                   >
-                    Confirm Password <span class="text-[#F52C11]">*</span>
+                    Confirm New Password <span class="text-[#F52C11]">*</span>
                   </label>
                   <input
                     v-model="form.confirmPassword"
                     type="password"
                     placeholder="Re-enter new password"
-                    :disabled="!form.password"
+                    :disabled="!form.newPassword"
                     :class="[
                       'w-full border rounded-[4px] px-3 py-2 text-[12px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                      !form.password
+                      !form.newPassword
                         ? 'bg-gray-100 cursor-not-allowed border-gray-200'
                         : 'bg-white border-gray-200 focus:border-[#F52C11]',
                       errors.confirmPassword ? 'border-[#F52C11]' : '',
@@ -232,42 +260,31 @@
           <div
             class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden flex flex-col"
           >
-            <div class="px-3 py-1.5">
+            <div class="flex items-center gap-1.5 px-3 py-1.5">
               <div
-                class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,1.2fr)] items-center"
+                class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
               >
-                <div class="flex items-center gap-1.5">
-                  <div
-                    class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
-                  >
-                    <svg
-                      class="w-2.5 h-2.5 text-[#F52C11]"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h2
-                      class="text-[11px] font-bold text-[#1F2835] leading-tight"
-                    >
-                      Role & permissions
-                    </h2>
-                    <p class="text-[9px] text-gray-400 leading-tight">
-                      Controls what this user can access and do
-                    </p>
-                  </div>
-                </div>
+                <svg
+                  class="w-2.5 h-2.5 text-[#F52C11]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
+                </svg>
+              </div>
+              <div>
                 <h2 class="text-[11px] font-bold text-[#1F2835] leading-tight">
-                  Permissions
+                  Role & permissions
                 </h2>
+                <p class="text-[9px] text-gray-400 leading-tight">
+                  Controls what this user can access and do
+                </p>
               </div>
             </div>
 
@@ -284,24 +301,18 @@
                   <div class="relative" ref="roleDropdownRef">
                     <button
                       type="button"
-                      :disabled="rolesLoading"
                       @click="isRoleDropdownOpen = !isRoleDropdownOpen"
                       :class="[
-                        'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-left focus:outline-none transition-colors cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed',
-                        errors.role
+                        'w-full bg-white border rounded-[4px] px-3 py-2 text-[12px] text-left focus:outline-none transition-colors cursor-pointer',
+                        errors.roleId
                           ? 'border-[#F52C11]'
                           : isRoleDropdownOpen
                           ? 'border-[#F52C11]'
                           : 'border-gray-200',
-                        form.role ? 'text-[#1F2835]' : 'text-gray-400',
+                        form.roleId ? 'text-[#1F2835]' : 'text-gray-400',
                       ]"
                     >
-                      {{
-                        form.role ||
-                        (rolesLoading
-                          ? "Loading roles..."
-                          : "- Please select -")
-                      }}
+                      {{ selectedRoleName || "Select role" }}
                     </button>
                     <svg
                       class="w-2.5 h-2.5 text-[#F52C11] absolute right-2.5 top-[7px] pointer-events-none transition-transform"
@@ -323,22 +334,28 @@
                       class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-[4px] shadow-lg max-h-48 overflow-auto py-1"
                     >
                       <li
+                        @click="selectRole('')"
+                        class="px-3 py-1.5 text-[12px] text-gray-400 cursor-pointer hover:bg-[#FEF4F3] transition-colors"
+                      >
+                        Select role
+                      </li>
+                      <li
                         v-for="role in roles"
                         :key="role.id"
-                        @click="selectRole(role.role_name)"
+                        @click="selectRole(role.id)"
                         :class="[
                           'px-3 py-1.5 text-[12px] cursor-pointer transition-colors hover:bg-[#FEF4F3]',
-                          form.role === role.role_name
+                          form.roleId === role.id
                             ? 'bg-[#FEF4F3] text-[#F52C11] font-medium'
                             : 'text-[#1F2835]',
                         ]"
                       >
-                        {{ role.role_name }}
+                        {{ role.role_name || role.name }}
                       </li>
                     </ul>
                   </div>
                   <p
-                    v-if="errors.role"
+                    v-if="errors.roleId"
                     class="text-[8px] text-[#F52C11] mt-0.5"
                   >
                     Role is required
@@ -347,12 +364,17 @@
 
                 <div>
                   <label
+                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                  >
+                    Permissions
+                  </label>
+
+                  <label
                     class="flex items-start gap-2.5 p-2.5 mb-2 border border-gray-200 rounded-[6px] bg-white cursor-pointer hover:bg-gray-50 transition-colors"
                   >
                     <input
                       type="checkbox"
-                      v-model="globalFullAccess"
-                      @change="toggleGlobalFullAccess"
+                      v-model="isFullAccess"
                       class="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer shrink-0"
                     />
                     <div>
@@ -368,28 +390,32 @@
                   </label>
 
                   <div
-                    class="overflow-x-auto rounded-[4px] border border-gray-200"
+                    class="border border-gray-200 rounded-[4px] overflow-hidden transition-opacity"
+                    :class="{
+                      'opacity-50 pointer-events-none select-none':
+                        isFullAccess,
+                    }"
                   >
-                    <table class="min-w-[360px] w-full border-collapse">
+                    <table class="w-full border-collapse">
                       <thead>
-                        <tr class="border-b border-gray-200">
+                        <tr class="border-b border-gray-200 bg-gray-50/50">
                           <th
-                            class="text-left px-2 py-[3px] text-[9px] font-semibold text-[#F52C11]"
+                            class="text-left px-3 py-1.5 text-[10px] font-semibold text-[#F52C11]"
                           >
                             Module
                           </th>
                           <th
-                            class="text-center px-1.5 py-[3px] text-[9px] font-semibold text-[#F52C11] w-8"
+                            class="text-center px-2 py-1.5 text-[10px] font-semibold text-[#F52C11] w-10"
                           >
                             View
                           </th>
                           <th
-                            class="text-center px-1.5 py-[3px] text-[9px] font-semibold text-[#F52C11] w-8"
+                            class="text-center px-2 py-1.5 text-[10px] font-semibold text-[#F52C11] w-10"
                           >
                             Edit
                           </th>
                           <th
-                            class="text-center px-1.5 py-[3px] text-[9px] font-semibold text-[#F52C11] w-8"
+                            class="text-center px-2 py-1.5 text-[10px] font-semibold text-[#F52C11] w-10"
                           >
                             Add
                           </th>
@@ -399,59 +425,44 @@
                         <tr
                           v-for="module in permissions"
                           :key="module.name"
-                          class="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/30 transition-colors"
+                          class="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/30"
                         >
-                          <td class="px-2 py-[3px] text-[10px] text-[#1F2835]">
-                            <span class="inline-flex items-center gap-1">
+                          <td class="px-3 py-2 text-[11px] text-[#1F2835]">
+                            <span class="inline-flex items-center gap-1.5">
                               {{ module.name }}
                               <span
                                 v-if="hasAnyPermission(module)"
-                                class="px-1 py-[1px] rounded-[3px] bg-[#F52C11]/10 text-[7px] font-semibold text-[#F52C11] leading-none"
-                                title="This page will be granted to the new user"
+                                class="px-1 py-[1px] rounded-[3px] bg-[#F52C11]/10 text-[8px] font-semibold text-[#F52C11] leading-none"
+                                title="This user has access to this page"
                               >
                                 Granted
                               </span>
                             </span>
                           </td>
-                          <td class="px-1.5 py-[3px] text-center">
+                          <td class="px-2 py-2 text-center">
                             <input
                               type="checkbox"
                               v-model="module.view"
-                              @change="checkGlobalFullAccess"
-                              class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                              class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                             />
                           </td>
-                          <td class="px-1.5 py-[3px] text-center">
+                          <td class="px-2 py-2 text-center">
                             <input
+                              v-if="module.name !== 'Auditlogs'"
                               type="checkbox"
                               v-model="module.edit"
-                              @change="checkGlobalFullAccess"
-                              class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                              class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                             />
+                            <span v-else class="text-gray-300">—</span>
                           </td>
-                          <td class="px-1.5 py-[3px] text-center">
+                          <td class="px-2 py-2 text-center">
                             <input
+                              v-if="module.name !== 'Auditlogs'"
                               type="checkbox"
                               v-model="module.add"
-                              @change="checkGlobalFullAccess"
-                              class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
+                              class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                             />
-                          </td>
-                        </tr>
-                        <tr v-if="!pagesLoading && permissions.length === 0">
-                          <td
-                            colspan="4"
-                            class="px-2 py-4 text-center text-[10px] text-gray-400"
-                          >
-                            No pages found in the database.
-                          </td>
-                        </tr>
-                        <tr v-if="pagesLoading">
-                          <td
-                            colspan="4"
-                            class="px-2 py-4 text-center text-[10px] text-gray-400"
-                          >
-                            Loading pages...
+                            <span v-else class="text-gray-300">—</span>
                           </td>
                         </tr>
                       </tbody>
@@ -462,151 +473,51 @@
             </div>
 
             <div
-              class="flex flex-col-reverse gap-2 border-t border-gray-100 px-3 py-3 sm:flex-row sm:items-center sm:justify-end"
+              class="px-3 py-2 border-t border-gray-100 flex items-center justify-end gap-2 bg-gray-50/50"
             >
-              <button
-                @click="cancel"
-                class="w-full rounded-[4px] border border-gray-300 bg-white px-4 py-2 text-[11px] font-medium text-[#1F2835] transition-colors hover:bg-gray-50 sm:w-auto"
+              <p
+                v-if="submitMessage"
+                class="mr-auto text-[10px]"
+                :class="submitError ? 'text-[#F52C11]' : 'text-green-600'"
               >
-                Cancel
+                {{ submitMessage }}
+              </p>
+              <button
+                @click="discardChanges"
+                :disabled="saving"
+                class="px-3 py-1 rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+              >
+                Discard
               </button>
               <button
-                @click="createUser"
-                :disabled="!isFormValid || saving"
+                @click="saveChanges"
+                :disabled="!isFormValid || loading || saving"
                 :class="[
-                  'flex w-full items-center justify-center gap-1 rounded-[4px] px-4 py-2 text-[11px] font-medium transition-colors shadow-sm sm:w-auto',
-                  isFormValid && !saving
+                  'px-3 py-1 rounded-[4px] text-[11px] font-medium flex items-center gap-1.5 transition-colors shadow-sm',
+                  isFormValid && !loading && !saving
                     ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed',
                 ]"
               >
-                {{ saving ? "Creating..." : "Create User" }}
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                {{ saving ? "Saving..." : "Save changes" }}
               </button>
             </div>
           </div>
-          <p v-if="submitMessage" class="text-[10px] text-[#F52C11]">
-            {{ submitMessage }}
-          </p>
         </div>
       </main>
-
-      <div
-        v-if="showDatePicker"
-        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-        @click.self="showDatePicker = false"
-      >
-        <div class="bg-white rounded-[8px] w-[280px] shadow-xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-[13px] font-bold text-[#1F2835]">Select Date</h3>
-            <button
-              @click="showDatePicker = false"
-              class="text-gray-400 hover:text-[#1F2835]"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div class="flex items-center justify-between mb-2">
-            <button
-              @click="prevMonth"
-              class="p-1 hover:bg-gray-100 rounded text-gray-500"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <span class="text-[12px] font-semibold text-[#1F2835]">{{
-              currentMonthYear
-            }}</span>
-            <button
-              @click="nextMonth"
-              class="p-1 hover:bg-gray-100 rounded text-gray-500"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div class="grid grid-cols-7 gap-0.5 mb-1">
-            <div
-              v-for="day in ['S', 'M', 'T', 'W', 'T', 'F', 'S']"
-              :key="day"
-              class="text-center text-[9px] font-semibold text-gray-400 py-1"
-            >
-              {{ day }}
-            </div>
-          </div>
-          <div class="grid grid-cols-7 gap-0.5">
-            <div
-              v-for="date in calendarDates"
-              :key="date.key"
-              @click="selectDate(date)"
-              :class="[
-                'text-center text-[11px] py-1 rounded cursor-pointer transition-colors',
-                date.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
-                date.isSelected
-                  ? 'bg-[#F52C11] text-white'
-                  : 'hover:bg-gray-100',
-                date.isToday && !date.isSelected
-                  ? 'border border-[#F52C11] text-[#F52C11]'
-                  : '',
-              ]"
-            >
-              {{ date.day }}
-            </div>
-          </div>
-
-          <div
-            class="flex items-center justify-end gap-2 mt-3 pt-2 border-t border-gray-100"
-          >
-            <button
-              @click="showDatePicker = false"
-              class="px-3 py-[4px] rounded-[4px] text-[10px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              @click="confirmDate"
-              class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-3 py-[4px] rounded-[4px] text-[10px] font-medium transition-colors"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   </template>
 
@@ -617,7 +528,7 @@
       {{
         permissionsLoading
           ? "Checking permissions..."
-          : "You don't have permission to add users."
+          : "You don't have permission to edit users."
       }}
     </div>
   </template>
@@ -634,350 +545,126 @@ definePageMeta({
   middleware: "auth",
 });
 
+const route = useRoute();
+const router = useRouter();
+const { fetchUser, updateUser } = useUserApi();
+const { apiFetch } = useApi();
+
 // --- PERMISSIONS ---
 const {
   ready: permissionsReady,
   isLoading: permissionsLoading,
-  canAdd,
+  canEdit,
 } = usePermissions("user-management");
 
 const form = ref({
-  fullName: "",
+  firstName: "",
+  lastName: "",
   email: "",
-  password: "",
-  confirmPassword: "",
-  role: "",
   dateAdded: "",
+  newPassword: "",
+  confirmPassword: "",
+  roleId: "",
 });
-
-const { apiFetch } = useApi();
-const router = useRouter();
-const roles = ref([]);
-const rolesLoading = ref(false);
-const pagesLoading = ref(false);
-const saving = ref(false);
-const submitMessage = ref("");
-const permissions = ref([]);
-const globalFullAccess = ref(false);
 
 const errors = ref({
-  fullName: false,
+  firstName: false,
+  lastName: false,
   email: false,
-  password: false,
+  newPassword: false,
   confirmPassword: false,
-  role: false,
+  roleId: false,
 });
 
-const showDatePicker = ref(false);
-const selectedDate = ref(null);
-const viewDate = ref(new Date());
+const loading = ref(false);
+const saving = ref(false);
+const submitMessage = ref("");
+const submitError = ref(false);
+const originalForm = ref(null);
+const originalPermissions = ref(null);
+const roles = ref([]);
+const userPagePermissions = ref([]);
+const permissions = ref([]);
 const passwordReminder = ref(false);
 
-const currentMonthYear = computed(() => {
-  return viewDate.value.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  });
-});
+// Holds the per-page permission state from just before "Full Access" was
+// checked, so unchecking it can restore what the user had instead of
+// wiping every permission to false.
+const permissionsBeforeFullAccess = ref(null);
 
-const calendarDates = computed(() => {
-  const year = viewDate.value.getFullYear();
-  const month = viewDate.value.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const startDayOfWeek = firstDay.getDay();
-  const dates = [];
-  const today = new Date();
-  const prevMonthLastDay = new Date(year, month, 0).getDate();
+const isFullAccess = computed({
+  get() {
+    if (!permissions.value || permissions.value.length === 0) return false;
+    // Auditlogs is view-only, so it doesn't need edit/add to count as "full".
+    return permissions.value.every((m) =>
+      m.name === "Auditlogs" ? m.view : m.view && m.edit && m.add
+    );
+  },
+  set(val) {
+    if (val) {
+      // Turning Full Access ON: remember current state, then grant everything.
+      permissionsBeforeFullAccess.value = permissions.value.map((m) => ({
+        page_id: m.page_id,
+        view: m.view,
+        edit: m.edit,
+        add: m.add,
+      }));
 
-  for (let i = startDayOfWeek - 1; i >= 0; i--) {
-    dates.push({
-      key: `prev-${i}`,
-      day: prevMonthLastDay - i,
-      isCurrentMonth: false,
-      isSelected: false,
-      isToday: false,
-    });
-  }
-
-  for (let day = 1; day <= lastDay.getDate(); day++) {
-    const dateObj = new Date(year, month, day);
-    dates.push({
-      key: `current-${day}`,
-      day,
-      isCurrentMonth: true,
-      isSelected:
-        selectedDate.value &&
-        dateObj.toDateString() === selectedDate.value.toDateString(),
-      isToday: dateObj.toDateString() === today.toDateString(),
-      dateObj,
-    });
-  }
-
-  const remaining = 42 - dates.length;
-  for (let day = 1; day <= remaining; day++) {
-    dates.push({
-      key: `next-${day}`,
-      day,
-      isCurrentMonth: false,
-      isSelected: false,
-      isToday: false,
-    });
-  }
-
-  return dates;
-});
-
-function prevMonth() {
-  viewDate.value = new Date(
-    viewDate.value.getFullYear(),
-    viewDate.value.getMonth() - 1,
-    1
-  );
-}
-
-function nextMonth() {
-  viewDate.value = new Date(
-    viewDate.value.getFullYear(),
-    viewDate.value.getMonth() + 1,
-    1
-  );
-}
-
-function selectDate(date) {
-  if (!date.isCurrentMonth) {
-    if (date.day > 20) {
-      prevMonth();
+      permissions.value.forEach((m) => {
+        m.view = true;
+        // Auditlogs is view-only; Full Access shouldn't grant edit/add here.
+        if (m.name !== "Auditlogs") {
+          m.edit = true;
+          m.add = true;
+        } else {
+          m.edit = false;
+          m.add = false;
+        }
+      });
+    } else if (permissionsBeforeFullAccess.value) {
+      // Turning Full Access OFF: restore the prior per-page permissions
+      // rather than clearing everything.
+      permissions.value.forEach((m) => {
+        const prior = permissionsBeforeFullAccess.value.find(
+          (p) => Number(p.page_id) === Number(m.page_id)
+        );
+        m.view = prior ? prior.view : false;
+        m.edit = prior ? prior.edit : false;
+        m.add = prior ? prior.add : false;
+      });
+      permissionsBeforeFullAccess.value = null;
     } else {
-      nextMonth();
+      // No snapshot to restore (e.g. Full Access was already true when the
+      // form loaded) — fall back to clearing everything.
+      permissions.value.forEach((m) => {
+        m.view = false;
+        m.edit = false;
+        m.add = false;
+      });
     }
-    return;
-  }
-
-  selectedDate.value = date.dateObj;
-}
-
-function confirmDate() {
-  if (selectedDate.value) {
-    form.value.dateAdded = selectedDate.value.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-  }
-  showDatePicker.value = false;
-}
-
-function checkPasswordFirst() {
-  if (!form.value.password) {
-    passwordReminder.value = true;
-    setTimeout(() => {
-      passwordReminder.value = false;
-    }, 3000);
-  }
-}
+  },
+});
 
 const isFormValid = computed(() => {
   return (
-    form.value.fullName.trim() &&
+    form.value.firstName.trim() &&
+    form.value.lastName.trim() &&
     form.value.email.trim() &&
-    form.value.password.trim() &&
-    form.value.confirmPassword.trim() &&
-    form.value.password === form.value.confirmPassword &&
-    form.value.role &&
-    selectedRoleId.value
+    form.value.roleId
   );
 });
-
-const selectedRoleId = computed(() => {
-  const selectedRole = roles.value.find(
-    (role) =>
-      role.role_name?.toLowerCase() === form.value.role.trim().toLowerCase()
-  );
-  return selectedRole?.id || null;
-});
-
-function validateForm() {
-  errors.value.fullName = !form.value.fullName.trim();
-  errors.value.email = !form.value.email.trim();
-  errors.value.password = !form.value.password.trim();
-  errors.value.confirmPassword =
-    !form.value.confirmPassword.trim() ||
-    form.value.password !== form.value.confirmPassword;
-  errors.value.role = !form.value.role;
-
-  return !Object.values(errors.value).some((error) => error);
-}
-
-function cancel() {
-  router.push("/users");
-}
-
-function resetErrors() {
-  errors.value = {
-    fullName: false,
-    email: false,
-    password: false,
-    confirmPassword: false,
-    role: false,
-  };
-}
-
-// Utility to format "user-management" to "User Management"
-function formatPageName(slug) {
-  if (!slug) return "";
-  return String(slug)
-    .replace(/[_-]+/g, " ")
-    .split(" ")
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function unwrapData(response) {
-  return Array.isArray(response) ? response : response?.data || [];
-}
-
-function buildPermissionRows(pages) {
-  permissions.value = pages.map((page) => ({
-    page_id: page.id,
-    page_name: page.page_name,
-    name: formatPageName(page.page_name),
-    view: false,
-    edit: false,
-    add: false,
-  }));
-}
-
-// True when at least one permission is checked for this page — flags
-// which pages will be granted to the new user on save.
-function hasAnyPermission(row) {
-  return Boolean(row.view || row.edit || row.add);
-}
-
-// Selects or deselects all checkboxes based on master checkbox state
-function toggleGlobalFullAccess() {
-  const state = globalFullAccess.value;
-  permissions.value.forEach((module) => {
-    module.view = state;
-    module.edit = state;
-    module.add = state;
-  });
-}
-
-// Verifies if all checkmarks are clicked, and automatically toggles the master checkbox
-function checkGlobalFullAccess() {
-  if (permissions.value.length === 0) {
-    globalFullAccess.value = false;
-    return;
-  }
-  globalFullAccess.value = permissions.value.every(
-    (module) => module.view && module.edit && module.add
-  );
-}
-
-// Saves permissions for the newly created user. Only pages with at least
-// one checkbox checked get a row — this writes directly to
-// user_page_permissions, there is no role-level default anymore.
-async function saveUserPermissions(userId) {
-  if (!userId) return;
-
-  for (const permissionRow of permissions.value) {
-    if (!hasAnyPermission(permissionRow)) continue;
-
-    await apiFetch("/user_page_permissions", {
-      method: "POST",
-      body: {
-        user_id: userId,
-        page_id: permissionRow.page_id,
-        permission_name: permissionRow.page_name,
-        can_view: Boolean(permissionRow.view),
-        can_create: Boolean(permissionRow.add),
-        can_edit: Boolean(permissionRow.edit),
-      },
-    });
-  }
-}
-
-const { logAuditAction } = useAuditLog();
-const toast = useToast();
-
-async function createUser() {
-  if (!validateForm()) {
-    toast.error("Please fill in all required fields correctly.");
-    return;
-  }
-
-  if (!selectedRoleId.value) {
-    errors.value.role = true;
-    submitMessage.value = "Selected role was not found in the database.";
-    toast.error("Selected role was not found in the database.");
-    return;
-  }
-
-  saving.value = true;
-  submitMessage.value = "";
-
-  try {
-    const fullName = form.value.fullName.trim();
-
-    const userResponse = await apiFetch("/users", {
-      method: "POST",
-      body: {
-        full_name: fullName,
-        email: form.value.email.trim(),
-        password: form.value.password,
-        role_id: selectedRoleId.value,
-      },
-    });
-
-    const createdUser = userResponse?.data || userResponse;
-
-    const hasPermissions = permissions.value.some((row) =>
-      hasAnyPermission(row)
-    );
-    try {
-      await saveUserPermissions(createdUser?.id);
-      if (hasPermissions) {
-        toast.success("Permissions saved for the new user.");
-      }
-    } catch (permissionsError) {
-      console.error("Error saving user permissions:", permissionsError);
-      toast.warning("User was created, but permissions could not be saved.");
-    }
-
-    logAuditAction({
-      module: "User Management",
-      description: `Created new user account for ${fullName} (${form.value.email.trim()})`,
-    });
-
-    toast.success(`${fullName} was created successfully.`);
-
-    await router.push("/users");
-  } catch (error) {
-    const message = error?.data?.message || error?.message || "";
-    const isDuplicate =
-      error?.status === 409 || /already exists|duplicate/i.test(message || "");
-
-    submitMessage.value = message || "Unable to create user.";
-
-    if (isDuplicate) {
-      errors.value.email = true;
-      toast.error("A user with this email already exists.");
-    } else {
-      toast.error(message || "Unable to create user. Please try again.");
-    }
-  } finally {
-    saving.value = false;
-  }
-}
 
 // --- ROLE DROPDOWN ---
 const isRoleDropdownOpen = ref(false);
 const roleDropdownRef = ref(null);
 
-function selectRole(roleName) {
-  form.value.role = roleName;
+const selectedRoleName = computed(() => {
+  const selected = roles.value.find((role) => role.id === form.value.roleId);
+  return selected ? selected.role_name || selected.name : "";
+});
+
+function selectRole(roleId) {
+  form.value.roleId = roleId;
   isRoleDropdownOpen.value = false;
 }
 
@@ -992,35 +679,320 @@ onMounted(async () => {
 
   await permissionsReady;
 
-  if (!canAdd.value) {
-    toast.error("You don't have permission to add users.");
+  if (!canEdit.value) {
+    toast.error("You don't have permission to edit users.");
     router.push("/users");
     return;
   }
 
-  rolesLoading.value = true;
-  pagesLoading.value = true;
-
-  try {
-    const [rolesResponse, pagesResponse] = await Promise.all([
-      apiFetch("/roles"),
-      apiFetch("/pages"),
-    ]);
-
-    roles.value = unwrapData(rolesResponse);
-    buildPermissionRows(unwrapData(pagesResponse));
-  } catch (error) {
-    submitMessage.value = "Unable to load initial data from the database.";
-    toast.error("Unable to load roles and pages. Please refresh the page.");
-  } finally {
-    rolesLoading.value = false;
-    pagesLoading.value = false;
-  }
+  loadEditData();
 });
 
 onUnmounted(() => {
   document.removeEventListener("click", handleClickOutsideRoleDropdown);
 });
+
+async function loadEditData() {
+  const userId = route.query.id;
+  if (!userId) {
+    router.push("/users");
+    return;
+  }
+
+  loading.value = true;
+  submitMessage.value = "";
+
+  try {
+    const [rolesResponse, pagesResponse, userResponse] = await Promise.all([
+      apiFetch("/roles"),
+      apiFetch("/pages"),
+      fetchUser(userId),
+    ]);
+
+    roles.value = unwrapData(rolesResponse);
+    buildPermissionRows(unwrapData(pagesResponse));
+
+    // Fetched separately: if this endpoint isn't set up yet (route/migration
+    // missing) or errors out, we still want the rest of the page to load —
+    // the user just won't see their saved permissions until it's fixed.
+    try {
+      const userPermissionsResponse = await apiFetch(
+        `/user_page_permissions?user_id=${userId}`
+      );
+      userPagePermissions.value = unwrapData(userPermissionsResponse);
+    } catch (permissionsError) {
+      console.error("Unable to load user permissions:", permissionsError);
+      userPagePermissions.value = [];
+      toast.warning(
+        "This user's saved permissions couldn't be loaded. Starting from a blank matrix instead."
+      );
+    }
+
+    fillForm(userResponse.data);
+  } catch (error) {
+    console.error("Error loading user:", error);
+    submitError.value = true;
+    submitMessage.value = "Unable to load this user. Please try again.";
+    toast.error("Unable to load this user. Please try again.");
+  } finally {
+    loading.value = false;
+  }
+}
+
+function unwrapData(response) {
+  return Array.isArray(response) ? response : response?.data || [];
+}
+
+function formatPageName(slug) {
+  if (!slug) return "";
+  return String(slug)
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function buildPermissionRows(pages) {
+  permissions.value = pages.map((page) => ({
+    page_id: page.id,
+    page_name: page.page_name,
+    name: formatPageName(page.page_name),
+    view: false,
+    edit: false,
+    add: false,
+  }));
+}
+
+// Populates the permission matrix directly from this user's saved
+// user_page_permissions rows. A page with no saved row means the user
+// currently has no access to it, so it starts unchecked.
+function applyUserPermissions() {
+  const userId = route.query.id;
+
+  permissions.value.forEach((permissionRow) => {
+    const savedPermission = userPagePermissions.value.find((permission) => {
+      // The endpoint is already scoped with ?user_id=, so some rows may
+      // omit user_id entirely. Only enforce the check when it's present —
+      // otherwise Number(undefined) (NaN) would never match and every
+      // checkbox would silently stay unchecked.
+      const hasUserId =
+        permission.user_id !== undefined && permission.user_id !== null;
+      const matchesUser =
+        !hasUserId || Number(permission.user_id) === Number(userId);
+
+      return (
+        matchesUser &&
+        Number(permission.page_id) === Number(permissionRow.page_id)
+      );
+    });
+
+    permissionRow.view = Boolean(savedPermission?.can_view);
+    permissionRow.edit = Boolean(savedPermission?.can_edit);
+    permissionRow.add = Boolean(savedPermission?.can_create);
+  });
+}
+
+// True when at least one permission is granted for this page — flags
+// which pages this user currently has access to.
+function hasAnyPermission(row) {
+  return Boolean(row.view || row.edit || row.add);
+}
+
+function fillForm(user) {
+  const fullName = user?.full_name || user?.name || "";
+  const [firstName = "", ...lastNameParts] = fullName.trim().split(/\s+/);
+
+  form.value = {
+    firstName,
+    lastName: lastNameParts.join(" "),
+    email: user?.email || "",
+    dateAdded: formatDate(user?.created_at),
+    newPassword: "",
+    confirmPassword: "",
+    roleId: user?.role_id || user?.role?.id || "",
+  };
+
+  applyUserPermissions();
+
+  originalForm.value = { ...form.value };
+  originalPermissions.value = JSON.parse(JSON.stringify(permissions.value));
+  resetErrors();
+}
+
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+// Redirects user straight back to User Management page
+function discardChanges() {
+  router.push("/users");
+}
+
+function checkPasswordFirst() {
+  if (!form.value.newPassword) {
+    passwordReminder.value = true;
+    setTimeout(() => {
+      passwordReminder.value = false;
+    }, 3000);
+  }
+}
+
+function validateForm() {
+  errors.value.firstName = !form.value.firstName.trim();
+  errors.value.lastName = !form.value.lastName.trim();
+  errors.value.email = !form.value.email.trim();
+  errors.value.roleId = !form.value.roleId;
+
+  if (form.value.newPassword || form.value.confirmPassword) {
+    errors.value.newPassword = !form.value.newPassword.trim();
+    errors.value.confirmPassword =
+      !form.value.confirmPassword.trim() ||
+      form.value.newPassword !== form.value.confirmPassword;
+  } else {
+    errors.value.newPassword = false;
+    errors.value.confirmPassword = false;
+  }
+
+  return !Object.values(errors.value).some((error) => error);
+}
+
+function resetErrors() {
+  errors.value = {
+    firstName: false,
+    lastName: false,
+    email: false,
+    newPassword: false,
+    confirmPassword: false,
+    roleId: false,
+  };
+}
+
+// Writes this user's permissions directly to user_page_permissions. Pages
+// with at least one checkbox checked are saved (created or updated); pages
+// with none checked have any existing saved row removed.
+async function syncUserPermissions() {
+  const userId = route.query.id;
+  if (!userId) return;
+
+  for (const permissionRow of permissions.value) {
+    const existingPermission = userPagePermissions.value.find(
+      (permission) =>
+        Number(permission.user_id) === Number(userId) &&
+        Number(permission.page_id) === Number(permissionRow.page_id)
+    );
+
+    if (!hasAnyPermission(permissionRow)) {
+      // Nothing granted on this page: remove any saved row for it.
+      if (existingPermission) {
+        await apiFetch(`/user_page_permissions/${existingPermission.id}`, {
+          method: "DELETE",
+        });
+        userPagePermissions.value = userPagePermissions.value.filter(
+          (permission) => permission.id !== existingPermission.id
+        );
+      }
+      continue;
+    }
+
+    const payload = {
+      user_id: Number(userId),
+      page_id: permissionRow.page_id,
+      permission_name: permissionRow.page_name,
+      can_view: Boolean(permissionRow.view),
+      can_create: Boolean(permissionRow.add),
+      can_edit: Boolean(permissionRow.edit),
+    };
+
+    if (existingPermission) {
+      await apiFetch(`/user_page_permissions/${existingPermission.id}`, {
+        method: "PUT",
+        body: payload,
+      });
+    } else {
+      const response = await apiFetch("/user_page_permissions", {
+        method: "POST",
+        body: payload,
+      });
+      const createdPermission = response?.data || response;
+      userPagePermissions.value.push(createdPermission);
+    }
+  }
+}
+
+const { logAuditAction } = useAuditLog();
+const toast = useToast();
+
+async function saveChanges() {
+  if (!validateForm()) {
+    toast.error("Please fill in all required fields correctly.");
+    return;
+  }
+
+  saving.value = true;
+  submitMessage.value = "";
+  submitError.value = false;
+
+  try {
+    const fullName =
+      `${form.value.firstName.trim()} ${form.value.lastName.trim()}`.trim();
+
+    const body = {
+      full_name: fullName,
+      email: form.value.email.trim(),
+      role_id: Number(form.value.roleId),
+    };
+
+    const passwordChanged = Boolean(form.value.newPassword.trim());
+    if (passwordChanged) {
+      body.password = form.value.newPassword;
+    }
+
+    await updateUser(route.query.id, body);
+
+    try {
+      await syncUserPermissions();
+    } catch (syncError) {
+      console.error("Error syncing user permissions:", syncError);
+      toast.warning(
+        "User was updated, but permission changes could not be saved."
+      );
+    }
+
+    submitMessage.value = "User updated successfully.";
+
+    logAuditAction({
+      module: "User Management",
+      description: passwordChanged
+        ? `Updated user account and reset password for ${fullName}`
+        : `Updated user account for ${fullName}`,
+    });
+
+    toast.success(`${fullName} was updated successfully.`);
+
+    originalForm.value = { ...form.value };
+    originalPermissions.value = JSON.parse(JSON.stringify(permissions.value));
+    resetErrors();
+
+    await router.push("/users");
+  } catch (error) {
+    console.error("Error updating user:", error);
+    submitError.value = true;
+    const message =
+      error?.data?.message || "Unable to save changes. Please try again.";
+    submitMessage.value = message;
+    toast.error(message);
+  } finally {
+    saving.value = false;
+  }
+}
 </script>
 
 <style scoped>

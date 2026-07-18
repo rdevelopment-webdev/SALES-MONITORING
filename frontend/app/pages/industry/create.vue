@@ -56,203 +56,430 @@
     </div>
     <main class="flex-1 flex flex-col min-h-0 overflow-hidden">
       <div class="flex-1 overflow-y-auto p-6 md:p-8">
-      <div class="max-w-4xl mx-auto w-full">
-        <div class="mb-4">
-          <h1 class="text-[15px] font-bold text-[#1F2835] leading-tight">
-            Add new record
-          </h1>
-          <p class="text-[10px] text-gray-500 mt-0.5">
-            Industry page – Leads Tracker
-          </p>
-          <p
-            v-if="saveError"
-            class="mt-1 text-[10px] font-medium text-[#F52C11]"
-          >
-            {{ saveError }}
-          </p>
-        </div>
+        <div class="max-w-4xl mx-auto w-full">
+          <div class="mb-4">
+            <h1 class="text-[15px] font-bold text-[#1F2835] leading-tight">
+              Add new record
+            </h1>
+            <p class="text-[10px] text-gray-500 mt-0.5">
+              Industry page – Leads Tracker
+            </p>
+            <p
+              v-if="saveError"
+              class="mt-1 text-[10px] font-medium text-[#F52C11]"
+            >
+              {{ saveError }}
+            </p>
+          </div>
 
-        <div class="w-full space-y-3">
-          <div
-            class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
-          >
-            <div class="flex items-center gap-1.5 px-3 py-2">
-              <div
-                class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
-              >
-                <svg
-                  class="w-2.5 h-2.5 text-[#F52C11]"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
+          <div class="w-full space-y-3">
+            <div
+              class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
+            >
+              <div class="flex items-center gap-1.5 px-3 py-2">
+                <div
+                  class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
+                  <svg
+                    class="w-2.5 h-2.5 text-[#F52C11]"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h2
+                    class="text-[11px] font-bold text-[#1F2835] leading-tight"
+                  >
+                    Business information
+                  </h2>
+                  <p class="text-[9px] text-gray-400 leading-tight">
+                    Enter the lead's contact and company details
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 class="text-[11px] font-bold text-[#1F2835] leading-tight">
-                  Business information
-                </h2>
-                <p class="text-[9px] text-gray-400 leading-tight">
-                  Enter the lead's contact and company details
-                </p>
+
+              <div class="px-3 pt-3 pb-2.5 border-t border-gray-100">
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Business name
+                    </label>
+                    <input
+                      v-model="form.businessName"
+                      type="text"
+                      placeholder="Enter business name"
+                      :class="[
+                        'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                        errors.businessName
+                          ? 'border-[#F52C11]'
+                          : 'border-gray-200 focus:border-[#F52C11]',
+                      ]"
+                      @keyup.enter="saveRecord"
+                    />
+                    <p
+                      v-if="errors.businessName"
+                      class="text-[8px] text-[#F52C11] mt-0.5"
+                    >
+                      Business name is required
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Job position
+                    </label>
+                    <input
+                      v-model="form.jobPosition"
+                      type="text"
+                      placeholder="CEO, Owner, Manager..."
+                      class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
+                      @keyup.enter="saveRecord"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Contact person
+                    </label>
+                    <input
+                      v-model="form.contactPerson"
+                      type="text"
+                      placeholder="Enter a name"
+                      :class="[
+                        'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                        errors.contactPerson
+                          ? 'border-[#F52C11]'
+                          : 'border-gray-200 focus:border-[#F52C11]',
+                      ]"
+                      @keyup.enter="saveRecord"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Email
+                    </label>
+                    <input
+                      v-model="form.email"
+                      type="email"
+                      placeholder="example@company.com"
+                      :class="[
+                        'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                        errors.email
+                          ? 'border-[#F52C11]'
+                          : 'border-gray-200 focus:border-[#F52C11]',
+                      ]"
+                      @blur="validateEmailField"
+                      @keyup.enter="saveRecord"
+                    />
+                    <p
+                      v-if="errors.email"
+                      class="text-[8px] text-[#F52C11] mt-0.5"
+                    >
+                      Enter a valid email (must include @)
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Contact number
+                    </label>
+                    <input
+                      v-model="form.contactNumber"
+                      type="text"
+                      inputmode="numeric"
+                      maxlength="11"
+                      placeholder="09XXXXXXXXX"
+                      :class="[
+                        'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
+                        errors.contactNumber
+                          ? 'border-[#F52C11]'
+                          : 'border-gray-200 focus:border-[#F52C11]',
+                      ]"
+                      @keydown="blockNonDigits"
+                      @blur="validateContactNumberField"
+                      @keyup.enter="saveRecord"
+                    />
+                    <p
+                      v-if="errors.contactNumber"
+                      class="text-[8px] text-[#F52C11] mt-0.5"
+                    >
+                      Enter the complete 11-digit number
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Service
+                    </label>
+                    <div class="relative">
+                      <button
+                        type="button"
+                        ref="serviceTriggerRef"
+                        @click="toggleServiceDropdown"
+                        :class="[
+                          'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
+                          errors.service
+                            ? 'border-[#F52C11]'
+                            : showServiceDropdown
+                            ? 'border-[#F52C11]'
+                            : 'border-gray-200',
+                          form.service ? 'text-[#1F2835]' : 'text-gray-400',
+                        ]"
+                      >
+                        <span class="truncate">{{
+                          form.service || "Select a service"
+                        }}</span>
+                        <svg
+                          :class="[
+                            'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
+                            showServiceDropdown
+                              ? 'text-[#F52C11] rotate-180'
+                              : 'text-[#F52C11]',
+                          ]"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+
+                      <teleport to="body">
+                        <div
+                          v-if="showServiceDropdown"
+                          ref="servicePanelRef"
+                          :style="servicePanelStyle"
+                          class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
+                        >
+                          <div class="max-h-48 overflow-y-auto scrollbar-red">
+                            <div
+                              v-for="service in serviceOptions"
+                              :key="service"
+                              :class="[
+                                'group flex items-center px-3 py-1.5 cursor-pointer transition-colors',
+                                form.service === service
+                                  ? 'bg-[#F52C11]/10 text-[#F52C11]'
+                                  : 'hover:bg-[#F52C11]/5 hover:text-[#1F2835]',
+                              ]"
+                              @click="selectService(service)"
+                            >
+                              <span class="text-[11px]">{{ service }}</span>
+                            </div>
+                          </div>
+                          <!-- Inline add new service (like PIP) -->
+                          <div
+                            class="border-t border-gray-100 px-2 py-1"
+                            @click.stop
+                          >
+                            <div
+                              v-if="!showAddServiceInput"
+                              @click="openAddService"
+                              class="flex items-center gap-1.5 px-1 py-1.5 text-[11px] text-[#F52C11] font-medium cursor-pointer hover:bg-[#F52C11]/5 rounded-[4px] transition-colors"
+                            >
+                              <svg
+                                class="w-2.5 h-2.5 text-[#F52C11]"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M12 4v16m8-8H4"
+                                />
+                              </svg>
+                              <span
+                                class="text-[11px] font-medium text-[#F52C11]"
+                                >Add new service</span
+                              >
+                            </div>
+                            <div v-else class="flex items-center gap-1 py-1">
+                              <input
+                                ref="newServiceInputRef"
+                                v-model="newServiceName"
+                                type="text"
+                                placeholder="New service name"
+                                class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11]"
+                                @keyup.enter="addNewService"
+                                @keyup.esc="cancelAddService"
+                              />
+                              <button
+                                type="button"
+                                @click="addNewService"
+                                class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5"
+                              >
+                                Add
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </teleport>
+                    </div>
+                    <p
+                      v-if="errors.service"
+                      class="text-[8px] text-[#F52C11] mt-0.5"
+                    >
+                      Service is required
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Date
+                    </label>
+                    <div class="relative">
+                      <input
+                        v-model="form.date"
+                        type="text"
+                        placeholder="mm/dd/yyyy"
+                        readonly
+                        :class="[
+                          'w-full border rounded-[4px] px-2.5 py-[5px] pr-8 text-[11px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer',
+                          errors.date
+                            ? 'border-[#F52C11] bg-white'
+                            : 'border-gray-200 bg-white',
+                        ]"
+                        @click="showDatePicker = true"
+                      />
+                      <button
+                        @click="showDatePicker = true"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F52C11] transition-colors"
+                        type="button"
+                      >
+                        <svg
+                          class="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <p
+                      v-if="errors.date"
+                      class="text-[8px] text-[#F52C11] mt-0.5"
+                    >
+                      Date is required
+                    </p>
+                  </div>
+
+                  <div>
+                    <label
+                      class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+                    >
+                      Remarks
+                    </label>
+                    <input
+                      v-model="form.remarks"
+                      type="text"
+                      placeholder="Notes about this lead, follow-up actions, outcomes..."
+                      class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
+                      @keyup.enter="saveRecord"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="px-3 pt-3 pb-2.5 border-t border-gray-100">
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+            <div class="grid grid-cols-2 gap-3">
+              <div
+                class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
+              >
+                <div class="flex items-center gap-1.5 px-3 py-1.5">
+                  <div
+                    class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
                   >
-                    Business name
-                  </label>
-                  <input
-                    v-model="form.businessName"
-                    type="text"
-                    placeholder="Enter business name"
-                    :class="[
-                      'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                      errors.businessName
-                        ? 'border-[#F52C11]'
-                        : 'border-gray-200 focus:border-[#F52C11]',
-                    ]"
-                    @keyup.enter="saveRecord"
-                  />
-                  <p
-                    v-if="errors.businessName"
-                    class="text-[8px] text-[#F52C11] mt-0.5"
-                  >
-                    Business name is required
-                  </p>
+                    <svg
+                      class="w-2.5 h-2.5 text-[#F52C11]"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2
+                      class="text-[11px] font-bold text-[#1F2835] leading-tight"
+                    >
+                      Location <span class="text-[#F52C11]">*</span>
+                    </h2>
+                    <p class="text-[9px] text-gray-400 leading-tight">
+                      The primary operating location for this lead.
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Job position
-                  </label>
-                  <input
-                    v-model="form.jobPosition"
-                    type="text"
-                    placeholder="CEO, Owner, Manager..."
-                    class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
-                    @keyup.enter="saveRecord"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Contact person
-                  </label>
-                  <input
-                    v-model="form.contactPerson"
-                    type="text"
-                    placeholder="Enter a name"
-                    :class="[
-                      'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                      errors.contactPerson
-                        ? 'border-[#F52C11]'
-                        : 'border-gray-200 focus:border-[#F52C11]',
-                    ]"
-                    @keyup.enter="saveRecord"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Email
-                  </label>
-                  <input
-                    v-model="form.email"
-                    type="email"
-                    placeholder="example@company.com"
-                    :class="[
-                      'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                      errors.email
-                        ? 'border-[#F52C11]'
-                        : 'border-gray-200 focus:border-[#F52C11]',
-                    ]"
-                    @blur="validateEmailField"
-                    @keyup.enter="saveRecord"
-                  />
-                  <p
-                    v-if="errors.email"
-                    class="text-[8px] text-[#F52C11] mt-0.5"
-                  >
-                    Enter a valid email (must include @)
-                  </p>
-                </div>
-
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Contact number
-                  </label>
-                  <input
-                    v-model="form.contactNumber"
-                    type="tel"
-                    inputmode="numeric"
-                    maxlength="13"
-                    placeholder="09XX-XXX-XXXX"
-                    :class="[
-                      'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
-                      errors.contactNumber
-                        ? 'border-[#F52C11]'
-                        : 'border-gray-200 focus:border-[#F52C11]',
-                    ]"
-                    @input="formatContactNumber"
-                    @keydown="handleContactKeydown"
-                    @blur="validateContactNumberField"
-                    @keyup.enter="saveRecord"
-                  />
-                  <p
-                    v-if="errors.contactNumber"
-                    class="text-[8px] text-[#F52C11] mt-0.5"
-                  >
-                    Enter the complete 11-digit number
-                  </p>
-                </div>
-
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Service
-                  </label>
+                <div class="px-3 pb-2.5 pt-1">
                   <div class="relative">
                     <button
                       type="button"
-                      ref="serviceTriggerRef"
-                      @click="toggleServiceDropdown"
+                      ref="locationTriggerRef"
+                      @click="toggleLocationDropdown"
                       :class="[
                         'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
-                        errors.service
+                        errors.location
                           ? 'border-[#F52C11]'
-                          : showServiceDropdown
+                          : showLocationDropdown
                           ? 'border-[#F52C11]'
                           : 'border-gray-200',
-                        form.service ? 'text-[#1F2835]' : 'text-gray-400',
+                        form.location ? 'text-[#1F2835]' : 'text-gray-400',
                       ]"
                     >
                       <span class="truncate">{{
-                        form.service || "Select a service"
+                        form.location || "Select a location"
                       }}</span>
                       <svg
                         :class="[
                           'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
-                          showServiceDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
+                          showLocationDropdown
+                            ? 'text-[#F52C11] rotate-180'
+                            : 'text-[#F52C11]',
                         ]"
                         fill="none"
                         stroke="currentColor"
@@ -269,425 +496,248 @@
 
                     <teleport to="body">
                       <div
-                        v-if="showServiceDropdown"
-                        ref="servicePanelRef"
-                        :style="servicePanelStyle"
+                        v-if="showLocationDropdown"
+                        ref="locationPanelRef"
+                        :style="locationPanelStyle"
                         class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
                       >
                         <div class="max-h-48 overflow-y-auto scrollbar-red">
-<div
-  v-for="service in serviceOptions"
-  :key="service"
-  :class="[
-    'group flex items-center px-3 py-1.5 cursor-pointer transition-colors',
-    form.service === service ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 hover:text-[#1F2835]'
-  ]"
-  @click="selectService(service)"
->
-  <span class="text-[11px]">{{ service }}</span>
-</div>
-                        </div>
-                        <!-- Inline add new service (like PIP) -->
-                        <div class="border-t border-gray-100 px-2 py-1" @click.stop>
                           <div
-                            v-if="!showAddServiceInput"
-                            @click="openAddService"
-                            class="flex items-center gap-1.5 px-1 py-1.5 text-[11px] text-[#F52C11] font-medium cursor-pointer hover:bg-[#F52C11]/5 rounded-[4px] transition-colors"
+                            v-for="loc in locationOptions"
+                            :key="loc"
+                            :class="[
+                              'px-3 py-1.5 cursor-pointer transition-colors text-[11px]',
+                              form.location === loc
+                                ? 'bg-[#F52C11]/10 text-[#F52C11]'
+                                : 'hover:bg-[#F52C11]/5 text-[#1F2835]',
+                            ]"
+                            @click="selectLocation(loc)"
                           >
-                            <svg
-                              class="w-2.5 h-2.5 text-[#F52C11]"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2.5"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 4v16m8-8H4"
-                              />
-                            </svg>
-                            <span class="text-[11px] font-medium text-[#F52C11]"
-                              >Add new service</span
-                            >
-                          </div>
-                          <div v-else class="flex items-center gap-1 py-1">
-                            <input
-                              ref="newServiceInputRef"
-                              v-model="newServiceName"
-                              type="text"
-                              placeholder="New service name"
-                              class="flex-1 border border-gray-200 rounded-[4px] px-2 py-1 text-[11px] focus:outline-none focus:border-[#F52C11]"
-                              @keyup.enter="addNewService"
-                              @keyup.esc="cancelAddService"
-                            />
-                            <button type="button" @click="addNewService" class="text-[#F52C11] hover:text-[#d9250e] text-[10px] font-semibold px-1.5">
-                              Add
-                            </button>
+                            {{ loc }}
                           </div>
                         </div>
                       </div>
                     </teleport>
                   </div>
                   <p
-                    v-if="errors.service"
+                    v-if="errors.location"
                     class="text-[8px] text-[#F52C11] mt-0.5"
                   >
-                    Service is required
+                    Location is required
                   </p>
                 </div>
+              </div>
 
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
+              <div
+                class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
+              >
+                <div class="flex items-center gap-1.5 px-3 py-1.5">
+                  <div
+                    class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
                   >
-                    Date
-                  </label>
-                  <div class="relative">
-                    <input
-                      v-model="form.date"
-                      type="text"
-                      placeholder="mm/dd/yyyy"
-                      readonly
-                      :class="[
-                        'w-full border rounded-[4px] px-2.5 py-[5px] pr-8 text-[11px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors cursor-pointer',
-                        errors.date
-                          ? 'border-[#F52C11] bg-white'
-                          : 'border-gray-200 bg-white',
-                      ]"
-                      @click="showDatePicker = true"
-                    />
-                    <button
-                      @click="showDatePicker = true"
-                      class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F52C11] transition-colors"
-                      type="button"
+                    <svg
+                      class="w-2.5 h-2.5 text-[#F52C11]"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
                     >
-                      <svg
-                        class="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </button>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
+                    </svg>
                   </div>
-                  <p
-                    v-if="errors.date"
-                    class="text-[8px] text-[#F52C11] mt-0.5"
-                  >
-                    Date is required
-                  </p>
-                </div>
-
-                <div>
-                  <label
-                    class="block text-[10px] font-semibold text-[#1F2835] mb-0.5"
-                  >
-                    Remarks
-                  </label>
-                  <input
-                    v-model="form.remarks"
-                    type="text"
-                    placeholder="Notes about this lead, follow-up actions, outcomes..."
-                    class="w-full bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
-                    @keyup.enter="saveRecord"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div
-              class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
-            >
-              <div class="flex items-center gap-1.5 px-3 py-1.5">
-                <div
-                  class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
-                >
-                  <svg
-                    class="w-2.5 h-2.5 text-[#F52C11]"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h2
-                    class="text-[11px] font-bold text-[#1F2835] leading-tight"
-                  >
-                    Location <span class="text-[#F52C11]">*</span>
-                  </h2>
-                  <p class="text-[9px] text-gray-400 leading-tight">
-                    The primary operating location for this lead.
-                  </p>
-                </div>
-              </div>
-
-              <div class="px-3 pb-2.5 pt-1">
-<div class="relative">
-  <button
-    type="button"
-    ref="locationTriggerRef"
-    @click="toggleLocationDropdown"
-    :class="[
-      'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
-      errors.location
-        ? 'border-[#F52C11]'
-        : showLocationDropdown
-        ? 'border-[#F52C11]'
-        : 'border-gray-200',
-      form.location ? 'text-[#1F2835]' : 'text-gray-400',
-    ]"
-  >
-    <span class="truncate">{{ form.location || "Select a location" }}</span>
-    <svg
-      :class="[
-        'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
-        showLocationDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
-      ]"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M19 9l-7 7-7-7"
-      />
-    </svg>
-  </button>
-
-  <teleport to="body">
-    <div
-      v-if="showLocationDropdown"
-      ref="locationPanelRef"
-      :style="locationPanelStyle"
-      class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
-    >
-      <div class="max-h-48 overflow-y-auto scrollbar-red">
-        <div
-          v-for="loc in locationOptions"
-          :key="loc"
-          :class="[
-            'px-3 py-1.5 cursor-pointer transition-colors text-[11px]',
-            form.location === loc ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 text-[#1F2835]'
-          ]"
-          @click="selectLocation(loc)"
-        >
-          {{ loc }}
-        </div>
-      </div>
-    </div>
-  </teleport>
-</div>
-                <p
-                  v-if="errors.location"
-                  class="text-[8px] text-[#F52C11] mt-0.5"
-                >
-                  Location is required
-                </p>
-              </div>
-            </div>
-
-            <div
-              class="bg-white rounded-[6px] border border-gray-200 shadow-sm overflow-hidden"
-            >
-              <div class="flex items-center gap-1.5 px-3 py-1.5">
-                <div
-                  class="w-5 h-5 rounded-full bg-[#F52C11]/10 flex items-center justify-center shrink-0"
-                >
-                  <svg
-                    class="w-2.5 h-2.5 text-[#F52C11]"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h2
-                    class="text-[11px] font-bold text-[#1F2835] leading-tight"
-                  >
-                    Status and progress
-                  </h2>
-                  <p class="text-[9px] text-gray-400 leading-tight">
-                    Set the current lead stage
-                  </p>
-                </div>
-              </div>
-
-              <div class="px-3 pb-2.5 pt-1">
-                <div class="flex items-center justify-between mb-1">
                   <div>
-                    <label
-                      class="block text-[10px] font-semibold text-[#1F2835]"
-                      >Status</label
+                    <h2
+                      class="text-[11px] font-bold text-[#1F2835] leading-tight"
                     >
-                    <p class="text-[8px] text-gray-400">
-                      Progress bar updates automatically
+                      Status and progress
+                    </h2>
+                    <p class="text-[9px] text-gray-400 leading-tight">
+                      Set the current lead stage
                     </p>
                   </div>
-
-                  <div class="flex items-center gap-1">
-                    <div
-                      class="flex items-center border border-gray-200 rounded-[4px] overflow-hidden"
-                    >
-                      <input
-                        v-model.number="form.progress"
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="10"
-                        class="w-10 text-right text-[11px] font-semibold text-[#1F2835] bg-transparent border-none focus:outline-none p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        @input="clampProgress"
-                        @blur="clampProgress"
-                        @keyup.enter="saveRecord"
-                      />
-                      <div class="flex flex-col">
-                        <button
-                          type="button"
-                          @click="incrementProgress"
-                          class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
-                        >
-                          <svg
-                            class="w-2 h-2"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="3"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M5 15l7-7 7 7"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          @click="decrementProgress"
-                          class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
-                        >
-                          <svg
-                            class="w-2 h-2"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="3"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                    <span class="text-[11px] text-gray-400">%</span>
-                  </div>
                 </div>
-                <div class="w-full h-2 bg-gray-200 rounded-full relative">
-                  <div
-                    class="absolute top-1/2 left-0 -translate-y-1/2 h-1 rounded-full transition-all duration-300"
-                    :style="{
-                      width: form.progress + '%',
-                      backgroundColor: progressColor,
-                    }"
-                  ></div>
+
+                <div class="px-3 pb-2.5 pt-1">
+                  <div class="flex items-center justify-between mb-1">
+                    <div>
+                      <label
+                        class="block text-[10px] font-semibold text-[#1F2835]"
+                        >Status</label
+                      >
+                      <p class="text-[8px] text-gray-400">
+                        Progress bar updates automatically
+                      </p>
+                    </div>
+
+                    <div class="flex items-center gap-1">
+                      <div
+                        class="flex items-center border border-gray-200 rounded-[4px] overflow-hidden"
+                      >
+                        <input
+                          v-model.number="form.progress"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="10"
+                          class="w-10 text-right text-[11px] font-semibold text-[#1F2835] bg-transparent border-none focus:outline-none p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          @input="clampProgress"
+                          @blur="clampProgress"
+                          @keyup.enter="saveRecord"
+                        />
+                        <div class="flex flex-col">
+                          <button
+                            type="button"
+                            @click="incrementProgress"
+                            class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
+                          >
+                            <svg
+                              class="w-2 h-2"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="3"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M5 15l7-7 7 7"
+                              />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            @click="decrementProgress"
+                            class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
+                          >
+                            <svg
+                              class="w-2 h-2"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="3"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M19 9l-7 7-7-7"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <span class="text-[11px] text-gray-400">%</span>
+                    </div>
+                  </div>
+                  <div class="w-full h-2 bg-gray-200 rounded-full relative">
+                    <div
+                      class="absolute top-1/2 left-0 -translate-y-1/2 h-1 rounded-full transition-all duration-300"
+                      :style="{
+                        width: form.progress + '%',
+                        backgroundColor: progressColor,
+                      }"
+                    ></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Save error banner (moved inside scrollable area like PIP) -->
-        <div
-          v-if="saveError"
-          class="flex items-start gap-2 px-3 py-2 rounded-[4px] bg-[#F52C11]/10 border border-[#F52C11]/30 text-[#F52C11] text-[10.5px] mt-3"
-        >
-          <svg class="w-3.5 h-3.5 mt-[1px] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
-          </svg>
-          <span>{{ saveError }}</span>
-        </div>
-
-        <!-- Action Buttons (moved inside scrollable area like PIP) -->
-        <div class="flex items-center justify-between gap-2 pt-4">
-          <!-- Clear all fields -->
-          <button
-            type="button"
-            @click="clearAllFields"
-            class="flex items-center gap-1.5 px-3 py-[5px] rounded-[4px] text-[10px] font-medium text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
+          <!-- Save error banner (moved inside scrollable area like PIP) -->
+          <div
+            v-if="saveError"
+            class="flex items-start gap-2 px-3 py-2 rounded-[4px] bg-[#F52C11]/10 border border-[#F52C11]/30 text-[#F52C11] text-[10.5px] mt-3"
           >
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Clear all fields
-          </button>
-
-          <div class="flex items-center gap-2">
-            <!-- Cancel -->
-            <button
-              type="button"
-              @click="cancel"
-              class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+            <svg
+              class="w-3.5 h-3.5 mt-[1px] shrink-0"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
-              Cancel
-            </button>
-            
-            <!-- Save record -->
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+              />
+            </svg>
+            <span>{{ saveError }}</span>
+          </div>
+
+          <!-- Action Buttons (moved inside scrollable area like PIP) -->
+          <div class="flex items-center justify-between gap-2 pt-4">
+            <!-- Clear all fields -->
             <button
               type="button"
-              @click="saveRecord"
-              :disabled="!isFormValid || isSaving"
-              :class="[
-                'px-4 py-[6px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors shadow-sm',
-                isFormValid && !isSaving
-                  ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed',
-              ]"
+              @click="clearAllFields"
+              class="flex items-center gap-1.5 px-3 py-[5px] rounded-[4px] text-[10px] font-medium text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
             >
               <svg
-                v-if="isSaving"
-                class="w-3 h-3 animate-spin"
+                class="w-3 h-3"
                 fill="none"
+                stroke="currentColor"
+                stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
-              {{ isSaving ? "Saving..." : "Save record" }}
+              Clear all fields
             </button>
+
+            <div class="flex items-center gap-2">
+              <!-- Cancel -->
+              <button
+                type="button"
+                @click="cancel"
+                class="px-4 py-[6px] rounded-[4px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                Cancel
+              </button>
+
+              <!-- Save record -->
+              <button
+                type="button"
+                @click="saveRecord"
+                :disabled="!isFormValid || isSaving"
+                :class="[
+                  'px-4 py-[6px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors shadow-sm',
+                  isFormValid && !isSaving
+                    ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed',
+                ]"
+              >
+                <svg
+                  v-if="isSaving"
+                  class="w-3 h-3 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                {{ isSaving ? "Saving..." : "Save record" }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
       </div>
 
       <!-- REMOVED: Fixed footer with buttons (now inside scrollable area above) -->
@@ -1021,7 +1071,9 @@ function addNewService() {
     cancelAddService();
     return;
   }
-  if (serviceOptions.value.some((s) => s.toLowerCase() === name.toLowerCase())) {
+  if (
+    serviceOptions.value.some((s) => s.toLowerCase() === name.toLowerCase())
+  ) {
     // Optionally show error inline, but for now just cancel
     cancelAddService();
     return;
@@ -1122,23 +1174,10 @@ function normalizeServiceNames(payload) {
     .filter(Boolean);
 }
 
-function formatContactNumber() {
-  const digitsOnly = form.value.contactNumber.replace(/\D/g, "").slice(0, 11);
-  let formatted = digitsOnly;
-  if (digitsOnly.length > 4 && digitsOnly.length <= 7) {
-    formatted = `${digitsOnly.slice(0, 4)}-${digitsOnly.slice(4)}`;
-  } else if (digitsOnly.length > 7) {
-    formatted = `${digitsOnly.slice(0, 4)}-${digitsOnly.slice(
-      4,
-      7
-    )}-${digitsOnly.slice(7)}`;
-  }
-  form.value.contactNumber = formatted;
-}
-
-function handleContactKeydown(e) {
+// Block letters/symbols from being typed, but no auto-formatting.
+function blockNonDigits(e) {
   const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
-  if (allowed.includes(e.key)) return;
+  if (allowed.includes(e.key) || e.metaKey || e.ctrlKey) return;
   if (!/^[0-9]$/.test(e.key)) e.preventDefault();
 }
 
@@ -1493,7 +1532,7 @@ watch(
   background: transparent;
 }
 .scrollbar-red::-webkit-scrollbar-thumb {
-  background: #F52C11;
+  background: #f52c11;
   border-radius: 3px;
 }
 .scrollbar-red::-webkit-scrollbar-thumb:hover {

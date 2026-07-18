@@ -133,7 +133,7 @@
             "
             class="bg-white border px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1 hover:border-gray-400 transition-colors"
           >
-            {{ selectedModule }}
+            {{ moduleLabel(selectedModule) }}
             <svg
               class="w-2.5 h-2.5 text-gray-500"
               fill="none"
@@ -166,7 +166,7 @@
               "
               class="w-full text-left px-3 py-1.5 text-[11px] transition-colors"
             >
-              {{ mod }}
+              {{ moduleLabel(mod) }}
             </button>
           </div>
         </div>
@@ -175,26 +175,30 @@
         <!-- Date Picker -->
         <div class="relative">
           <button
-  @click="showDatePicker = !showDatePicker"
-  :class="selectedDate ? 'border-[#F52C11] text-[#F52C11]' : 'border-gray-300 text-[#1F2835]'"
-  class="bg-white border px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1.5 hover:border-gray-400 transition-colors"
->
-  <span>{{ selectedDate || "Select Date" }}</span>
-  <svg
-    class="w-3 h-3 text-[#F52C11]"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.5"
-    viewBox="0 0 24 24"
-  >
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-    />
-  </svg>
-</button>
-                    <div
+            @click="showDatePicker = !showDatePicker"
+            :class="
+              selectedDate
+                ? 'border-[#F52C11] text-[#F52C11]'
+                : 'border-gray-300 text-[#1F2835]'
+            "
+            class="bg-white border px-2 py-[2px] rounded-[4px] text-[11px] flex items-center gap-1.5 hover:border-gray-400 transition-colors"
+          >
+            <span>{{ selectedDate || "Select Date" }}</span>
+            <svg
+              class="w-3 h-3 text-[#F52C11]"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          </button>
+          <div
             v-if="showDatePicker"
             class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
           >
@@ -239,26 +243,26 @@
             </div>
             <div class="grid grid-cols-7 gap-1">
               <button
-  v-for="day in calendarDays"
-  :key="day.date || Math.random()"
-  @click="day.date && selectDate(day.date)"
-  :disabled="!day.date"
-  :class="[
-    'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
-    day.isCurrentMonth ? 'text-[#1F2835]' : 'text-transparent',
-    day.isSelected
-      ? 'bg-[#F52C11] text-white font-semibold'
-      : day.isToday
-      ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
-      : day.date
-      ? 'hover:bg-gray-100'
-      : '',
-  ]"
->
-  {{ day.isCurrentMonth ? day.day : '' }}
-</button>
+                v-for="day in calendarDays"
+                :key="day.date || Math.random()"
+                @click="day.date && selectDate(day.date)"
+                :disabled="!day.date"
+                :class="[
+                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
+                  day.isCurrentMonth ? 'text-[#1F2835]' : 'text-transparent',
+                  day.isSelected
+                    ? 'bg-[#F52C11] text-white font-semibold'
+                    : day.isToday
+                    ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
+                    : day.date
+                    ? 'hover:bg-gray-100'
+                    : '',
+                ]"
+              >
+                {{ day.isCurrentMonth ? day.day : "" }}
+              </button>
             </div>
-             <!-- Clear date -->
+            <!-- Clear date -->
             <div class="flex justify-end mt-2 pt-2">
               <button
                 @click="clearDateFilter"
@@ -407,7 +411,7 @@
                 <td
                   class="px-4 py-[4px] whitespace-nowrap text-[11px] text-gray-600"
                 >
-                  {{ log.module }}
+                  {{ moduleLabel(log.module) }}
                 </td>
                 <td
                   class="px-4 py-[4px] whitespace-nowrap text-[11px] text-gray-600"
@@ -525,7 +529,7 @@
       class="fixed inset-0 z-40"
       @click="closeAllDropdowns"
     ></div>
-        <!-- Click outside to close dropdowns -->
+    <!-- Click outside to close dropdowns -->
     <div
       v-if="showDatePicker || showUsersDropdown || showModulesDropdown"
       class="fixed inset-0 z-40"
@@ -561,6 +565,15 @@ const moduleOptions = ref([
   "Sales Task",
   "Audit Logs",
 ]);
+
+// Display-only shortener: shows "PIP" anywhere the full module name would
+// otherwise appear (dropdown button, dropdown list, table cell), while the
+// underlying value stays "Performance Improvement Plan (PIP)" so it still
+// matches whatever useAuditLog() writes into log.module for filtering.
+function moduleLabel(mod) {
+  if (!mod) return mod;
+  return mod.startsWith("Performance Improvement Plan") ? "PIP" : mod;
+}
 
 // Date filter - COPIED FROM PIP: simple selectedDate string (MM/DD/YY), '' = no filter
 const selectedDate = ref("");

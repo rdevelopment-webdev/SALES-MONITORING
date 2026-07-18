@@ -79,7 +79,7 @@
       <div class="px-4 py-2.5 bg-white">
         <div class="grid grid-cols-2 gap-x-5 gap-y-2 items-stretch h-full">
           <!-- Left Column -->
-<div class="space-y-2 flex flex-col flex-1">
+          <div class="space-y-2 flex flex-col flex-1">
             <!-- Business name -->
             <div>
               <label
@@ -121,18 +121,17 @@
               </label>
               <input
                 v-model="form.contactNumber"
-                type="tel"
+                type="text"
                 inputmode="numeric"
-                maxlength="13"
-                placeholder="09XX-XXX-XXXX"
+                maxlength="11"
+                placeholder="09XXXXXXXXX"
                 :class="[
                   'w-full bg-white border rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none transition-colors',
                   errors.contactNumber
                     ? 'border-[#F52C11]'
                     : 'border-gray-200 focus:border-[#F52C11]',
                 ]"
-                @input="formatContactNumber"
-                @keydown="handleContactKeydown"
+                @keydown="blockNonDigits"
                 @blur="validateContactNumberField"
                 @keyup.enter="save"
               />
@@ -144,149 +143,167 @@
               </p>
             </div>
 
-           <!-- Service -->
-<div>
-  <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">
-    Service
-  </label>
-  <div class="relative">
-    <button
-      type="button"
-      ref="serviceTriggerRef"
-      @click="toggleServiceDropdown"
-      :class="[
-        'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
-        errors.service
-          ? 'border-[#F52C11]'
-          : showServiceDropdown
-          ? 'border-[#F52C11]'
-          : 'border-gray-200',
-        form.service ? 'text-[#1F2835]' : 'text-gray-400',
-      ]"
-    >
-      <span class="truncate">{{ form.service || "Select a service" }}</span>
-      <svg
-        :class="[
-          'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
-          showServiceDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
-        ]"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M19 9l-7 7-7-7"
-        />
-      </svg>
-    </button>
+            <!-- Service -->
+            <div>
+              <label
+                class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
+              >
+                Service
+              </label>
+              <div class="relative">
+                <button
+                  type="button"
+                  ref="serviceTriggerRef"
+                  @click="toggleServiceDropdown"
+                  :class="[
+                    'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
+                    errors.service
+                      ? 'border-[#F52C11]'
+                      : showServiceDropdown
+                      ? 'border-[#F52C11]'
+                      : 'border-gray-200',
+                    form.service ? 'text-[#1F2835]' : 'text-gray-400',
+                  ]"
+                >
+                  <span class="truncate">{{
+                    form.service || "Select a service"
+                  }}</span>
+                  <svg
+                    :class="[
+                      'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
+                      showServiceDropdown
+                        ? 'text-[#F52C11] rotate-180'
+                        : 'text-[#F52C11]',
+                    ]"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
-    <teleport to="body">
-      <div
-        v-if="showServiceDropdown"
-        ref="servicePanelRef"
-        :style="servicePanelStyle"
-        class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
-      >
-        <div class="max-h-48 overflow-y-auto scrollbar-red">
-          <div
-            v-for="service in serviceOptions"
-            :key="service"
-            :class="[
-              'group flex items-center px-3 py-1.5 cursor-pointer transition-colors',
-              form.service === service ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 text-[#1F2835]'
-            ]"
-            @click="selectService(service)"
-          >
-            <span class="text-[11px]">{{ service }}</span>
-          </div>
-        </div>
-      </div>
-    </teleport>
-  </div>
-</div>
+                <teleport to="body">
+                  <div
+                    v-if="showServiceDropdown"
+                    ref="servicePanelRef"
+                    :style="servicePanelStyle"
+                    class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
+                  >
+                    <div class="max-h-48 overflow-y-auto scrollbar-red">
+                      <div
+                        v-for="service in serviceOptions"
+                        :key="service"
+                        :class="[
+                          'group flex items-center px-3 py-1.5 cursor-pointer transition-colors',
+                          form.service === service
+                            ? 'bg-[#F52C11]/10 text-[#F52C11]'
+                            : 'hover:bg-[#F52C11]/5 text-[#1F2835]',
+                        ]"
+                        @click="selectService(service)"
+                      >
+                        <span class="text-[11px]">{{ service }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </teleport>
+              </div>
+            </div>
 
-<!-- Remarks -->
-<div class="flex-1 flex flex-col min-h-0">
-  <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">
-    Remarks
-  </label>
-  <textarea
-    v-model="form.remarks"
-    placeholder="Notes about this lead, follow-up actions, outcomes..."
-    class="w-full flex-1 bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors resize-none min-h-0"
-    @keyup.enter="save"
-  ></textarea>
-</div>
+            <!-- Remarks -->
+            <div class="flex-1 flex flex-col min-h-0">
+              <label
+                class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
+              >
+                Remarks
+              </label>
+              <textarea
+                v-model="form.remarks"
+                placeholder="Notes about this lead, follow-up actions, outcomes..."
+                class="w-full flex-1 bg-white border border-gray-200 rounded-[4px] px-2.5 py-[5px] text-[11px] text-[#1F2835] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors resize-none min-h-0"
+                @keyup.enter="save"
+              ></textarea>
+            </div>
           </div>
 
           <!-- Right Column -->
-<div class="space-y-2 flex flex-col flex-1">
+          <div class="space-y-2 flex flex-col flex-1">
             <!-- Location -->
-<div>
-  <label class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5">
-    Location
-  </label>
-  <div class="relative">
-    <button
-      type="button"
-      ref="locationTriggerRef"
-      @click="toggleLocationDropdown"
-      :class="[
-        'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
-        errors.location
-          ? 'border-[#F52C11]'
-          : showLocationDropdown
-          ? 'border-[#F52C11]'
-          : 'border-gray-200',
-        form.location ? 'text-[#1F2835]' : 'text-gray-400',
-      ]"
-    >
-      <span class="truncate">{{ form.location || "Select a location" }}</span>
-      <svg
-        :class="[
-          'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
-          showLocationDropdown ? 'text-[#F52C11] rotate-180' : 'text-[#F52C11]',
-        ]"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M19 9l-7 7-7-7"
-        />
-      </svg>
-    </button>
+            <div>
+              <label
+                class="block text-[10.5px] font-bold text-[#1F2835] mb-0.5"
+              >
+                Location
+              </label>
+              <div class="relative">
+                <button
+                  type="button"
+                  ref="locationTriggerRef"
+                  @click="toggleLocationDropdown"
+                  :class="[
+                    'w-full flex items-center justify-between border rounded-[4px] px-2.5 py-[5px] text-[11px] bg-white focus:outline-none transition-colors cursor-pointer',
+                    errors.location
+                      ? 'border-[#F52C11]'
+                      : showLocationDropdown
+                      ? 'border-[#F52C11]'
+                      : 'border-gray-200',
+                    form.location ? 'text-[#1F2835]' : 'text-gray-400',
+                  ]"
+                >
+                  <span class="truncate">{{
+                    form.location || "Select a location"
+                  }}</span>
+                  <svg
+                    :class="[
+                      'w-2.5 h-2.5 shrink-0 ml-1.5 transition-transform',
+                      showLocationDropdown
+                        ? 'text-[#F52C11] rotate-180'
+                        : 'text-[#F52C11]',
+                    ]"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
-    <teleport to="body">
-      <div
-        v-if="showLocationDropdown"
-        ref="locationPanelRef"
-        :style="locationPanelStyle"
-        class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
-      >
-        <div class="max-h-48 overflow-y-auto scrollbar-red">
-          <div
-            v-for="loc in locationOptions"
-            :key="loc"
-            :class="[
-              'px-3 py-1.5 cursor-pointer transition-colors text-[11px]',
-              form.location === loc ? 'bg-[#F52C11]/10 text-[#F52C11]' : 'hover:bg-[#F52C11]/5 text-[#1F2835]'
-            ]"
-            @click="selectLocation(loc)"
-          >
-            {{ loc }}
-          </div>
-        </div>
-      </div>
-    </teleport>
-  </div>
-</div>
+                <teleport to="body">
+                  <div
+                    v-if="showLocationDropdown"
+                    ref="locationPanelRef"
+                    :style="locationPanelStyle"
+                    class="fixed z-[9999] bg-white border border-gray-200 rounded-[6px] shadow-lg overflow-hidden"
+                  >
+                    <div class="max-h-48 overflow-y-auto scrollbar-red">
+                      <div
+                        v-for="loc in locationOptions"
+                        :key="loc"
+                        :class="[
+                          'px-3 py-1.5 cursor-pointer transition-colors text-[11px]',
+                          form.location === loc
+                            ? 'bg-[#F52C11]/10 text-[#F52C11]'
+                            : 'hover:bg-[#F52C11]/5 text-[#1F2835]',
+                        ]"
+                        @click="selectLocation(loc)"
+                      >
+                        {{ loc }}
+                      </div>
+                    </div>
+                  </div>
+                </teleport>
+              </div>
+            </div>
 
             <!-- Job position -->
             <div>
@@ -363,88 +380,90 @@
               </div>
             </div>
 
-<!-- Status -->
-<div class="flex-1 flex flex-col min-h-0 justify-center">
-  <div class="flex items-start justify-between mb-0.5">
-    <div class="leading-tight">
-      <label class="text-[10.5px] font-bold text-[#1F2835]">
-        Status
-      </label>
-      <p class="text-[8.7px] text-gray-400">
-        Progress bar updates automatically
-      </p>
-    </div>
-    <!-- Number + stepper share ONE rectangle -->
-    <div class="flex items-center gap-1">
-      <div
-        class="flex items-center border border-gray-200 rounded-[4px] overflow-hidden"
-      >
-        <input
-          v-model.number="form.progress"
-          type="number"
-          min="0"
-          max="100"
-          step="10"
-          class="w-10 text-right text-[11px] font-semibold text-[#1F2835] bg-transparent border-none focus:outline-none p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          @input="clampProgress"
-          @blur="clampProgress"
-          @keyup.enter="save"
-        />
-        <div class="flex flex-col">
-          <button
-            type="button"
-            @click="incrementProgress"
-            class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
-          >
-            <svg
-              class="w-2 h-2"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5 15l7-7 7 7"
-              />
-            </svg>
-          </button>
-          <button
-            type="button"
-            @click="decrementProgress"
-            class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
-          >
-            <svg
-              class="w-2 h-2"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-      <span class="text-[11px] text-gray-400">%</span>
-    </div>
-  </div>
-  <!-- Progress Bar -->
-  <div class="w-full h-2 bg-gray-200 rounded-full relative shrink-0">
-    <div
-      class="absolute top-1/2 left-0 -translate-y-1/2 h-1 rounded-full transition-all duration-300"
-      :style="{
-        width: form.progress + '%',
-        backgroundColor: progressColor,
-      }"
-    ></div>
-  </div>
-</div>
+            <!-- Status -->
+            <div class="flex-1 flex flex-col min-h-0 justify-center">
+              <div class="flex items-start justify-between mb-0.5">
+                <div class="leading-tight">
+                  <label class="text-[10.5px] font-bold text-[#1F2835]">
+                    Status
+                  </label>
+                  <p class="text-[8.7px] text-gray-400">
+                    Progress bar updates automatically
+                  </p>
+                </div>
+                <!-- Number + stepper share ONE rectangle -->
+                <div class="flex items-center gap-1">
+                  <div
+                    class="flex items-center border border-gray-200 rounded-[4px] overflow-hidden"
+                  >
+                    <input
+                      v-model.number="form.progress"
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="10"
+                      class="w-10 text-right text-[11px] font-semibold text-[#1F2835] bg-transparent border-none focus:outline-none p-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      @input="clampProgress"
+                      @blur="clampProgress"
+                      @keyup.enter="save"
+                    />
+                    <div class="flex flex-col">
+                      <button
+                        type="button"
+                        @click="incrementProgress"
+                        class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
+                      >
+                        <svg
+                          class="w-2 h-2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M5 15l7-7 7 7"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        @click="decrementProgress"
+                        class="w-4 h-[10px] flex items-center justify-center text-gray-400 hover:text-[#F52C11] hover:bg-gray-50 transition-colors"
+                      >
+                        <svg
+                          class="w-2 h-2"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  <span class="text-[11px] text-gray-400">%</span>
+                </div>
+              </div>
+              <!-- Progress Bar -->
+              <div
+                class="w-full h-2 bg-gray-200 rounded-full relative shrink-0"
+              >
+                <div
+                  class="absolute top-1/2 left-0 -translate-y-1/2 h-1 rounded-full transition-all duration-300"
+                  :style="{
+                    width: form.progress + '%',
+                    backgroundColor: progressColor,
+                  }"
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -802,27 +821,15 @@ const serviceOptions = [
 ];
 
 // ============================================
-// CONTACT NUMBER - Philippine format 0917-123-4567
+// CONTACT NUMBER
 // Optional (nullable): empty is valid; if the user starts typing, it
 // must resolve to a complete 11-digit number.
 // ============================================
-function formatContactNumber() {
-  const digitsOnly = form.contactNumber.replace(/\D/g, "").slice(0, 11);
-  let formatted = digitsOnly;
-  if (digitsOnly.length > 4 && digitsOnly.length <= 7) {
-    formatted = `${digitsOnly.slice(0, 4)}-${digitsOnly.slice(4)}`;
-  } else if (digitsOnly.length > 7) {
-    formatted = `${digitsOnly.slice(0, 4)}-${digitsOnly.slice(
-      4,
-      7
-    )}-${digitsOnly.slice(7)}`;
-  }
-  form.contactNumber = formatted;
-}
 
-function handleContactKeydown(e) {
+// Block letters/symbols from being typed, but no auto-formatting.
+function blockNonDigits(e) {
   const allowed = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
-  if (allowed.includes(e.key)) return;
+  if (allowed.includes(e.key) || e.metaKey || e.ctrlKey) return;
   if (!/^[0-9]$/.test(e.key)) e.preventDefault();
 }
 
@@ -1073,7 +1080,7 @@ input[type="number"] {
   background: transparent;
 }
 .scrollbar-red::-webkit-scrollbar-thumb {
-  background: #F52C11;
+  background: #f52c11;
   border-radius: 3px;
 }
 .scrollbar-red::-webkit-scrollbar-thumb:hover {

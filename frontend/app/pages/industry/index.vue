@@ -1,259 +1,112 @@
 <template>
-  <div
-    class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#f0f0f0] font-['Overpass'] text-[14px] text-[#1F2835]"
-  >
+  <template v-if="canView">
     <div
-      class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
+      class="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-[#f0f0f0] font-['Overpass'] text-[14px] text-[#1F2835]"
     >
-      <div class="flex items-center text-[11px] text-gray-500 gap-1">
-        <svg
-          class="w-3.5 h-3.5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M18 17V9" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13 17V5" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 17v-3" />
-        </svg>
-        <span class="hover:text-[#1F2835] cursor-pointer transition-colors"
-          >Leads Tracker</span
-        >
-        <svg
-          class="w-2.5 h-2.5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-        <span class="hover:text-[#1F2835] cursor-pointer transition-colors"
-          >Leads</span
-        >
-        <svg
-          class="w-2.5 h-2.5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-        <span class="text-[#F52C11] font-semibold">Industry</span>
-      </div>
-    </div>
-
-    <div class="px-4 py-0.5 flex items-center justify-between shrink-0">
-      <h1 class="font-bold text-[16px] tracking-tight">
-        Industry – Leads listing
-      </h1>
-      <button
-        @click="openArchiveModal"
-        class="relative bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+      <div
+        class="bg-white px-4 py-1.5 flex items-center shrink-0 border-b border-gray-200"
       >
-        <svg
-          class="w-3 h-3"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-          />
-        </svg>
-        View archive
-        <span
-          v-if="totalArchivedCount > 0"
-          class="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-[#F52C11] text-white text-[9px] font-bold leading-none"
-        >
-          {{ totalArchivedCount > 99 ? "99+" : totalArchivedCount }}
-        </span>
-      </button>
-    </div>
+        <div class="flex items-center text-[11px] text-gray-500 gap-1">
+          <svg
+            class="w-3.5 h-3.5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 3v18h18"
+            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 17V9" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 17V5" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 17v-3" />
+          </svg>
+          <span class="hover:text-[#1F2835] cursor-pointer transition-colors"
+            >Leads Tracker</span
+          >
+          <svg
+            class="w-2.5 h-2.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+          <span class="hover:text-[#1F2835] cursor-pointer transition-colors"
+            >Leads</span
+          >
+          <svg
+            class="w-2.5 h-2.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+          <span class="text-[#F52C11] font-semibold">Industry</span>
+        </div>
+      </div>
 
-    <div
-      class="px-4 py-0.5 flex items-center justify-between gap-2 shrink-0 bg-[#f0f0f0]"
-    >
-      <div class="flex items-center gap-1.5">
+      <div class="px-4 py-0.5 flex items-center justify-between shrink-0">
+        <h1 class="font-bold text-[16px] tracking-tight">
+          Industry – Leads listing
+        </h1>
         <button
-          v-for="loc in locationOptions"
-          :key="loc"
-          @click="switchLocation(loc)"
-          :class="
-            selectedLocation === loc
-              ? 'bg-[#F52C11] text-white'
-              : 'bg-gray-100 text-[#1F2835] border border-gray-200'
-          "
-          class="pl-1.5 pr-2 py-[2px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+          @click="openArchiveModal"
+          class="relative bg-white border border-gray-300 hover:border-[#F52C11] hover:text-[#F52C11] text-[#1F2835] px-3 py-[4px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
         >
           <svg
             class="w-3 h-3"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="1.5"
             viewBox="0 0 24 24"
           >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
             />
           </svg>
-          {{ loc }}
+          View archive
+          <span
+            v-if="totalArchivedCount > 0"
+            class="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-1 flex items-center justify-center rounded-full bg-[#F52C11] text-white text-[9px] font-bold leading-none"
+          >
+            {{ totalArchivedCount > 99 ? "99+" : totalArchivedCount }}
+          </span>
         </button>
-        <div class="relative flex items-center">
-          <svg
-            class="w-3.5 h-3.5 text-gray-400 absolute left-2 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search business name, contact..."
-            class="pl-7 pr-2 py-[3px] w-56 bg-white border border-gray-300 rounded-[4px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
-          />
-        </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <div class="relative">
+      <div
+        class="px-4 py-0.5 flex items-center justify-between gap-2 shrink-0 bg-[#f0f0f0]"
+      >
+        <div class="flex items-center gap-1.5">
           <button
-            @click="showDatePicker = !showDatePicker"
-            class="bg-white border border-gray-300 px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
-          >
-            {{ formattedSelectedDate || "Select Date" }}
-            <svg
-              class="w-3 h-3 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </button>
-          <div
-            v-if="showDatePicker"
-            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
-          >
-            <div class="flex items-center justify-between mb-2">
-              <button
-                @click="prevMonth"
-                class="text-gray-400 hover:text-[#1F2835]"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <span class="text-[12px] font-semibold">{{
-                currentMonthYear
-              }}</span>
-              <button
-                @click="nextMonth"
-                class="text-gray-400 hover:text-[#1F2835]"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-            <div
-              class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 mb-1"
-            >
-              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
-              ><span>Th</span><span>Fr</span><span>Sa</span>
-            </div>
-            <div class="grid grid-cols-7 gap-1">
-              <button
-                v-for="day in calendarDays"
-                :key="day.date || Math.random()"
-                @click="day.date && selectDate(day.date)"
-                :disabled="!day.date"
-                :class="[
-                  'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
-                  day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
-                  day.isSelected
-                    ? 'bg-[#F52C11] text-white font-semibold'
-                    : day.isToday
-                    ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
-                    : day.date
-                    ? 'hover:bg-gray-100'
-                    : '',
-                ]"
-              >
-                {{ day.day }}
-              </button>
-            </div>
-
-            <!-- Clear date -->
-            <div class="flex justify-end mt-2 pt-2">
-              <button
-                @click="clearDateFilter"
-                class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
-              >
-                Clear date
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="relative">
-          <button
-            @click="showServicesDropdown = !showServicesDropdown"
+            v-for="loc in locationOptions"
+            :key="loc"
+            @click="switchLocation(loc)"
             :class="
-              selectedService !== 'All Services'
-                ? 'border-[#F52C11] text-[#F52C11]'
-                : 'border-gray-300 text-[#1F2835]'
+              selectedLocation === loc
+                ? 'bg-[#F52C11] text-white'
+                : 'bg-gray-100 text-[#1F2835] border border-gray-200'
             "
-            class="bg-white border px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1 hover:border-gray-400 transition-colors"
+            class="pl-1.5 pr-2 py-[2px] rounded-[4px] text-[11px] font-medium flex items-center gap-1 transition-colors"
           >
-            {{ selectedService }}
             <svg
-              class="w-2.5 h-2.5 text-gray-500"
+              class="w-3 h-3"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
@@ -262,206 +115,150 @@
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M19 9l-7 7-7-7"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
+            {{ loc }}
           </button>
-          <div
-            v-if="showServicesDropdown"
-            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[160px]"
-          >
-            <button
-              v-for="service in serviceOptions"
-              :key="service"
-              @click="
-                selectedService = service;
-                showServicesDropdown = false;
-              "
-              :class="
-                selectedService === service
-                  ? 'bg-[#F52C11]/10 text-[#F52C11] font-medium'
-                  : 'text-[#1F2835] hover:bg-gray-50'
-              "
-              class="w-full text-left px-3 py-1.5 text-[11px] transition-colors"
-            >
-              {{ service }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <main class="flex-1 flex p-2 gap-1.5 min-h-0 overflow-hidden">
-      <aside
-        class="w-48 shrink-0 flex flex-col bg-white border border-gray-200 rounded-[6px] overflow-hidden"
-      >
-        <div
-          class="bg-[#1F2835] text-white px-2.5 py-1 flex items-center justify-center relative"
-        >
-          <button
-            @click="showAddIndustryModal = true"
-            class="absolute left-2.5 w-5 h-5 bg-white/20 rounded-[4px] flex items-center justify-center hover:bg-white/30 transition-colors"
-            title="Add industry"
-          >
+          <div class="relative flex items-center">
             <svg
-              class="w-3 h-3 text-white"
+              class="w-3.5 h-3.5 text-gray-400 absolute left-2 pointer-events-none"
               fill="none"
               stroke="currentColor"
-              stroke-width="2.5"
+              stroke-width="2"
               viewBox="0 0 24 24"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M12 4v16m8-8H4"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-          </button>
-          <span class="font-bold text-[11px] tracking-wide uppercase"
-            >Industries</span
-          >
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search business name, contact..."
+              class="pl-7 pr-2 py-[3px] w-56 bg-white border border-gray-300 rounded-[4px] focus:outline-none focus:border-[#F52C11] text-[11px] placeholder:text-gray-400 transition-colors"
+            />
+          </div>
         </div>
 
-        <div
-          v-if="isLoadingIndustries"
-          class="flex-1 flex items-center justify-center text-[11px] text-gray-400 py-6 px-3 text-center"
-        >
-          Loading industries...
-        </div>
-        <div
-          v-else-if="sortedIndustries.length === 0"
-          class="flex-1 flex items-center justify-center text-[11px] text-gray-400 py-6 px-3 text-center"
-        >
-          No industries yet. Click + to add one.
-        </div>
-        <div v-else class="flex-1 overflow-y-auto custom-scroll relative">
-          <div
-            v-for="(industry, index) in sortedIndustries"
-            :key="industry"
-            @click="selectedIndustry = industry"
-            :class="[
-              selectedIndustry === industry
-                ? 'bg-[#F52C11]/15 text-[#F52C11] font-medium'
-                : 'text-[#1F2835] hover:bg-[#F52C11]/10',
-            ]"
-            class="px-2.5 py-1.5 text-[12px] cursor-pointer transition-all flex items-center justify-between group"
-          >
-            <div
-              v-if="editingIndex === index"
-              class="flex-1 flex items-center gap-1"
-              @click.stop
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <button
+              @click="showDatePicker = !showDatePicker"
+              class="bg-white border border-gray-300 px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1.5 text-[#1F2835] hover:border-gray-400 transition-colors"
             >
-              <input
-                v-model="renameValue"
-                type="text"
-                class="flex-1 bg-white border border-gray-300 rounded-[3px] px-1.5 py-0.5 text-[11px] focus:outline-none focus:border-[#F52C11]"
-                @blur="finishRename(index)"
-                @keyup.enter="finishRename(index)"
-                @keyup.esc="cancelRename"
-              />
-            </div>
-            <span v-else class="truncate pr-1 flex-1">{{ industry }}</span>
-
-            <div v-if="editingIndex !== index" class="relative">
-              <button
-                @click.stop="toggleIndustryMenu(index)"
-                class="text-gray-400 hover:text-[#1F2835] p-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+              {{ formattedSelectedDate || "Select Date" }}
+              <svg
+                class="w-3 h-3 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  class="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                  />
-                </svg>
-              </button>
-              <div
-                v-if="openIndustryMenuIndex === index"
-                class="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[100px]"
-              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
+            <div
+              v-if="showDatePicker"
+              class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[12px] shadow-lg z-50 p-3 w-64"
+            >
+              <div class="flex items-center justify-between mb-2">
                 <button
-                  @click.stop="startInlineRename(industry, index)"
-                  class="w-full text-left px-3 py-1.5 text-[11px] text-[#1F2835] hover:bg-gray-50 transition-colors flex items-center gap-1.5"
+                  @click="prevMonth"
+                  class="text-gray-400 hover:text-[#1F2835]"
                 >
                   <svg
-                    class="w-3 h-3 text-gray-400"
+                    class="w-4 h-4"
                     fill="none"
                     stroke="currentColor"
                     stroke-width="2"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
+                    <path d="M15 19l-7-7 7-7" />
                   </svg>
-                  Rename
                 </button>
+                <span class="text-[12px] font-semibold">{{
+                  currentMonthYear
+                }}</span>
                 <button
-                  @click.stop="archiveIndustry(industry)"
-                  class="w-full text-left px-3 py-1.5 text-[11px] text-red-500 hover:bg-red-50 transition-colors flex items-center gap-1.5"
+                  @click="nextMonth"
+                  class="text-gray-400 hover:text-[#1F2835]"
                 >
                   <svg
-                    class="w-3 h-3 text-red-400"
+                    class="w-4 h-4"
                     fill="none"
                     stroke="currentColor"
                     stroke-width="2"
                     viewBox="0 0 24 24"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                    />
+                    <path d="M9 5l7 7-7 7" />
                   </svg>
-                  Archive
+                </button>
+              </div>
+              <div
+                class="grid grid-cols-7 gap-1 text-center text-[10px] text-gray-400 mb-1"
+              >
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
+                ><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div class="grid grid-cols-7 gap-1">
+                <button
+                  v-for="day in calendarDays"
+                  :key="day.date || Math.random()"
+                  @click="day.date && selectDate(day.date)"
+                  :disabled="!day.date"
+                  :class="[
+                    'w-7 h-7 rounded-[4px] text-[11px] flex items-center justify-center transition-colors',
+                    day.isCurrentMonth ? 'text-[#1F2835]' : 'text-gray-300',
+                    day.isSelected
+                      ? 'bg-[#F52C11] text-white font-semibold'
+                      : day.isToday
+                      ? 'border border-[#F52C11] text-[#F52C11] font-semibold'
+                      : day.date
+                      ? 'hover:bg-gray-100'
+                      : '',
+                  ]"
+                >
+                  {{ day.day }}
+                </button>
+              </div>
+
+              <!-- Clear date -->
+              <div class="flex justify-end mt-2 pt-2">
+                <button
+                  @click="clearDateFilter"
+                  class="text-[10px] text-gray-400 hover:text-[#F52C11] transition-colors"
+                >
+                  Clear date
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      </aside>
 
-      <section
-        class="flex-1 flex flex-col min-w-0 bg-white border border-gray-100 overflow-hidden relative"
-      >
-        <div
-          class="flex items-center justify-between px-2 py-1 border-b border-gray-100 shrink-0 bg-gray-50"
-        >
-          <span class="text-[11px] text-gray-500">
-            <span v-if="filteredRecords.length > 0"
-              >Showing {{ recordsRangeStart }}–{{ recordsRangeEnd }}</span
+          <div class="relative">
+            <button
+              @click="showServicesDropdown = !showServicesDropdown"
+              :class="
+                selectedService !== 'All Services'
+                  ? 'border-[#F52C11] text-[#F52C11]'
+                  : 'border-gray-300 text-[#1F2835]'
+              "
+              class="bg-white border px-2.5 py-[3px] rounded-[4px] text-[11px] flex items-center gap-1 hover:border-gray-400 transition-colors"
             >
-            <span v-else>Showing 0</span>
-            <span class="mx-1 text-gray-200">|</span>
-            {{ filteredRecords.length }} total records
-          </span>
-
-          <div class="flex items-center gap-2">
-            <span class="text-[11px] text-gray-500">Rows per page</span>
-            <div class="relative">
-              <select
-                v-model.number="recordsRowsPerPage"
-                class="bg-white border border-gray-300 rounded-[4px] text-[11px] px-1.5 py-[1px] pr-5 focus:outline-none focus:border-[#F52C11] appearance-none cursor-pointer"
-              >
-                <option
-                  v-for="option in rowsPerPageOptions"
-                  :key="option"
-                  :value="option"
-                >
-                  {{ option }}
-                </option>
-              </select>
-              <!-- Custom arrow -->
+              {{ selectedService }}
               <svg
-                class="w-2.5 h-2.5 text-[#F52C11] absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"
+                class="w-2.5 h-2.5 text-gray-500"
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
@@ -473,23 +270,49 @@
                   d="M19 9l-7 7-7-7"
                 />
               </svg>
+            </button>
+            <div
+              v-if="showServicesDropdown"
+              class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[160px]"
+            >
+              <button
+                v-for="service in serviceOptions"
+                :key="service"
+                @click="
+                  selectedService = service;
+                  showServicesDropdown = false;
+                "
+                :class="
+                  selectedService === service
+                    ? 'bg-[#F52C11]/10 text-[#F52C11] font-medium'
+                    : 'text-[#1F2835] hover:bg-gray-50'
+                "
+                class="w-full text-left px-3 py-1.5 text-[11px] transition-colors"
+              >
+                {{ service }}
+              </button>
             </div>
+          </div>
+        </div>
+      </div>
 
+      <main class="flex-1 flex p-2 gap-1.5 min-h-0 overflow-hidden">
+        <aside
+          class="w-48 shrink-0 flex flex-col bg-white border border-gray-200 rounded-[6px] overflow-hidden"
+        >
+          <div
+            class="bg-[#1F2835] text-white px-2.5 py-1 flex items-center justify-center relative"
+          >
             <button
-              @click="goToAddRecord"
-              :disabled="!selectedIndustry"
-              :class="[
-                selectedIndustry
-                  ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed',
-              ]"
-              class="px-2.5 py-1 rounded-[4px] text-[10px] font-medium flex items-center gap-0.5 transition-colors"
+              @click="showAddIndustryModal = true"
+              class="absolute left-2.5 w-5 h-5 bg-white/20 rounded-[4px] flex items-center justify-center hover:bg-white/30 transition-colors"
+              title="Add industry"
             >
               <svg
-                class="w-2.5 h-2.5"
+                class="w-3 h-3 text-white"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
+                stroke-width="2.5"
                 viewBox="0 0 24 24"
               >
                 <path
@@ -498,397 +321,1020 @@
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              Add record
+            </button>
+            <span class="font-bold text-[11px] tracking-wide uppercase"
+              >Industries</span
+            >
+          </div>
+
+          <div
+            v-if="isLoadingIndustries"
+            class="flex-1 flex items-center justify-center text-[11px] text-gray-400 py-6 px-3 text-center"
+          >
+            Loading industries...
+          </div>
+          <div
+            v-else-if="sortedIndustries.length === 0"
+            class="flex-1 flex items-center justify-center text-[11px] text-gray-400 py-6 px-3 text-center"
+          >
+            No industries yet. Click + to add one.
+          </div>
+          <div v-else class="flex-1 overflow-y-auto custom-scroll relative">
+            <div
+              v-for="(industry, index) in sortedIndustries"
+              :key="industry"
+              @click="selectedIndustry = industry"
+              :class="[
+                selectedIndustry === industry
+                  ? 'bg-[#F52C11]/15 text-[#F52C11] font-medium'
+                  : 'text-[#1F2835] hover:bg-[#F52C11]/10',
+              ]"
+              class="px-2.5 py-1.5 text-[12px] cursor-pointer transition-all flex items-center justify-between group"
+            >
+              <div
+                v-if="editingIndex === index"
+                class="flex-1 flex items-center gap-1"
+                @click.stop
+              >
+                <input
+                  v-model="renameValue"
+                  type="text"
+                  class="flex-1 bg-white border border-gray-300 rounded-[3px] px-1.5 py-0.5 text-[11px] focus:outline-none focus:border-[#F52C11]"
+                  @blur="finishRename(index)"
+                  @keyup.enter="finishRename(index)"
+                  @keyup.esc="cancelRename"
+                />
+              </div>
+              <span v-else class="truncate pr-1 flex-1">{{ industry }}</span>
+
+              <div v-if="editingIndex !== index" class="relative">
+                <button
+                  @click.stop="toggleIndustryMenu(index)"
+                  class="text-gray-400 hover:text-[#1F2835] p-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                    />
+                  </svg>
+                </button>
+                <div
+                  v-if="openIndustryMenuIndex === index"
+                  class="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-[6px] shadow-lg z-50 py-1 min-w-[100px]"
+                >
+                  <button
+                    @click.stop="startInlineRename(industry, index)"
+                    class="w-full text-left px-3 py-1.5 text-[11px] text-[#1F2835] hover:bg-gray-50 transition-colors flex items-center gap-1.5"
+                  >
+                    <svg
+                      class="w-3 h-3 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                    Rename
+                  </button>
+                  <button
+                    @click.stop="archiveIndustry(industry)"
+                    class="w-full text-left px-3 py-1.5 text-[11px] text-red-500 hover:bg-red-50 transition-colors flex items-center gap-1.5"
+                  >
+                    <svg
+                      class="w-3 h-3 text-red-400"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                      />
+                    </svg>
+                    Archive
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section
+          class="flex-1 flex flex-col min-w-0 bg-white border border-gray-100 overflow-hidden relative"
+        >
+          <div
+            class="flex items-center justify-between px-2 py-1 border-b border-gray-100 shrink-0 bg-gray-50"
+          >
+            <span class="text-[11px] text-gray-500">
+              <span v-if="filteredRecords.length > 0"
+                >Showing {{ recordsRangeStart }}–{{ recordsRangeEnd }}</span
+              >
+              <span v-else>Showing 0</span>
+              <span class="mx-1 text-gray-200">|</span>
+              {{ filteredRecords.length }} total records
+            </span>
+
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-gray-500">Rows per page</span>
+              <div class="relative">
+                <select
+                  v-model.number="recordsRowsPerPage"
+                  class="bg-white border border-gray-300 rounded-[4px] text-[11px] px-1.5 py-[1px] pr-5 focus:outline-none focus:border-[#F52C11] appearance-none cursor-pointer"
+                >
+                  <option
+                    v-for="option in rowsPerPageOptions"
+                    :key="option"
+                    :value="option"
+                  >
+                    {{ option }}
+                  </option>
+                </select>
+                <!-- Custom arrow -->
+                <svg
+                  class="w-2.5 h-2.5 text-[#F52C11] absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+
+              <button
+                v-if="canAdd"
+                @click="goToAddRecord"
+                :disabled="!selectedIndustry"
+                :class="[
+                  selectedIndustry
+                    ? 'bg-[#F52C11] hover:bg-[#d9250e] text-white'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed',
+                ]"
+                class="px-2.5 py-1 rounded-[4px] text-[10px] font-medium flex items-center gap-0.5 transition-colors"
+              >
+                <svg
+                  class="w-2.5 h-2.5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Add record
+              </button>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-auto custom-scroll relative">
+            <table class="w-full border-collapse text-left text-[12px]">
+              <thead class="bg-[#f2f2f2] sticky top-0 z-20">
+                <tr class="border-b border-gray-200">
+                  <th
+                    class="w-8 px-2 py-1.5 text-center text-[10px] text-gray-400"
+                  ></th>
+                  <th class="w-6 px-2 py-1.5 text-center">
+                    <input
+                      type="checkbox"
+                      :checked="isAllSelected"
+                      @change="toggleAll"
+                      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer"
+                    />
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Date
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Business Name
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Contact Person
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Job Position
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Contact No.
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Email
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Service
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
+                  >
+                    Remarks
+                  </th>
+                  <th
+                    class="px-3 py-1.5 font-semibold text-[#F52C11] sticky right-0 z-30 bg-gray-100 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="isLoadingRecords">
+                  <td
+                    colspan="12"
+                    class="px-4 py-12 text-center text-gray-400 border border-gray-200 bg-white"
+                  >
+                    Loading records from database...
+                  </td>
+                </tr>
+                <tr
+                  v-else-if="paginatedRecords.length === 0"
+                  class="px-4 py-12 text-center text-gray-400 border border-gray-200 bg-white"
+                >
+                  <td
+                    colspan="12"
+                    class="px-4 py-12 text-center text-gray-400 border border-gray-200"
+                  >
+                    No active records discovered in this collection.
+                  </td>
+                </tr>
+
+                <tr
+                  v-else
+                  v-for="(record, recordIndex) in paginatedRecords"
+                  :key="record.id"
+                  :class="[
+                    isSelected(record.id)
+                      ? 'bg-[#F52C11]/10'
+                      : 'bg-white hover:bg-[#f52c11]/5',
+                  ]"
+                  class="transition-colors border-b border-gray-100"
+                >
+                  <td class="px-2 py-1 text-center text-[11px] text-gray-400">
+                    {{ recordsRangeStart + recordIndex }}
+                  </td>
+                  <td class="px-2 py-1 text-center">
+                    <input
+                      type="checkbox"
+                      :checked="isSelected(record.id)"
+                      @change="toggleSelection(record.id)"
+                      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer"
+                    />
+                  </td>
+                  <td class="px-3 py-1 whitespace-nowrap text-[11px]">
+                    {{ record.date }}
+                  </td>
+                  <td
+                    class="px-3 py-1 whitespace-nowrap font-bold text-slate-800"
+                  >
+                    {{ record.businessName }}
+                  </td>
+                  <td class="px-3 py-1 whitespace-nowrap">
+                    {{ record.contactPerson }}
+                  </td>
+                  <td class="px-3 py-1 whitespace-nowrap">
+                    {{ record.jobPosition }}
+                  </td>
+                  <td class="px-3 py-1 whitespace-nowrap text-slate-600">
+                    {{ record.contactNo }}
+                  </td>
+                  <td class="px-3 py-1 whitespace-nowrap text-gray-600">
+                    {{ record.email }}
+                  </td>
+                  <td class="px-3 py-1 whitespace-nowrap text-[11px]">
+                    {{ record.service }}
+                  </td>
+                  <td class="px-3 py-1 whitespace-nowrap">
+                    <div class="flex items-center gap-1.5 min-w-[120px]">
+                      <div
+                        class="flex-1 h-[5px] bg-gray-200 rounded-full overflow-hidden"
+                      >
+                        <div
+                          class="h-full rounded-full transition-all duration-500"
+                          :style="{
+                            width: record.statusPercent + '%',
+                            backgroundColor: getStatusColor(
+                              record.statusPercent
+                            ),
+                          }"
+                        ></div>
+                      </div>
+                      <span
+                        :style="{ color: getStatusColor(record.statusPercent) }"
+                        class="text-[10px] font-bold shrink-0 w-6 text-right"
+                        >{{ record.statusPercent }}%</span
+                      >
+                    </div>
+                  </td>
+                  <td
+                    class="px-3 py-1 max-w-[200px] truncate text-gray-600"
+                    :title="record.remarks"
+                  >
+                    {{ record.remarks || "-" }}
+                  </td>
+                  <td
+                    class="px-3 py-1 sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
+                    :class="isSelected(record.id) ? 'bg-[#FCE4E2]' : 'bg-white'"
+                  >
+                    <div class="flex items-center justify-center gap-2">
+                      <button
+                        @click="viewRecord(record)"
+                        class="text-gray-400 hover:text-[#1F2835]"
+                        title="View details"
+                      >
+                        <svg
+                          class="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        v-if="canEdit"
+                        @click="openEditModal(record)"
+                        class="text-gray-400 hover:text-blue-600"
+                        title="Modify record"
+                      >
+                        <svg
+                          class="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Archive Selected Bar - sits above pagination, matches PIP index sizing -->
+          <div
+            v-if="selectedIds.length > 0"
+            class="shrink-0 bg-white border-t border-gray-200 px-3 py-[2px] flex items-center justify-between"
+          >
+            <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+              <svg
+                class="w-3.5 h-3.5 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span class="font-medium"
+                >{{ selectedIds.length }} record(s) selected</span
+              >
+            </div>
+            <button
+              @click="archiveSelectedRecords"
+              class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[2px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
+            >
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                />
+              </svg>
+              Archive selected
+            </button>
+          </div>
+
+          <!-- Pagination footer - matches PIP index pattern -->
+          <div
+            class="shrink-0 bg-[#f0f0f0] px-3 py-1.5 flex items-center justify-between gap-2 flex-wrap border-t border-gray-200 text-[11px]"
+          >
+            <span class="text-[11px] text-gray-500"
+              >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
+            >
+
+            <div class="flex items-center gap-1">
+              <span class="text-[11px] text-gray-500">Go to</span>
+              <input
+                v-model="recordsPageInput"
+                type="number"
+                min="1"
+                :max="totalRecordsPages"
+                placeholder="---"
+                class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[11px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                @keyup.enter="goToTypedRecordsPage"
+              />
+              <button
+                @click="goToTypedRecordsPage"
+                class="bg-gray-200 border border-gray-300 hover:bg-gray-300 text-[#1F2835] px-1.5 py-[1px] rounded-[3px] text-[9px] font-medium transition-colors"
+              >
+                Go
+              </button>
+            </div>
+
+            <div class="flex items-center gap-0.5">
+              <button
+                @click="goToRecordsPage(recordsCurrentPage - 1)"
+                :disabled="recordsCurrentPage === 1"
+                class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <button
+                v-for="page in recordsPageNumbers"
+                :key="page"
+                @click="goToRecordsPage(page)"
+                :class="
+                  recordsCurrentPage === page
+                    ? 'text-[#1F2835]'
+                    : 'text-gray-400 hover:bg-gray-100'
+                "
+                class="w-5 h-5 flex items-center justify-center rounded-[3px] text-[10px] font-medium transition-colors"
+              >
+                {{ page }}
+              </button>
+              <button
+                @click="goToRecordsPage(recordsCurrentPage + 1)"
+                :disabled="recordsCurrentPage === totalRecordsPages"
+                class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div
+        v-if="showAddIndustryModal"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-[6px] w-[365px] shadow-xl p-4">
+          <h3 class="text-[13px] font-bold text-slate-800 mb-2">
+            Create New Industry Node
+          </h3>
+          <input
+            v-model="newIndustryName"
+            type="text"
+            placeholder="e.g. Finance, Agriculture, Healthcare"
+            class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] mb-2 focus:outline-none focus:border-[#F52C11]"
+            @keyup.enter="addIndustry"
+          />
+          <p v-if="addIndustryError" class="text-[11px] text-[#F52C11] mb-2">
+            {{ addIndustryError }}
+          </p>
+          <div class="flex justify-end gap-1.5 mt-3">
+            <button
+              @click="
+                showAddIndustryModal = false;
+                newIndustryName = '';
+                addIndustryError = '';
+              "
+              class="px-3 py-1 rounded-[4px] text-[11px] text-slate-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              @click="addIndustry"
+              :disabled="!newIndustryName.trim() || isSubmittingIndustry"
+              class="px-4 py-1 rounded-[4px] text-[11px] bg-[#F52C11] text-white hover:bg-[#d9250e] disabled:bg-gray-300 transition-colors font-medium"
+            >
+              Add
             </button>
           </div>
         </div>
+      </div>
 
-        <div class="flex-1 overflow-auto custom-scroll relative">
-          <table class="w-full border-collapse text-left text-[12px]">
-            <thead class="bg-[#f2f2f2] sticky top-0 z-20">
-              <tr class="border-b border-gray-200">
-                <th
-                  class="w-8 px-2 py-1.5 text-center text-[10px] text-gray-400"
-                ></th>
-                <th class="w-6 px-2 py-1.5 text-center">
-                  <input
-                    type="checkbox"
-                    :checked="isAllSelected"
-                    @change="toggleAll"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer"
-                  />
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Date
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Business Name
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Contact Person
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Job Position
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Contact No.
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Email
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Service
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Status
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] whitespace-nowrap"
-                >
-                  Remarks
-                </th>
-                <th
-                  class="px-3 py-1.5 font-semibold text-[#F52C11] sticky right-0 z-30 bg-gray-100 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="isLoadingRecords">
-                <td
-                  colspan="12"
-                  class="px-4 py-12 text-center text-gray-400 border border-gray-200 bg-white"
-                >
-                  Loading records from database...
-                </td>
-              </tr>
-              <tr
-                v-else-if="paginatedRecords.length === 0"
-                class="px-4 py-12 text-center text-gray-400 border border-gray-200 bg-white"
+      <div
+        v-if="showArchiveModal"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div
+          class="bg-white rounded-[12px] w-[800px] h-[550px] shadow-xl flex flex-col overflow-hidden"
+        >
+          <div
+            class="flex items-center justify-between px-5 py-4 border-b border-gray-200"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-9 h-9 rounded-[8px] bg-[#F52C11]/10 flex items-center justify-center shrink-0"
               >
-                <td
-                  colspan="12"
-                  class="px-4 py-12 text-center text-gray-400 border border-gray-200"
+                <svg
+                  class="w-[18px] h-[18px] text-[#F52C11]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  viewBox="0 0 24 24"
                 >
-                  No active records discovered in this collection.
-                </td>
-              </tr>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div class="font-bold text-[14px] text-slate-800 leading-tight">
+                  Archived items
+                </div>
+                <div class="text-[11px] text-gray-400 leading-tight">
+                  Industry page
+                </div>
+              </div>
+            </div>
+            <button
+              @click="showArchiveModal = false"
+              class="text-[#F52C11] hover:text-[#d9250e] transition-colors"
+            >
+              <svg
+                class="w-[18px] h-[18px]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
 
-              <tr
-                v-else
-                v-for="(record, recordIndex) in paginatedRecords"
-                :key="record.id"
-                :class="[
-                  isSelected(record.id)
-                    ? 'bg-[#F52C11]/10'
-                    : 'bg-white hover:bg-[#f52c11]/5',
-                ]"
-                class="transition-colors border-b border-gray-100"
+          <div class="flex items-center gap-5 px-5 border-b border-gray-200">
+            <button
+              @click="archiveTab = 'records'"
+              :class="
+                archiveTab === 'records'
+                  ? 'border-[#F52C11] text-[#F52C11]'
+                  : 'border-transparent text-gray-400 hover:text-gray-600'
+              "
+              class="flex items-center gap-1.5 pb-2.5 pt-3 border-b-2 text-[11px] font-medium transition-colors"
+            >
+              <svg
+                class="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
               >
-                <td class="px-2 py-1 text-center text-[11px] text-gray-400">
-                  {{ recordsRangeStart + recordIndex }}
-                </td>
-                <td class="px-2 py-1 text-center">
-                  <input
-                    type="checkbox"
-                    :checked="isSelected(record.id)"
-                    @change="toggleSelection(record.id)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer"
-                  />
-                </td>
-                <td class="px-3 py-1 whitespace-nowrap text-[11px]">
-                  {{ record.date }}
-                </td>
-                <td
-                  class="px-3 py-1 whitespace-nowrap font-bold text-slate-800"
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+              Archived records
+              <span
+                :class="
+                  archiveTab === 'records'
+                    ? 'bg-[#F52C11]/10 text-[#F52C11]'
+                    : 'bg-gray-100 text-gray-500'
+                "
+                class="rounded-full px-1.5 py-[1px] text-[10px] font-semibold"
+                >{{ archivedRecords.length }}</span
+              >
+            </button>
+            <button
+              @click="archiveTab = 'industries'"
+              :class="
+                archiveTab === 'industries'
+                  ? 'border-[#F52C11] text-[#F52C11]'
+                  : 'border-transparent text-gray-400 hover:text-gray-600'
+              "
+              class="flex items-center gap-1.5 pb-2.5 pt-3 border-b-2 text-[12px] font-medium transition-colors"
+            >
+              <svg
+                class="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <rect x="4" y="4" width="7" height="7" rx="1.5" />
+                <rect x="13" y="4" width="7" height="7" rx="1.5" />
+                <rect x="4" y="13" width="7" height="7" rx="1.5" />
+                <rect x="13" y="13" width="7" height="7" rx="1.5" />
+              </svg>
+              Archived industries
+              <span
+                :class="
+                  archiveTab === 'industries'
+                    ? 'bg-[#F52C11]/10 text-[#F52C11]'
+                    : 'bg-gray-100 text-gray-500'
+                "
+                class="rounded-full px-1.5 py-[1px] text-[10px] font-semibold"
+                >{{ archivedIndustries.length }}</span
+              >
+            </button>
+          </div>
+
+          <!-- Location filter — records only. Archived industries carry no
+             location value, so there's nothing to filter there. -->
+          <div
+            v-if="archiveTab === 'records'"
+            class="px-5 pt-3 pb-1 shrink-0 flex items-center gap-1.5"
+          >
+            <span class="text-[11px] text-gray-400 mr-0.5"></span>
+            <button
+              v-for="loc in ['All', ...locationOptions]"
+              :key="loc"
+              @click="setArchiveLocationFilter(loc)"
+              :class="
+                archiveLocationFilter === loc
+                  ? 'bg-[#1F2835] text-white'
+                  : 'bg-gray-100 text-[#1F2835] border border-gray-200'
+              "
+              class="px-2.5 py-[2px] rounded-[4px] text-[11px] font-medium transition-colors"
+            >
+              {{ loc }}
+            </button>
+          </div>
+
+          <div class="px-5 py-2 shrink-0">
+            <div class="relative">
+              <svg
+                class="w-3 h-3 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                v-model="archiveSearchQuery"
+                type="text"
+                :placeholder="
+                  archiveTab === 'records'
+                    ? 'Search archived records...'
+                    : 'Search archived industries...'
+                "
+                class="w-full pl-7 pr-2 py-[4px] bg-white border border-gray-200 rounded-[4px] text-[11px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
+              />
+            </div>
+          </div>
+
+          <div
+            class="flex-1 overflow-y-auto custom-scroll px-5 pb-4 min-h-[200px]"
+          >
+            <div
+              v-if="isLoadingArchive"
+              class="text-center text-gray-400 py-10 text-[11px]"
+            >
+              Loading system archive indices...
+            </div>
+
+            <div v-else class="space-y-2.5">
+              <template v-if="archiveTab === 'records'">
+                <div
+                  v-if="filteredArchivedRecords.length === 0"
+                  class="text-center text-gray-400 py-10 text-[11px]"
                 >
-                  {{ record.businessName }}
-                </td>
-                <td class="px-3 py-1 whitespace-nowrap">
-                  {{ record.contactPerson }}
-                </td>
-                <td class="px-3 py-1 whitespace-nowrap">
-                  {{ record.jobPosition }}
-                </td>
-                <td class="px-3 py-1 whitespace-nowrap text-slate-600">
-                  {{ record.contactNo }}
-                </td>
-                <td class="px-3 py-1 whitespace-nowrap text-gray-600">
-                  {{ record.email }}
-                </td>
-                <td class="px-3 py-1 whitespace-nowrap text-[11px]">
-                  {{ record.service }}
-                </td>
-                <td class="px-3 py-1 whitespace-nowrap">
-                  <div class="flex items-center gap-1.5 min-w-[120px]">
+                  No matching archived lead records found.
+                </div>
+                <div
+                  v-for="rec in filteredArchivedRecords"
+                  :key="rec.id"
+                  class="flex items-center gap-3 p-1 bg-white border border-gray-200 rounded-[8px] hover:border-gray-300 transition-colors"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <input
+                      type="checkbox"
+                      :checked="isArchiveRecordSelected(rec.id)"
+                      @change="toggleArchiveRecordSelection(rec.id)"
+                      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer shrink-0"
+                    />
                     <div
-                      class="flex-1 h-[5px] bg-gray-200 rounded-full overflow-hidden"
-                    >
-                      <div
-                        class="h-full rounded-full transition-all duration-500"
-                        :style="{
-                          width: record.statusPercent + '%',
-                          backgroundColor: getStatusColor(record.statusPercent),
-                        }"
-                      ></div>
-                    </div>
-                    <span
-                      :style="{ color: getStatusColor(record.statusPercent) }"
-                      class="text-[10px] font-bold shrink-0 w-6 text-right"
-                      >{{ record.statusPercent }}%</span
-                    >
-                  </div>
-                </td>
-                <td
-                  class="px-3 py-1 max-w-[200px] truncate text-gray-600"
-                  :title="record.remarks"
-                >
-                  {{ record.remarks || "-" }}
-                </td>
-                <td
-                  class="px-3 py-1 sticky right-0 shadow-[-2px_0_4px_rgba(0,0,0,0.05)] text-center"
-                  :class="isSelected(record.id) ? 'bg-[#FCE4E2]' : 'bg-white'"
-                >
-                  <div class="flex items-center justify-center gap-2">
-                    <button
-                      @click="viewRecord(record)"
-                      class="text-gray-400 hover:text-[#1F2835]"
-                      title="View details"
+                      class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
                     >
                       <svg
-                        class="w-3.5 h-3.5"
+                        class="w-4 h-4 text-gray-400"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
+                        stroke-width="1.75"
                         viewBox="0 0 24 24"
                       >
                         <path
                           stroke-linecap="round"
                           stroke-linejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          d="M3 21h18M6 21V6a1 1 0 011-1h6a1 1 0 011 1v15M9 9h1m3 0h1m-5 4h1m3 0h1m-5 4h1m3 0h1M18 21v-8a1 1 0 00-1-1h-2"
                         />
                       </svg>
-                    </button>
-                    <button
-                      @click="openEditModal(record)"
-                      class="text-gray-400 hover:text-blue-600"
-                      title="Modify record"
+                    </div>
+                    <div class="min-w-0">
+                      <div
+                        class="font-bold text-[13px] text-slate-800 truncate"
+                      >
+                        {{ rec.businessName }}
+                      </div>
+                      <div class="text-[11px] text-gray-400 mt-0.5 truncate">
+                        {{ rec.location }},
+                        {{ archivedRecordIndustryName(rec) }}
+                        <span class="mx-1">•</span>Archived
+                        {{ formatArchiveDate(rec.archivedAt) }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <template v-else>
+                <div
+                  v-if="filteredArchivedIndustries.length === 0"
+                  class="text-center text-gray-400 py-10 text-[11px]"
+                >
+                  No matching archived industries found.
+                </div>
+                <div
+                  v-for="ind in filteredArchivedIndustries"
+                  :key="ind.name"
+                  class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-[10px]"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <input
+                      type="checkbox"
+                      :checked="isArchiveIndustrySelected(ind.name)"
+                      @change="toggleArchiveIndustrySelection(ind.name)"
+                      class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer shrink-0"
+                    />
+                    <div
+                      class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
                     >
                       <svg
-                        class="w-3.5 h-3.5"
+                        class="w-4 h-4 text-gray-400"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
+                        stroke-width="1.75"
                         viewBox="0 0 24 24"
                       >
-                        <path
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
+                        <rect x="4" y="4" width="7" height="7" rx="1.5" />
+                        <rect x="13" y="4" width="7" height="7" rx="1.5" />
+                        <rect x="4" y="13" width="7" height="7" rx="1.5" />
+                        <rect x="13" y="13" width="7" height="7" rx="1.5" />
                       </svg>
-                    </button>
+                    </div>
+                    <div class="min-w-0">
+                      <div
+                        class="font-bold text-[13px] text-slate-800 truncate"
+                      >
+                        {{ ind.name }}
+                      </div>
+                      <div class="flex items-center gap-1.5 mt-0.5">
+                        <span
+                          class="bg-[#F52C11]/10 text-[#F52C11] text-[10px] font-semibold px-1.5 py-[1px] rounded-full shrink-0"
+                          >{{ ind.leadsCount }} leads</span
+                        >
+                        <span class="text-[11px] text-gray-400 truncate"
+                          >• Archived
+                          {{ formatArchiveDate(ind.archivedAt) }}</span
+                        >
+                      </div>
+                    </div>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Archive Selected Bar - sits above pagination, matches PIP index sizing -->
-        <div
-          v-if="selectedIds.length > 0"
-          class="shrink-0 bg-white border-t border-gray-200 px-3 py-[2px] flex items-center justify-between"
-        >
-          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
-            <svg
-              class="w-3.5 h-3.5 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span class="font-medium"
-              >{{ selectedIds.length }} record(s) selected</span
-            >
-          </div>
-          <button
-            @click="archiveSelectedRecords"
-            class="bg-[#F52C11] hover:bg-[#d9250e] text-white px-2.5 py-[2px] rounded-[6px] text-[11px] font-medium flex items-center gap-1 transition-colors"
-          >
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-              />
-            </svg>
-            Archive selected
-          </button>
-        </div>
-
-        <!-- Pagination footer - matches PIP index pattern -->
-        <div
-          class="shrink-0 bg-[#f0f0f0] px-3 py-1.5 flex items-center justify-between gap-2 flex-wrap border-t border-gray-200 text-[11px]"
-        >
-          <span class="text-[11px] text-gray-500"
-            >Page {{ recordsCurrentPage }} of {{ totalRecordsPages }}</span
-          >
-
-          <div class="flex items-center gap-1">
-            <span class="text-[11px] text-gray-500">Go to</span>
-            <input
-              v-model="recordsPageInput"
-              type="number"
-              min="1"
-              :max="totalRecordsPages"
-              placeholder="---"
-              class="w-10 bg-white border border-gray-300 rounded-[3px] px-1.5 py-[1px] text-[11px] text-[#1F2835] text-center focus:outline-none focus:border-[#F52C11] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              @keyup.enter="goToTypedRecordsPage"
-            />
-            <button
-              @click="goToTypedRecordsPage"
-              class="bg-gray-200 border border-gray-300 hover:bg-gray-300 text-[#1F2835] px-1.5 py-[1px] rounded-[3px] text-[9px] font-medium transition-colors"
-            >
-              Go
-            </button>
+                </div>
+              </template>
+            </div>
           </div>
 
-          <div class="flex items-center gap-0.5">
-            <button
-              @click="goToRecordsPage(recordsCurrentPage - 1)"
-              :disabled="recordsCurrentPage === 1"
-              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
-            >
-              <svg
-                class="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              v-for="page in recordsPageNumbers"
-              :key="page"
-              @click="goToRecordsPage(page)"
-              :class="
-                recordsCurrentPage === page
-                  ? 'text-[#1F2835]'
-                  : 'text-gray-400 hover:bg-gray-100'
-              "
-              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-[10px] font-medium transition-colors"
-            >
-              {{ page }}
-            </button>
-            <button
-              @click="goToRecordsPage(recordsCurrentPage + 1)"
-              :disabled="recordsCurrentPage === totalRecordsPages"
-              class="w-5 h-5 flex items-center justify-center rounded-[3px] text-gray-400 hover:text-[#1F2835] hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400 transition-colors"
-            >
-              <svg
-                class="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <div
-      v-if="showAddIndustryModal"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-    >
-      <div class="bg-white rounded-[6px] w-[365px] shadow-xl p-4">
-        <h3 class="text-[13px] font-bold text-slate-800 mb-2">
-          Create New Industry Node
-        </h3>
-        <input
-          v-model="newIndustryName"
-          type="text"
-          placeholder="e.g. Finance, Agriculture, Healthcare"
-          class="w-full bg-white border border-gray-300 rounded-[4px] px-2.5 py-1.5 text-[12px] mb-2 focus:outline-none focus:border-[#F52C11]"
-          @keyup.enter="addIndustry"
-        />
-        <p v-if="addIndustryError" class="text-[11px] text-[#F52C11] mb-2">
-          {{ addIndustryError }}
-        </p>
-        <div class="flex justify-end gap-1.5 mt-3">
-          <button
-            @click="
-              showAddIndustryModal = false;
-              newIndustryName = '';
-              addIndustryError = '';
+          <!--Bulk actions - matches PIP index selected-archive bar pattern-->
+          <div
+            v-if="
+              (archiveTab === 'records' &&
+                archiveSelectedRecordIds.length > 0) ||
+              (archiveTab === 'industries' &&
+                archiveSelectedIndustryNames.length > 0)
             "
-            class="px-3 py-1 rounded-[4px] text-[11px] text-slate-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+            class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
           >
-            Cancel
-          </button>
-          <button
-            @click="addIndustry"
-            :disabled="!newIndustryName.trim() || isSubmittingIndustry"
-            class="px-4 py-1 rounded-[4px] text-[11px] bg-[#F52C11] text-white hover:bg-[#d9250e] disabled:bg-gray-300 transition-colors font-medium"
+            <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
+              <svg
+                class="w-3.5 h-3.5 text-[#F52C11]"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span class="font-medium">
+                {{
+                  archiveTab === "records"
+                    ? archiveSelectedRecordIds.length
+                    : archiveSelectedIndustryNames.length
+                }}
+                record(s) selected
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <!-- Select All Button -->
+              <button
+                @click="
+                  archiveTab === 'records'
+                    ? toggleAllArchivedRecords()
+                    : toggleAllArchivedIndustries()
+                "
+                class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] hover:text-[#F52C11] text-[10px] font-medium transition-colors"
+              >
+                <svg
+                  class="w-3 h-3 text-[#F52C11]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Select all
+              </button>
+
+              <button
+                @click="
+                  archiveTab === 'records'
+                    ? restoreSelectedArchivedRecords()
+                    : restoreSelectedArchivedIndustries()
+                "
+                class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors"
+              >
+                <svg
+                  class="w-3 h-3 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+                Restore
+              </button>
+              <button
+                @click="
+                  archiveTab === 'records'
+                    ? requestDeleteSelectedArchivedRecords()
+                    : requestDeleteSelectedArchivedIndustries()
+                "
+                class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
+              >
+                <svg
+                  class="w-3 h-3 text-[#F52C11]"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="px-5 py-2 border-t border-gray-100 flex items-center justify-between bg-white shrink-0"
           >
-            Add
-          </button>
+            <div class="flex items-center gap-1.5 text-[9px] text-gray-400">
+              <svg
+                class="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span v-if="archiveTab === 'records'"
+                >Restoring moves the record back to its active list</span
+              >
+              <span v-else
+                >Restoring brings the industry and its leads back to the
+                sidebar</span
+              >
+            </div>
+            <button
+              @click="showArchiveModal = false"
+              class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div
-      v-if="showArchiveModal"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-    >
       <div
-        class="bg-white rounded-[12px] w-[800px] h-[550px] shadow-xl flex flex-col overflow-hidden"
+        v-if="showDeleteConfirmModal"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]"
       >
         <div
-          class="flex items-center justify-between px-5 py-4 border-b border-gray-200"
+          class="bg-white rounded-[12px] w-[380px] shadow-xl overflow-hidden"
         >
-          <div class="flex items-center gap-3">
+          <div class="p-5 flex items-start gap-3">
             <div
               class="w-9 h-9 rounded-[8px] bg-[#F52C11]/10 flex items-center justify-center shrink-0"
             >
@@ -902,490 +1348,64 @@
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                  d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14.14A2 2 0 004.18 21h15.64a2 2 0 001.87-2.99L13.71 3.86a2 2 0 00-3.42 0z"
                 />
               </svg>
             </div>
             <div>
               <div class="font-bold text-[14px] text-slate-800 leading-tight">
-                Archived items
+                Delete permanently?
               </div>
-              <div class="text-[11px] text-gray-400 leading-tight">
-                Industry page
-              </div>
+              <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+                {{ deleteConfirmMessage }}
+              </p>
             </div>
           </div>
-          <button
-            @click="showArchiveModal = false"
-            class="text-[#F52C11] hover:text-[#d9250e] transition-colors"
-          >
-            <svg
-              class="w-[18px] h-[18px]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <div class="flex items-center gap-5 px-5 border-b border-gray-200">
-          <button
-            @click="archiveTab = 'records'"
-            :class="
-              archiveTab === 'records'
-                ? 'border-[#F52C11] text-[#F52C11]'
-                : 'border-transparent text-gray-400 hover:text-gray-600'
-            "
-            class="flex items-center gap-1.5 pb-2.5 pt-3 border-b-2 text-[11px] font-medium transition-colors"
-          >
-            <svg
-              class="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-            Archived records
-            <span
-              :class="
-                archiveTab === 'records'
-                  ? 'bg-[#F52C11]/10 text-[#F52C11]'
-                  : 'bg-gray-100 text-gray-500'
-              "
-              class="rounded-full px-1.5 py-[1px] text-[10px] font-semibold"
-              >{{ archivedRecords.length }}</span
-            >
-          </button>
-          <button
-            @click="archiveTab = 'industries'"
-            :class="
-              archiveTab === 'industries'
-                ? 'border-[#F52C11] text-[#F52C11]'
-                : 'border-transparent text-gray-400 hover:text-gray-600'
-            "
-            class="flex items-center gap-1.5 pb-2.5 pt-3 border-b-2 text-[12px] font-medium transition-colors"
-          >
-            <svg
-              class="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <rect x="4" y="4" width="7" height="7" rx="1.5" />
-              <rect x="13" y="4" width="7" height="7" rx="1.5" />
-              <rect x="4" y="13" width="7" height="7" rx="1.5" />
-              <rect x="13" y="13" width="7" height="7" rx="1.5" />
-            </svg>
-            Archived industries
-            <span
-              :class="
-                archiveTab === 'industries'
-                  ? 'bg-[#F52C11]/10 text-[#F52C11]'
-                  : 'bg-gray-100 text-gray-500'
-              "
-              class="rounded-full px-1.5 py-[1px] text-[10px] font-semibold"
-              >{{ archivedIndustries.length }}</span
-            >
-          </button>
-        </div>
-
-        <!-- Location filter — records only. Archived industries carry no
-             location value, so there's nothing to filter there. -->
-        <div
-          v-if="archiveTab === 'records'"
-          class="px-5 pt-3 pb-1 shrink-0 flex items-center gap-1.5"
-        >
-          <span class="text-[11px] text-gray-400 mr-0.5"></span>
-          <button
-            v-for="loc in ['All', ...locationOptions]"
-            :key="loc"
-            @click="setArchiveLocationFilter(loc)"
-            :class="
-              archiveLocationFilter === loc
-                ? 'bg-[#1F2835] text-white'
-                : 'bg-gray-100 text-[#1F2835] border border-gray-200'
-            "
-            class="px-2.5 py-[2px] rounded-[4px] text-[11px] font-medium transition-colors"
-          >
-            {{ loc }}
-          </button>
-        </div>
-
-        <div class="px-5 py-2 shrink-0">
-          <div class="relative">
-            <svg
-              class="w-3 h-3 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              v-model="archiveSearchQuery"
-              type="text"
-              :placeholder="
-                archiveTab === 'records'
-                  ? 'Search archived records...'
-                  : 'Search archived industries...'
-              "
-              class="w-full pl-7 pr-2 py-[4px] bg-white border border-gray-200 rounded-[4px] text-[11px] placeholder:text-gray-400 focus:outline-none focus:border-[#F52C11] transition-colors"
-            />
-          </div>
-        </div>
-
-        <div
-          class="flex-1 overflow-y-auto custom-scroll px-5 pb-4 min-h-[200px]"
-        >
           <div
-            v-if="isLoadingArchive"
-            class="text-center text-gray-400 py-10 text-[11px]"
+            class="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
           >
-            Loading system archive indices...
-          </div>
-
-          <div v-else class="space-y-2.5">
-            <template v-if="archiveTab === 'records'">
-              <div
-                v-if="filteredArchivedRecords.length === 0"
-                class="text-center text-gray-400 py-10 text-[11px]"
-              >
-                No matching archived lead records found.
-              </div>
-              <div
-                v-for="rec in filteredArchivedRecords"
-                :key="rec.id"
-                class="flex items-center gap-3 p-1 bg-white border border-gray-200 rounded-[8px] hover:border-gray-300 transition-colors"
-              >
-                <div class="flex items-center gap-3 min-w-0">
-                  <input
-                    type="checkbox"
-                    :checked="isArchiveRecordSelected(rec.id)"
-                    @change="toggleArchiveRecordSelection(rec.id)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer shrink-0"
-                  />
-                  <div
-                    class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
-                  >
-                    <svg
-                      class="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.75"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 21h18M6 21V6a1 1 0 011-1h6a1 1 0 011 1v15M9 9h1m3 0h1m-5 4h1m3 0h1m-5 4h1m3 0h1M18 21v-8a1 1 0 00-1-1h-2"
-                      />
-                    </svg>
-                  </div>
-                  <div class="min-w-0">
-                    <div class="font-bold text-[13px] text-slate-800 truncate">
-                      {{ rec.businessName }}
-                    </div>
-                    <div class="text-[11px] text-gray-400 mt-0.5 truncate">
-                      {{ rec.location }}, {{ archivedRecordIndustryName(rec) }}
-                      <span class="mx-1">•</span>Archived
-                      {{ formatArchiveDate(rec.archivedAt) }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-
-            <template v-else>
-              <div
-                v-if="filteredArchivedIndustries.length === 0"
-                class="text-center text-gray-400 py-10 text-[11px]"
-              >
-                No matching archived industries found.
-              </div>
-              <div
-                v-for="ind in filteredArchivedIndustries"
-                :key="ind.name"
-                class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-[10px]"
-              >
-                <div class="flex items-center gap-3 min-w-0">
-                  <input
-                    type="checkbox"
-                    :checked="isArchiveIndustrySelected(ind.name)"
-                    @change="toggleArchiveIndustrySelection(ind.name)"
-                    class="w-3 h-3 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] accent-[#F52C11] cursor-pointer shrink-0"
-                  />
-                  <div
-                    class="w-10 h-10 rounded-[8px] bg-gray-100 flex items-center justify-center shrink-0"
-                  >
-                    <svg
-                      class="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.75"
-                      viewBox="0 0 24 24"
-                    >
-                      <rect x="4" y="4" width="7" height="7" rx="1.5" />
-                      <rect x="13" y="4" width="7" height="7" rx="1.5" />
-                      <rect x="4" y="13" width="7" height="7" rx="1.5" />
-                      <rect x="13" y="13" width="7" height="7" rx="1.5" />
-                    </svg>
-                  </div>
-                  <div class="min-w-0">
-                    <div class="font-bold text-[13px] text-slate-800 truncate">
-                      {{ ind.name }}
-                    </div>
-                    <div class="flex items-center gap-1.5 mt-0.5">
-                      <span
-                        class="bg-[#F52C11]/10 text-[#F52C11] text-[10px] font-semibold px-1.5 py-[1px] rounded-full shrink-0"
-                        >{{ ind.leadsCount }} leads</span
-                      >
-                      <span class="text-[11px] text-gray-400 truncate"
-                        >• Archived
-                        {{ formatArchiveDate(ind.archivedAt) }}</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-
-        <!--Bulk actions - matches PIP index selected-archive bar pattern-->
-        <div
-          v-if="
-            (archiveTab === 'records' && archiveSelectedRecordIds.length > 0) ||
-            (archiveTab === 'industries' &&
-              archiveSelectedIndustryNames.length > 0)
-          "
-          class="shrink-0 bg-white border-t border-gray-200 px-3 py-[6px] flex items-center justify-between"
-        >
-          <div class="flex items-center gap-2 text-[11px] text-[#1F2835]">
-            <svg
-              class="w-3.5 h-3.5 text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span class="font-medium">
-              {{
-                archiveTab === "records"
-                  ? archiveSelectedRecordIds.length
-                  : archiveSelectedIndustryNames.length
-              }}
-              record(s) selected
-            </span>
-          </div>
-          <div class="flex items-center gap-2">
-            <!-- Select All Button -->
             <button
-              @click="
-                archiveTab === 'records'
-                  ? toggleAllArchivedRecords()
-                  : toggleAllArchivedIndustries()
-              "
-              class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] hover:text-[#F52C11] text-[10px] font-medium transition-colors"
+              @click="cancelDeleteConfirm"
+              class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
             >
-              <svg
-                class="w-3 h-3 text-[#F52C11]"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              Select all
-            </button>
-
-            <button
-              @click="
-                archiveTab === 'records'
-                  ? restoreSelectedArchivedRecords()
-                  : restoreSelectedArchivedIndustries()
-              "
-              class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-[#F52C11] text-[10px] font-medium transition-colors"
-            >
-              <svg
-                class="w-3 h-3 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              Restore
+              Cancel
             </button>
             <button
-              @click="
-                archiveTab === 'records'
-                  ? requestDeleteSelectedArchivedRecords()
-                  : requestDeleteSelectedArchivedIndustries()
-              "
-              class="inline-flex items-center gap-1 px-2.5 py-[4px] rounded-[6px] border border-gray-200 bg-white text-[#1F2835] hover:border-red-400 text-[10px] font-medium transition-colors"
+              @click="confirmDeleteConfirm"
+              class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-white bg-[#F52C11] hover:bg-[#d9250e] transition-colors"
             >
-              <svg
-                class="w-3 h-3 text-[#F52C11]"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
               Delete
             </button>
           </div>
         </div>
-
-        <div
-          class="px-5 py-2 border-t border-gray-100 flex items-center justify-between bg-white shrink-0"
-        >
-          <div class="flex items-center gap-1.5 text-[9px] text-gray-400">
-            <svg
-              class="w-3 h-3"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span v-if="archiveTab === 'records'"
-              >Restoring moves the record back to its active list</span
-            >
-            <span v-else
-              >Restoring brings the industry and its leads back to the
-              sidebar</span
-            >
-          </div>
-          <button
-            @click="showArchiveModal = false"
-            class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            Close
-          </button>
-        </div>
       </div>
+
+      <div
+        v-if="
+          showDatePicker ||
+          showServicesDropdown ||
+          openIndustryMenuIndex !== null
+        "
+        class="fixed inset-0 z-40"
+        @click="closeAllDropdowns"
+      ></div>
+
+      <ViewRecordModal
+        v-if="showViewModal"
+        :record="viewingRecord"
+        @close="closeViewModal"
+      />
+
+      <EditRecordModal
+        v-if="showEditModal"
+        :record="toEditModalRecord(editingRecord)"
+        :error-message="editSaveError"
+        :saving="isEditSaving"
+        @close="closeEditModal"
+        @save="handleEditSave"
+      />
     </div>
-
-    <div
-      v-if="showDeleteConfirmModal"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]"
-    >
-      <div class="bg-white rounded-[12px] w-[380px] shadow-xl overflow-hidden">
-        <div class="p-5 flex items-start gap-3">
-          <div
-            class="w-9 h-9 rounded-[8px] bg-[#F52C11]/10 flex items-center justify-center shrink-0"
-          >
-            <svg
-              class="w-[18px] h-[18px] text-[#F52C11]"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14.14A2 2 0 004.18 21h15.64a2 2 0 001.87-2.99L13.71 3.86a2 2 0 00-3.42 0z"
-              />
-            </svg>
-          </div>
-          <div>
-            <div class="font-bold text-[14px] text-slate-800 leading-tight">
-              Delete permanently?
-            </div>
-            <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
-              {{ deleteConfirmMessage }}
-            </p>
-          </div>
-        </div>
-        <div
-          class="px-5 py-3 border-t border-gray-100 flex items-center justify-end gap-2 bg-white"
-        >
-          <button
-            @click="cancelDeleteConfirm"
-            class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-[#1F2835] bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            @click="confirmDeleteConfirm"
-            class="px-3 py-[4px] rounded-[6px] text-[11px] font-medium text-white bg-[#F52C11] hover:bg-[#d9250e] transition-colors"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div
-      v-if="
-        showDatePicker || showServicesDropdown || openIndustryMenuIndex !== null
-      "
-      class="fixed inset-0 z-40"
-      @click="closeAllDropdowns"
-    ></div>
-
-    <ViewRecordModal
-      v-if="showViewModal"
-      :record="viewingRecord"
-      @close="closeViewModal"
-    />
-
-    <EditRecordModal
-      v-if="showEditModal"
-      :record="toEditModalRecord(editingRecord)"
-      :error-message="editSaveError"
-      :saving="isEditSaving"
-      @close="closeEditModal"
-      @save="handleEditSave"
-    />
-  </div>
+  </template>
 </template>
 
 <script setup>
@@ -1617,7 +1637,13 @@ async function fetchRecords() {
     isLoadingRecords.value = false;
   }
 }
-
+const {
+  ready: permissionsReady,
+  isLoading: permissionsLoading,
+  canView,
+  canEdit,
+  canAdd,
+} = usePermissions("industry");
 async function fetchArchive() {
   isLoadingArchive.value = true;
   try {

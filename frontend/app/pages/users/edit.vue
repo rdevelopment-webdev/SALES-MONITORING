@@ -448,17 +448,21 @@
                           </td>
                           <td class="px-2 py-2 text-center">
                             <input
+                              v-if="module.name !== 'Audit Logs'"
                               type="checkbox"
                               v-model="module.edit"
                               class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                             />
+                            <span v-else class="text-gray-300">—</span>
                           </td>
                           <td class="px-2 py-2 text-center">
                             <input
+                              v-if="module.name !== 'Audit Logs'"
                               type="checkbox"
                               v-model="module.add"
                               class="w-3.5 h-3.5 rounded border-gray-300 text-[#F52C11] focus:ring-[#F52C11] cursor-pointer"
                             />
+                            <span v-else class="text-gray-300">—</span>
                           </td>
                         </tr>
                       </tbody>
@@ -591,7 +595,10 @@ const permissionsBeforeFullAccess = ref(null);
 const isFullAccess = computed({
   get() {
     if (!permissions.value || permissions.value.length === 0) return false;
-    return permissions.value.every((m) => m.view && m.edit && m.add);
+    // Auditlogs is view-only, so it doesn't need edit/add to count as "full".
+    return permissions.value.every((m) =>
+      m.name === "Audit Logs" ? m.view : m.view && m.edit && m.add
+    );
   },
   set(val) {
     if (val) {
@@ -605,8 +612,14 @@ const isFullAccess = computed({
 
       permissions.value.forEach((m) => {
         m.view = true;
-        m.edit = true;
-        m.add = true;
+        // Auditlogs is view-only; Full Access shouldn't grant edit/add here.
+        if (m.name !== "Audit Logs") {
+          m.edit = true;
+          m.add = true;
+        } else {
+          m.edit = false;
+          m.add = false;
+        }
       });
     } else if (permissionsBeforeFullAccess.value) {
       // Turning Full Access OFF: restore the prior per-page permissions
